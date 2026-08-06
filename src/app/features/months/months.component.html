@@ -1,0 +1,14 @@
+<section class="page">
+  <div class="page-head"><div><h1>Months</h1><p>Close, unlock, and delete accounting periods</p></div><button mat-flat-button color="primary" (click)="createMonth()"><i class="pi pi-plus"></i>New Month</button></div>
+  <mat-card><mat-card-content>
+    <table mat-table [dataSource]="months()">
+      @for (c of columns; track c) { <ng-container [matColumnDef]="c"><th mat-header-cell *matHeaderCellDef>{{ c | titlecase }}</th><td mat-cell *matCellDef="let row">{{ row[c] }}</td></ng-container> }
+      <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let row" class="actions">
+        @if (row.status === 'open') { <button mat-button color="primary" (click)="close(row)">Close Month</button> }
+        @if (auth.profile()?.role === 'admin' && row.status === 'locked') { <button mat-button (click)="unlock(row)">Unlock</button> }
+        @if (auth.profile()?.role === 'admin') { <button mat-button color="warn" (click)="remove(row)">Delete</button> }
+      </td></ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr><tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </mat-card-content></mat-card>
+</section>

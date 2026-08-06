@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <p>{{ data.message }}</p>
+  @if (data.requireText) {
+    <mat-form-field class="full">
+      <mat-label>Type {{ data.requireText }}</mat-label>
+      <input matInput [formControl]="typed" autocomplete="off" />
+    </mat-form-field>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="warn" [disabled]="data.requireText && typed.value !== data.requireText" (click)="ref.close(true)">
+    {{ data.action }}
+  </button>
+</mat-dialog-actions>

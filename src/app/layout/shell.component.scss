@@ -1,0 +1,15 @@
+.shell{min-height:100vh;background:#fff7ed;color:#172033}
+.side{width:240px;border:0!important;background:#f97316;color:#fff;border-radius:0!important}
+.brand{height:64px;display:flex;align-items:center;gap:10px;font-weight:800;padding:10px 16px;color:#fff;background:#f97316}
+.brand img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:#050505}
+.active{background:rgba(255,255,255,.22);color:#fff}
+.side a{color:#fff}
+.title{margin-left:8px;font-weight:700;color:#fff}
+.spacer{flex:1}
+.content{padding:20px;max-width:1440px}
+.mat-toolbar{height:64px;background:#f97316;color:#fff;border:0}
+.mat-toolbar button{color:#fff}
+.pi{font-size:18px}
+.menu-pi{width:24px;margin-right:16px;font-size:18px}
+
+@media(max-width:900px){.side{width:230px}.content{padding:12px}}

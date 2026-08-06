@@ -1,0 +1,33 @@
+<section class="auth">
+  <mat-card class="login-card">
+    <div class="brand">
+      <img src="phantom-logo.svg" alt="Phantom Snack Record" />
+      <h1>Snack Record</h1>
+      <p>Sign in to continue</p>
+    </div>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="login()">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <i class="pi pi-envelope" matPrefix></i>
+          <input matInput type="email" formControlName="email" autocomplete="email" autofocus />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <i class="pi pi-lock" matPrefix></i>
+          <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="current-password" />
+          <button mat-icon-button matSuffix type="button" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+            <i class="pi" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()"></i>
+          </button>
+        </mat-form-field>
+        @if (error()) {
+          <div class="error"><i class="pi pi-exclamation-circle"></i><span>{{ error() }}</span></div>
+        }
+        <button mat-flat-button class="login-btn" type="submit" [disabled]="form.invalid || loading()">
+          @if (loading()) { <mat-spinner diameter="20" /> } @else { <i class="pi pi-sign-in"></i><span>Login</span> }
+        </button>
+      </form>
+      <div class="forgot"><a routerLink="/auth/forgot-password">Forgot password?</a></div>
+    </mat-card-content>
+  </mat-card>
+</section>

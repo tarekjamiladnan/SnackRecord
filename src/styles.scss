@@ -1,0 +1,9 @@
+@use '@angular/material' as mat;
+@import 'primeicons/primeicons.css';
+
+html { @include mat.theme((color: (primary: mat.$azure-palette, tertiary: mat.$green-palette), typography: Roboto, density: 0)); }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, Arial, sans-serif; background: #f6f7fb; color: #101828; }
+* { box-sizing: border-box; }
+a { color: inherit; text-decoration: none; }
+.mat-mdc-card { border-radius: 8px !important; }

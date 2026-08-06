@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="grid">
+    @for (field of data.fields; track field.key) {
+      <mat-form-field>
+        <mat-label>{{ field.label }}</mat-label>
+        @if (field.type === 'select') {
+          <mat-select [formControlName]="field.key">
+            @for (option of field.options ?? []; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+        } @else {
+          <input matInput [type]="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'" [formControlName]="field.key" />
+        }
+        @if (form.get(field.key)?.hasError('required')) { <mat-error>Required</mat-error> }
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="save()">Save</button>
+</mat-dialog-actions>

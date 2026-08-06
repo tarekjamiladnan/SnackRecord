@@ -1,0 +1,9 @@
+<section class="page">
+  <div class="page-head"><div><h1>Settings</h1><p>Manager information</p></div></div>
+  <mat-card><mat-card-content>
+    <form [formGroup]="form" class="grid" (ngSubmit)="save()">
+      <mat-form-field><mat-label>Manager Name</mat-label><input matInput formControlName="manager_name" /></mat-form-field>
+      <button mat-flat-button color="primary">Save</button>
+    </form>
+  </mat-card-content></mat-card>
+</section>

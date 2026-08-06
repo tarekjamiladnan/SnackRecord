@@ -1,0 +1,29 @@
+<mat-sidenav-container class="shell">
+  <mat-sidenav #sidenav mode="side" [opened]="wide()" class="side">
+    <div class="brand"><img src="phantom-logo.svg" alt="Phantom Snack Record" /><span>Snack Record</span></div>
+    <mat-nav-list>
+      @for (item of nav(); track item.path) {
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active">
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenav.toggle()" matTooltip="Menu">
+        <i class="pi" [class.pi-arrow-left]="sidenav.opened" [class.pi-arrow-right]="!sidenav.opened"></i>
+      </button>
+      <span class="title">{{ pageTitle() }}</span>
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="account" matTooltip="Profile">
+        <i class="pi" [class.pi-angle-double-up]="profileOpen()" [class.pi-angle-double-down]="!profileOpen()"></i>
+      </button>
+      <mat-menu #account="matMenu" (opened)="profileOpen.set(true)" (closed)="profileOpen.set(false)">
+        <button mat-menu-item routerLink="/auth/change-password"><i class="pi pi-key menu-pi"></i>Change password</button>
+        <button mat-menu-item (click)="auth.signOut()"><i class="pi pi-sign-out menu-pi"></i>Logout</button>
+      </mat-menu>
+    </mat-toolbar>
+    <main class="content"><router-outlet /></main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

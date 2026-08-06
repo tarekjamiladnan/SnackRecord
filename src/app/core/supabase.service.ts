@@ -1,0 +1,85 @@
+import { Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { createClient, Session, SupabaseClient, User } from '@supabase/supabase-js';
+import { environment } from '../../environments/environment';
+import { Month, Profile, Role } from './models';
+
+@Injectable({ providedIn: 'root' })
+export class SupabaseService {
+  readonly client: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseAnonKey, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  });
+  readonly session = signal<Session | null>(null);
+  readonly user = signal<User | null>(null);
+  readonly profile = signal<Profile | null>(null);
+  readonly loading = signal(false);
+
+  constructor(private router: Router) {
+    void this.restoreSession();
+    this.client.auth.onAuthStateChange((event, session) => {
+      this.session.set(session);
+      this.user.set(session?.user ?? null);
+      if (session?.user) void this.loadProfile();
+      if (event === 'SIGNED_IN' && session) void this.audit('Login', 'auth', session.user.id);
+      if (event === 'SIGNED_OUT') void this.router.navigateByUrl('/auth/login');
+    });
+  }
+
+  async restoreSession(): Promise<void> {
+    const { data } = await this.client.auth.getSession();
+    this.session.set(data.session);
+    this.user.set(data.session?.user ?? null);
+    if (data.session?.user) await this.loadProfile();
+  }
+
+  async loadProfile(): Promise<void> {
+    const id = this.user()?.id;
+    if (!id) return;
+    const { data, error } = await this.client.from('profiles').select('*').eq('id', id).single();
+    if (error) throw error;
+    this.profile.set(data as Profile);
+  }
+
+  async getOpenMonth(): Promise<Month | null> {
+    const { data, error } = await this.client
+      .from('months')
+      .select('*')
+      .eq('status', 'open')
+      .order('year', { ascending: false })
+      .order('month', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as Month) ?? null;
+  }
+
+  hasRole(roles: Role[]): boolean {
+    const role = this.profile()?.role;
+    return !!role && roles.includes(role);
+  }
+
+  async signIn(email: string, password: string): Promise<void> {
+    const { error } = await this.client.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }
+
+  async signOut(): Promise<void> {
+    await this.audit('Logout', 'auth', this.user()?.id ?? null);
+    const { error } = await this.client.auth.signOut();
+    if (error) throw error;
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const { error } = await this.client.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/auth/reset-password` });
+    if (error) throw error;
+  }
+
+  async updatePassword(password: string): Promise<void> {
+    const { error } = await this.client.auth.updateUser({ password });
+    if (error) throw error;
+  }
+
+  async audit(action: string, entity?: string | null, entityId?: string | null, metadata: Record<string, unknown> = {}): Promise<void> {
+    await this.client.from('audit_logs').insert({ actor_id: this.user()?.id ?? null, action, entity, entity_id: entityId, metadata });
+  }
+}

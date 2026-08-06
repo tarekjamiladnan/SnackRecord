@@ -1,0 +1,29 @@
+<section class="page">
+  <div class="page-head">
+    <div><h1>Daily Entry</h1><p>Enter each member amount manually</p></div>
+    <button mat-flat-button color="primary" (click)="save()">Save</button>
+  </div>
+  <mat-card><mat-card-content class="sheet-wrap">
+    <div class="toolbar">
+      <mat-form-field>
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" [ngModel]="dateValue" (ngModelChange)="setDate($event)" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="remarks"><mat-label>Remarks</mat-label><input matInput [(ngModel)]="remarks" maxlength="200" /></mat-form-field>
+    </div>
+    <table class="sheet">
+      <thead><tr><th>Member</th><th>Amount</th></tr></thead>
+      <tbody>
+        @for (m of members(); track m.id) {
+          <tr>
+            <td>{{ m.name }}</td>
+            <td><input class="amount-input" type="number" min="0" step="0.01" [ngModel]="amounts()[m.id]" (ngModelChange)="setAmount(m.id, $event)" /></td>
+          </tr>
+        }
+      </tbody>
+      <tfoot><tr><th>Total</th><th>{{ total() | number:'1.0-2' }}</th></tr></tfoot>
+    </table>
+  </mat-card-content></mat-card>
+</section>

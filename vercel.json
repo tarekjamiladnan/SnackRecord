@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/phantom-snack-record/browser",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

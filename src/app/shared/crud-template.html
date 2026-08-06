@@ -1,0 +1,30 @@
+<section class="page">
+  <div class="page-head">
+    <div><h1>{{ title }}</h1><p>{{ count() }} records</p></div>
+    <button mat-flat-button color="primary" (click)="open()"><i class="pi pi-plus"></i>Add</button>
+  </div>
+  <mat-card>
+    <mat-card-content>
+      <mat-form-field class="search"><mat-label>Search</mat-label><i class="pi pi-search" matPrefix></i><input matInput #q (input)="search.set(q.value); load()" /></mat-form-field>
+      @if (loading()) { <div class="loading"><mat-spinner diameter="36" /></div> }
+      <table mat-table [dataSource]="data()" class="mat-elevation-z0">
+        @for (column of columns; track column) {
+          <ng-container [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef>{{ column.replace('_', ' ') | titlecase }}</th>
+            <td mat-cell *matCellDef="let row">{{ row[column] }}</td>
+          </ng-container>
+        }
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" class="actions">
+            <button mat-icon-button matTooltip="Edit" (click)="open(row)"><i class="pi pi-pencil"></i></button>
+            <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete(row)"><i class="pi pi-trash"></i></button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+      <mat-paginator [length]="count()" [pageSize]="pageSize()" [pageSizeOptions]="[10,25,50]" (page)="page.set($event.pageIndex); pageSize.set($event.pageSize); load()" />
+    </mat-card-content>
+  </mat-card>
+</section>
