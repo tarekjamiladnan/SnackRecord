@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { UI_IMPORTS } from './ui';
 
 export interface ConfirmDialogData { title: string; message: string; requireText?: string; action: string; }
@@ -13,5 +13,9 @@ export interface ConfirmDialogData { title: string; message: string; requireText
 })
 export class ConfirmDialogComponent {
   typed = new FormControl('');
-  constructor(public ref: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {}
+  data: ConfirmDialogData;
+
+  constructor(public ref: DynamicDialogRef, private config: DynamicDialogConfig) {
+    this.data = this.config.data as ConfirmDialogData;
+  }
 }

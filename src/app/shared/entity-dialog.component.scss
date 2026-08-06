@@ -1,6 +1,41 @@
-.grid {
+.entity-form {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.entity-field {
+  display: grid;
+  gap: 8px;
+}
+
+.entity-field label {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text-1);
+}
+
+.entity-field .req {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+.entity-field .p-inputtext,
+.entity-field .p-select,
+.entity-field .p-datepicker {
+  width: 100%;
+}
+
+.entity-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
   padding-top: 8px;
+  border-top: 1px solid var(--divider);
+  margin-top: 8px;
+}
+
+.entity-actions .p-button {
+  min-width: 110px;
+  height: 44px;
 }

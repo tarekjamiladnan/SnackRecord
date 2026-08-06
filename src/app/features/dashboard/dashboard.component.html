@@ -1,104 +1,132 @@
 <section class="page">
-  <div class="page-hero">
-    <div>
-      <p-tag value="Overview" severity="warn" icon="pi pi-chart-line" />
-      <h1>Dashboard</h1>
-      <p>Manager: {{ managerName() || 'Not set' }}</p>
-    </div>
-    <div class="hero-metric">
-      <span>Total Left</span>
-      <b>{{ totalLeft() | number:'1.0-2' }}</b>
-    </div>
-  </div>
-
-  <div class="cards">
-    <p-card styleClass="soft-panel stat"><span>Total Given</span><b>{{ totalGiven() | number:'1.0-2' }}</b></p-card>
-    <p-card styleClass="soft-panel stat"><span>Total Used</span><b>{{ totalUsed() | number:'1.0-2' }}</b></p-card>
-    <p-card styleClass="soft-panel stat"><span>Total Left</span><b>{{ totalLeft() | number:'1.0-2' }}</b></p-card>
-  </div>
-
-  <p-card styleClass="soft-panel table-panel">
-    <ng-template pTemplate="header">
-      <div class="table-head">
-        <div>
-          <h2>Member Money</h2>
-          <p>Current member balances</p>
-        </div>
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="hero-chip"><svg lucideSparkles /> Dashboard</span>
+      <h1>Good to see you{{ managerName() ? ', ' + managerName() : '' }}!</h1>
+      <p>Here's how the month is shaping up for your members.</p>
+      <div class="hero-actions">
+        <button pButton (click)="goTo('/daily-entry')"><svg lucideClipboardPlus /> New Entry</button>
+        <button pButton type="button" class="ghost-button" (click)="goTo('/collections')"><svg lucideWallet /> Add Collection</button>
+        <button pButton type="button" class="ghost-button" (click)="goTo('/months')"><svg lucideCalendarPlus /> New Month</button>
       </div>
-    </ng-template>
-    <p-table [value]="rows()" responsiveLayout="scroll" styleClass="modern-table">
+    </div>
+    <div class="hero-art">
+      <svg lucidePiggyBank />
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-top"><span class="icon-badge"><svg lucideUsers /></span><span class="trend-chip">{{ members().length }} active</span></div>
+      <div class="stat-value">{{ members().length }}</div>
+      <div class="stat-label">Members</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><span class="icon-badge" style="background:linear-gradient(135deg,#22c55e,#86efac)"><svg lucideArrowDownToLine /></span><span class="trend-chip">collections</span></div>
+      <div class="stat-value">{{ collectedTotal() | number:'1.0-2' }}</div>
+      <div class="stat-label">Total Given</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><span class="icon-badge" style="background:linear-gradient(135deg,#ef4444,#fca5a5)"><svg lucideArrowUpFromLine /></span><span class="trend-chip">entries</span></div>
+      <div class="stat-value">{{ totalUsed() | number:'1.0-2' }}</div>
+      <div class="stat-label">Total Used</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><span class="icon-badge" style="background:linear-gradient(135deg,#8b5cf6,#c4b5fd)"><svg lucideScale /></span><span class="trend-chip">balance</span></div>
+      <div class="stat-value highlight">{{ totalLeft() | number:'1.0-2' }}</div>
+      <div class="stat-label">Total Left</div>
+    </div>
+  </div>
+
+  <div class="split-2">
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge"><svg lucideTrendingUp /></span>
+        <div><h2>Spending Trend</h2><p>Daily totals for the last 10 entries</p></div>
+      </div>
+      <div class="chart-box">
+        <canvas #spendCanvas></canvas>
+        @if (!previewRows().length) {
+          <div class="chart-empty">
+            <div class="empty-art"><svg lucideChartNoAxesCombined /></div>
+            <b>No spending yet</b><span>Record an entry to see the trend.</span>
+          </div>
+        }
+      </div>
+    </p-card>
+
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge" style="background:linear-gradient(135deg,#ff6b00,#ffab7a)"><svg lucideChartPie /></span>
+        <div><h2>Share by Member</h2><p>Spending amount contribution</p></div>
+      </div>
+      <div class="chart-box">
+        <canvas #shareCanvas></canvas>
+        @if (!memberUsed().length) {
+          <div class="chart-empty">
+            <div class="empty-art"><svg lucideChartPie /></div>
+            <b>No spending yet</b><span>Record an entry to see the breakdown.</span>
+          </div>
+        }
+      </div>
+    </p-card>
+  </div>
+
+  <p-card>
+    <div class="panel-title">
+      <span class="icon-badge" style="background:linear-gradient(135deg,#3b82f6,#93c5fd)"><svg lucideListFilter /></span>
+      <div><h2>Member Balances</h2><p>Given vs. remaining</p></div>
+    </div>
+      <p-table [value]="rows()" styleClass="preview-table">
+        <ng-template pTemplate="header">
+          <tr><th>Member</th><th>Given</th><th>Left</th></tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td><div class="person-cell"><span class="initials">{{ initials(row.name) }}</span><b>{{ row.name }}</b></div></td>
+            <td><span class="amount-pill soft">{{ row.given | number:'1.0-2' }}</span></td>
+            <td><span class="amount-pill" [class.negative]="row.left < 0">{{ row.left | number:'1.0-2' }}</span></td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="3" class="empty-state"><div class="empty-art"><svg lucideUsersRound /></div><b>No active members</b><span>Add members to begin.</span></td></tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+
+  <p-card>
+    <div class="panel-title">
+      <span class="icon-badge" style="background:linear-gradient(135deg,#10b981,#6ee7b7)"><svg lucideReceipt /></span>
+      <div><h2>Recent Daily Entries</h2><p>The latest recorded expenses</p></div>
+      <div class="panel-actions"><button pButton type="button" class="ghost-button" (click)="goTo('/daily-entry')">View All <svg lucideArrowRight /></button></div>
+    </div>
+    <p-table [value]="previewRows()" styleClass="preview-table">
       <ng-template pTemplate="header">
-        <tr>
-          <th pSortableColumn="name">Person <p-sortIcon field="name" /></th>
-          <th pSortableColumn="given">Given <p-sortIcon field="given" /></th>
-          <th pSortableColumn="left">Left <p-sortIcon field="left" /></th>
-        </tr>
+        <tr><th>Date</th><th>Remarks</th><th>Who &amp; How Much</th><th>Total</th></tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
         <tr>
-          <td><strong>{{ row.name }}</strong></td>
-          <td><span class="amount-pill">{{ row.given | number:'1.0-2' }}</span></td>
-          <td><span class="amount-pill accent">{{ row.left | number:'1.0-2' }}</span></td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-card>
-
-  <p-card styleClass="soft-panel table-panel">
-    <ng-template pTemplate="header">
-      <div class="table-head">
-        <div>
-          <h2>Daily Entry Preview</h2>
-          <p>Recent daily entries by member</p>
-        </div>
-        <span class="count-pill">{{ previewRows().length }} entries</span>
-      </div>
-    </ng-template>
-
-    <p-table
-      [value]="previewRows()"
-      [scrollable]="true"
-      scrollHeight="520px"
-      responsiveLayout="scroll"
-      styleClass="modern-table preview-table"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Date</th>
-          @for (member of members(); track member.id) {
-            <th>{{ shortName(member.name) }}</th>
-          }
-          <th>Total Cost</th>
-          <th>Item Remarks</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-entry>
-        <tr>
-          <td><strong>{{ entry.date }}</strong></td>
-          @for (member of members(); track member.id) {
-            <td>{{ entry.values[member.id] ? (entry.values[member.id] | number:'1.0-2') : '-' }}</td>
-          }
-          <td><span class="amount-pill">{{ entry.total | number:'1.0-2' }}</span></td>
-          <td>{{ entry.remarks || '-' }}</td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="footer">
-        <tr>
-          <td><strong>Total</strong></td>
-          @for (member of members(); track member.id) {
-            <td><strong>{{ memberUsed(member.id) | number:'1.0-2' }}</strong></td>
-          }
-          <td><strong>{{ totalUsed() | number:'1.0-2' }}</strong></td>
-          <td>Manager: {{ managerName() || 'Not set' }}</td>
+          <td><span class="amount-pill soft">{{ row.date }}</span></td>
+          <td>{{ row.remarks || '—' }}</td>
+          <td>
+            @if (row.items.length) {
+              <div class="ep-columns">
+                @for (person of row.items; track person.name) {
+                  <div class="ep-member">
+                    <b class="ep-name">{{ person.name }}</b>
+                    <span class="ep-cost">{{ person.amount | number:'1.0-2' }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <span class="muted">—</span>
+            }
+          </td>
+          <td><b class="amount">{{ row.total | number:'1.0-2' }}</b></td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
-        <tr>
-          <td [attr.colspan]="members().length + 3" class="empty-state">
-            <i class="pi pi-inbox"></i>
-            <span>No daily entries recorded yet.</span>
-          </td>
-        </tr>
+        <tr><td colspan="4" class="empty-state"><div class="empty-art"><svg lucideReceiptText /></div><b>No entries yet</b><span>Start the month with your first entry.</span></td></tr>
       </ng-template>
     </p-table>
   </p-card>

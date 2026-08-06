@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Member } from '../../core/models';
 import { SupabaseService } from '../../core/supabase.service';
@@ -19,7 +19,14 @@ export class DailyEntryComponent {
   amounts = signal<Record<string, number>>({});
   total = () => Object.values(this.amounts()).reduce((sum, amount) => sum + Number(amount || 0), 0);
 
-  constructor(private supabase: SupabaseService, private snack: MatSnackBar, private router: Router) { void this.load(); void this.loadEntry(); }
+  constructor(
+    private supabase: SupabaseService,
+    private message: MessageService,
+    private router: Router
+  ) {
+    void this.load();
+    void this.loadEntry();
+  }
 
   async load(): Promise<void> {
     const { data } = await this.supabase.client.from('members').select('*').eq('status', 'active').order('name');
@@ -61,7 +68,10 @@ export class DailyEntryComponent {
     const items = Object.entries(this.amounts()).filter(([, amount]) => Number(amount) > 0);
     if (!items.length) return;
     const month = await this.supabase.getOpenMonth();
-    if (!month) { this.notifyNoOpenMonth(); return; }
+    if (!month) {
+      this.notifyNoOpenMonth();
+      return;
+    }
     const { data: existing, error: existingError } = await this.supabase.client.from('daily_entries').select('id').eq('month_id', month.id).eq('entry_date', this.date).maybeSingle();
     if (existingError) throw existingError;
     const remark = this.remarks.trim() || null;
@@ -78,12 +88,26 @@ export class DailyEntryComponent {
     await this.supabase.audit(existing ? 'Daily Entry Update' : 'Daily Entry Add', 'daily_entries', entry.id);
     this.amounts.set({});
     this.remarks = '';
-    this.snack.open(existing ? 'Entry updated' : 'Entry saved', 'Close', { duration: 2200, panelClass: ['app-toast'] });
+    this.message.add({ severity: 'success', summary: existing ? 'Entry updated' : 'Entry saved', detail: `Total ${this.total().toFixed(2)} recorded` });
+  }
+
+  initials(name?: string): string {
+    return (name ?? '?')
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('');
   }
 
   private notifyNoOpenMonth(): void {
-    const ref = this.snack.open('No open month found. Create a new month before saving daily entries.', 'Create Month', { duration: 8000, panelClass: ['app-toast'] });
-    ref.onAction().subscribe(() => void this.router.navigateByUrl('/months'));
+    this.message.add({
+      key: 'no-month',
+      severity: 'warn',
+      summary: 'No open month',
+      detail: 'Create a new month before saving daily entries.',
+      sticky: true
+    });
   }
 
   private toIsoDate(date: Date): string {

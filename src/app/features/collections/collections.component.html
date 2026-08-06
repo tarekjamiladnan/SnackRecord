@@ -1,7 +1,7 @@
 <section class="page">
-  <div class="page-hero collections-hero">
+  <div class="page-hero">
     <div>
-      <p-tag value="Cash in" severity="success" icon="pi pi-wallet" />
+      <p-tag value="Cash in" severity="success" />
       <h1>Collections</h1>
       <p>Record received snack money and keep the latest collection history easy to scan.</p>
     </div>
@@ -12,17 +12,17 @@
   </div>
 
   <div class="collection-layout">
-    <p-card styleClass="glass-panel entry-panel">
+    <p-card>
       <form class="prime-form" (ngSubmit)="save()">
         <div class="panel-title">
-          <span class="icon-badge"><i class="pi pi-plus"></i></span>
+          <span class="icon-badge"><svg lucideHandCoins /></span>
           <div>
             <h2>New Collection</h2>
             <p>Choose a person, amount, and payment date.</p>
           </div>
         </div>
 
-        <label class="field">
+        <div class="field" style="margin-top:18px">
           <span>Person Name</span>
           <p-select
             [(ngModel)]="memberId"
@@ -36,9 +36,9 @@
             filterBy="name"
             required
           />
-        </label>
+        </div>
 
-        <label class="field">
+        <div class="field">
           <span>Money</span>
           <p-inputnumber
             [(ngModel)]="amount"
@@ -50,9 +50,9 @@
             placeholder="0.00"
             required
           />
-        </label>
+        </div>
 
-        <label class="field">
+        <div class="field">
           <span>Date</span>
           <p-datepicker
             [ngModel]="dateValue"
@@ -63,21 +63,32 @@
             showIcon
             required
           />
-        </label>
+        </div>
 
         <button
           pButton
           type="submit"
-          icon="pi pi-check"
-          label="Save Collection"
           class="save-button"
           [disabled]="!memberId || !amount"
-        ></button>
+        >
+          <svg lucideWallet /> Save Collection
+        </button>
       </form>
     </p-card>
 
-    <p-card styleClass="glass-panel history-panel">
-      <ng-template pTemplate="header">
+    <div class="grid-stack">
+      <div class="stat-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px">
+        <div class="mini-stat">
+          <span class="icon-badge"><svg lucideHandCoins /></span>
+          <div><b>{{ collections().length }}</b><span>Transactions</span></div>
+        </div>
+        <div class="mini-stat">
+          <span class="icon-badge" style="background:linear-gradient(135deg,#22c55e,#86efac)"><svg lucideTrendingUp /></span>
+          <div><b>{{ visibleTotal() | number:'1.0-2' }}</b><span>Received</span></div>
+        </div>
+      </div>
+
+      <p-card>
         <div class="table-head">
           <div>
             <h2>Recent Collections</h2>
@@ -85,44 +96,44 @@
           </div>
           <span class="count-pill">{{ collections().length }} records</span>
         </div>
-      </ng-template>
 
-      <p-table
-        [value]="collections()"
-        [paginator]="collections().length > 8"
-        [rows]="8"
-        [rowsPerPageOptions]="[8, 16, 32]"
-        responsiveLayout="scroll"
-        styleClass="modern-table"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th pSortableColumn="members.name">Person <p-sortIcon field="members.name" /></th>
-            <th pSortableColumn="amount">Money <p-sortIcon field="amount" /></th>
-            <th pSortableColumn="date">Date <p-sortIcon field="date" /></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-row>
-          <tr>
-            <td>
-              <div class="person-cell">
-                <span>{{ initials(row.members?.name) }}</span>
-                <strong>{{ row.members?.name }}</strong>
-              </div>
-            </td>
-            <td><span class="amount-pill">{{ row.amount | number:'1.0-2' }}</span></td>
-            <td>{{ row.date }}</td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3" class="empty-state">
-              <i class="pi pi-inbox"></i>
-              <span>No collections recorded yet.</span>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
+        <p-table
+          [value]="collections()"
+          [paginator]="collections().length > 8"
+          [rows]="8"
+          [rowsPerPageOptions]="[8, 16, 32]"
+          styleClass="preview-table"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="members.name">Person <p-sortIcon field="members.name" /></th>
+              <th pSortableColumn="amount">Money <p-sortIcon field="amount" /></th>
+              <th pSortableColumn="date">Date <p-sortIcon field="date" /></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td>
+                <div class="person-cell">
+                  <span class="initials">{{ initials(row.members?.name) }}</span>
+                  <strong>{{ row.members?.name }}</strong>
+                </div>
+              </td>
+              <td><span class="amount-pill">{{ row.amount | number:'1.0-2' }}</span></td>
+              <td><span class="muted">{{ row.date }}</span></td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3" class="empty-state">
+                <div class="empty-art"><svg lucideWallet /></div>
+                <b>No collections yet</b>
+                <span>Record your first collection on the left.</span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
   </div>
 </section>

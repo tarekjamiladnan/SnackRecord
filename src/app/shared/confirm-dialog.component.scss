@@ -1,4 +1,68 @@
-.full {
+.confirm-head {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 4px 0 6px;
+}
+
+.confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+  flex-shrink: 0;
+}
+
+.confirm-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 2;
+}
+
+.confirm-head h3 {
+  margin: 2px 0 6px;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.confirm-head p {
+  margin: 0;
+  color: var(--text-2);
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.confirm-type {
+  display: grid;
+  gap: 8px;
+  margin: 6px 0 4px;
+}
+
+.confirm-type label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.confirm-type label b { color: var(--danger); }
+
+.confirm-type .p-inputtext {
   width: 100%;
-  margin-top: 12px;
+}
+
+.entity-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--divider);
+  margin-top: 14px;
+}
+
+.entity-actions .p-button {
+  min-width: 110px;
+  height: 44px;
 }

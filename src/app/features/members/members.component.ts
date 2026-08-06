@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component, ViewChild, signal } from '@angular/core';
+import { MenuItem, MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { Menu } from 'primeng/menu';
 import { Member } from '../../core/models';
 import { RepositoryService } from '../../core/repository.service';
 import { SupabaseService } from '../../core/supabase.service';
@@ -24,23 +25,72 @@ export class MembersComponent extends CrudPageBase<Member> {
     { key: 'name', label: 'Name', required: true },
     { key: 'phone', label: 'Number' }
   ];
-  constructor(repo: RepositoryService, dialog: MatDialog, snack: MatSnackBar, public override auth: SupabaseService) { super(repo, dialog, snack, auth); void this.load(); }
+  menuItems = signal<MenuItem[]>([]);
+  @ViewChild('rowMenu') rowMenu?: Menu;
+
+  constructor(
+    repo: RepositoryService,
+    dialog: DialogService,
+    message: MessageService,
+    public override auth: SupabaseService
+  ) {
+    super(repo, dialog, message, auth);
+    void this.load();
+  }
+
   override async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const result = await this.repo.list<Member>('members', { search: this.search(), searchColumns: this.searchColumns, page: this.page(), pageSize: this.pageSize(), filters: { status: 'active' } });
+      const result = await this.repo.list<Member>('members', {
+        search: this.search(),
+        searchColumns: this.searchColumns,
+        page: this.page(),
+        pageSize: this.pageSize(),
+        filters: { status: 'active' }
+      });
       this.data.set(result.data);
       this.count.set(result.count);
-    } finally { this.loading.set(false); }
+    } finally {
+      this.loading.set(false);
+    }
   }
+
   async archive(row: Member, status: 'active' | 'archived'): Promise<void> {
     await this.repo.update<Member>('members', row.id, { status }, status === 'archived' ? 'Member Delete' : 'Member Restore');
     await this.load();
   }
-  override delete(row: Member): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const ref = this.dialog.open(ConfirmDialogComponent, { data: { title: 'Delete Member', message: 'Archives the member so their payment history is kept. They will no longer appear in new entries.', action: 'Delete' } });
-      ref.afterClosed().subscribe(async (ok) => { if (ok) { await this.archive(row, 'archived'); } resolve(); });
+
+  override delete(row: Member): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      header: 'Delete Member',
+      width: '460px',
+      data: {
+        title: 'Delete Member',
+        message: 'Archives the member so their payment history is kept. They will no longer appear in new entries.',
+        action: 'Delete'
+      }
     });
+    if (!ref) return;
+    ref.onClose.subscribe(async (ok) => {
+      if (ok) await this.archive(row, 'archived');
+    });
+  }
+
+  initials(name?: string): string {
+    return (name ?? '?')
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('');
+  }
+
+  openRowMenu(event: Event, row: Member): void {
+    const items: MenuItem[] = [{ label: 'Edit Member', icon: 'pi pi-pencil', command: () => this.open(row) }];
+    if (this.auth.profile()?.role === 'admin') {
+      items.push({ label: 'Delete Member', icon: 'pi pi-trash', command: () => this.delete(row) });
+    }
+    this.menuItems.set(items);
+    this.rowMenu?.toggle(event);
   }
 }

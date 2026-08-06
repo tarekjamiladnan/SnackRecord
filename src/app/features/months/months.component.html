@@ -1,14 +1,82 @@
 <section class="page">
-  <div class="page-head"><div><h1>Months</h1><p>Close, unlock, and delete accounting periods</p></div><button mat-flat-button color="primary" (click)="createMonth()"><i class="pi pi-plus"></i>New Month</button></div>
-  <mat-card><mat-card-content>
-    <table mat-table [dataSource]="months()">
-      @for (c of columns; track c) { <ng-container [matColumnDef]="c"><th mat-header-cell *matHeaderCellDef>{{ c | titlecase }}</th><td mat-cell *matCellDef="let row">{{ row[c] }}</td></ng-container> }
-      <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let row" class="actions">
-        @if (row.status === 'open') { <button mat-button color="primary" (click)="close(row)">Close Month</button> }
-        @if (auth.profile()?.role === 'admin' && row.status === 'locked') { <button mat-button (click)="unlock(row)">Unlock</button> }
-        @if (auth.profile()?.role === 'admin') { <button mat-button color="warn" (click)="remove(row)">Delete</button> }
-      </td></ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr><tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-  </mat-card-content></mat-card>
+  <div class="page-head">
+    <div>
+      <h1>Months</h1>
+      <p class="page-sub">Close, unlock, and delete accounting periods</p>
+    </div>
+    <div class="page-actions">
+      <button pButton (click)="createMonth()"><svg lucidePlus /> New Month</button>
+    </div>
+  </div>
+
+  <p-card>
+    <p-table [value]="months()" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" styleClass="preview-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Month</th>
+          <th>Opening Cash</th>
+          <th>Closing Cash</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <span class="initials" [style.background]="row.status === 'open' ? 'linear-gradient(135deg,#22c55e,#86efac)' : 'linear-gradient(135deg,#6b7280,#9ca3af)'">
+                <svg lucideCalendarDays style="width:16px;height:16px" />
+              </span>
+              <div>
+                <div class="month-name">{{ monthName(row.month) }}</div>
+                <div class="month-year">{{ row.year }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="money-cell"><b>{{ row.opening_cash | number:'1.0-2' }}</b><small>opening</small></div>
+          </td>
+          <td>
+            <div class="money-cell"><b>{{ row.closing_cash | number:'1.0-2' }}</b><small>closing</small></div>
+          </td>
+          <td>
+            @if (row.status === 'open') {
+              <span class="status-badge open"><svg lucideCircleCheck /> Open</span>
+            } @else {
+              <span class="status-badge locked"><svg lucideLock /> Locked</span>
+            }
+          </td>
+          <td>
+            <div class="row-actions">
+              @if (row.status === 'open') {
+                <button pButton type="button" severity="secondary" pTooltip="Close Month" (click)="close(row)">
+                  <svg lucideLock />
+                </button>
+              }
+              @if (auth.profile()?.role === 'admin' && row.status === 'locked') {
+                <button pButton type="button" severity="secondary" pTooltip="Unlock Month" (click)="unlock(row)">
+                  <svg lucideLockOpen />
+                </button>
+              }
+              @if (auth.profile()?.role === 'admin') {
+                <button pButton type="button" class="p-button-danger" pTooltip="Delete Month" (click)="remove(row)">
+                  <svg lucideTrash2 />
+                </button>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="empty-state">
+            <div class="empty-art"><svg lucideCalendarRange /></div>
+            <b>No months yet</b>
+            <span>Create your first month to begin recording.</span>
+            <button pButton style="margin-top:20px" (click)="createMonth()"><svg lucidePlus /> New Month</button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
 </section>

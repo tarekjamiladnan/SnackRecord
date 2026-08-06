@@ -1,66 +1,171 @@
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DatePickerModule } from 'primeng/datepicker';
+import { DialogModule } from 'primeng/dialog';
+import { DividerModule } from 'primeng/divider';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenuModule } from 'primeng/menu';
+import { MessageModule } from 'primeng/message';
+import { PasswordModule } from 'primeng/password';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RippleModule } from 'primeng/ripple';
 import { SelectModule } from 'primeng/select';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
+import {
+  LucideArrowDownToLine,
+  LucideArrowRight,
+  LucideArrowUpFromLine,
+  LucideBell,
+  LucideCalendarDays,
+  LucideCalendarPlus,
+  LucideCalendarRange,
+  LucideChartColumn,
+  LucideChartNoAxesCombined,
+  LucideChartPie,
+  LucideChevronDown,
+  LucideChevronLeft,
+  LucideCircleAlert,
+  LucideCircleCheck,
+  LucideClipboardList,
+  LucideClipboardPlus,
+  LucideCoins,
+  LucideCookingPot,
+  LucideEllipsis,
+  LucideEye,
+  LucideEyeOff,
+  LucideFileDown,
+  LucideFileSpreadsheet,
+  LucideHandCoins,
+  LucideKeyRound,
+  LucideLayoutDashboard,
+  LucideLayoutGrid,
+  LucideListFilter,
+  LucideLock,
+  LucideLockOpen,
+  LucideLogIn,
+  LucideLogOut,
+  LucideMenu,
+  LucideNotebookPen,
+  LucidePencil,
+  LucidePiggyBank,
+  LucidePlus,
+  LucideReceipt,
+  LucideReceiptText,
+  LucideScale,
+  LucideSearch,
+  LucideSettings,
+  LucideShieldCheck,
+  LucideSparkles,
+  LucideStore,
+  LucideTrash2,
+  LucideTrendingUp,
+  LucideTriangleAlert,
+  LucideUserRound,
+  LucideUsers,
+  LucideUsersRound,
+  LucideUtensilsCrossed,
+  LucideVault,
+  LucideWallet,
+  LucideX
+} from '@lucide/angular';
 
 export const UI_IMPORTS = [
   CommonModule,
   FormsModule,
   ReactiveFormsModule,
-  MatAutocompleteModule,
-  MatButtonModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatListModule,
-  MatMenuModule,
-  MatPaginatorModule,
-  MatProgressSpinnerModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSlideToggleModule,
-  MatSortModule,
-  MatTableModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatDatepickerModule,
-  MatNativeDateModule,
+  RouterLink,
+  RouterLinkActive,
+  AvatarModule,
+  BadgeModule,
   ButtonModule,
   CardModule,
   DatePickerModule,
+  DialogModule,
+  DividerModule,
+  DynamicDialogModule,
+  FloatLabelModule,
+  IconFieldModule,
+  InputIconModule,
   InputNumberModule,
+  InputTextModule,
+  MenuModule,
+  MessageModule,
+  PasswordModule,
+  ProgressSpinnerModule,
+  RippleModule,
   SelectModule,
+  SkeletonModule,
   TableModule,
   TagModule,
-  TooltipModule
+  ToastModule,
+  TooltipModule,
+  LucideArrowDownToLine,
+  LucideArrowRight,
+  LucideArrowUpFromLine,
+  LucideBell,
+  LucideCalendarDays,
+  LucideCalendarPlus,
+  LucideCalendarRange,
+  LucideChartColumn,
+  LucideChartNoAxesCombined,
+  LucideChartPie,
+  LucideChevronDown,
+  LucideChevronLeft,
+  LucideCircleAlert,
+  LucideCircleCheck,
+  LucideClipboardList,
+  LucideClipboardPlus,
+  LucideCoins,
+  LucideCookingPot,
+  LucideEllipsis,
+  LucideEye,
+  LucideEyeOff,
+  LucideFileDown,
+  LucideFileSpreadsheet,
+  LucideHandCoins,
+  LucideKeyRound,
+  LucideLayoutDashboard,
+  LucideLayoutGrid,
+  LucideListFilter,
+  LucideLock,
+  LucideLockOpen,
+  LucideLogIn,
+  LucideLogOut,
+  LucideMenu,
+  LucideNotebookPen,
+  LucidePencil,
+  LucidePiggyBank,
+  LucidePlus,
+  LucideReceipt,
+  LucideReceiptText,
+  LucideScale,
+  LucideSearch,
+  LucideSettings,
+  LucideShieldCheck,
+  LucideSparkles,
+  LucideStore,
+  LucideTrash2,
+  LucideTrendingUp,
+  LucideTriangleAlert,
+  LucideUserRound,
+  LucideUsers,
+  LucideUsersRound,
+  LucideUtensilsCrossed,
+  LucideVault,
+  LucideWallet,
+  LucideX
 ];

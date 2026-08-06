@@ -1,9 +1,52 @@
 <section class="page">
-  <div class="page-head"><div><h1>Settings</h1><p>Manager information</p></div></div>
-  <mat-card><mat-card-content>
-    <form [formGroup]="form" class="grid" (ngSubmit)="save()">
-      <mat-form-field><mat-label>Manager Name</mat-label><input matInput formControlName="manager_name" /></mat-form-field>
-      <button mat-flat-button color="primary">Save</button>
-    </form>
-  </mat-card-content></mat-card>
+  <div class="page-head">
+    <div>
+      <h1>Settings</h1>
+      <p class="page-sub">Manage manager information</p>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge"><svg lucideUserRound /></span>
+        <div>
+          <h2>Manager Information</h2>
+          <p>This name appears across reports and the dashboard</p>
+        </div>
+      </div>
+
+      <form [formGroup]="form" class="prime-form settings-form" (ngSubmit)="save()">
+        <div class="field">
+          <span>Manager Name</span>
+          <input pInputText formControlName="manager_name" placeholder="e.g. Rahim Bhai" />
+        </div>
+
+        <button pButton type="submit" class="save-button" [disabled]="form.invalid">
+          <svg lucideCircleCheck /> Save Settings
+        </button>
+      </form>
+    </p-card>
+
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge soft"><svg lucideShieldCheck /></span>
+        <div>
+          <h2>Company Profile</h2>
+          <p>Fixed application details</p>
+        </div>
+      </div>
+
+      <div class="profile-meta-grid">
+        <div class="mini-stat">
+          <span class="icon-badge" style="background:linear-gradient(135deg,#8b5cf6,#c4b5fd)"><svg lucideLayoutGrid /></span>
+          <div><b>Snack Record</b><span>Company</span></div>
+        </div>
+        <div class="mini-stat">
+          <span class="icon-badge" style="background:linear-gradient(135deg,#3b82f6,#93c5fd)"><svg lucideCoins /></span>
+          <div><b>BDT</b><span>Currency</span></div>
+        </div>
+      </div>
+    </p-card>
+  </div>
 </section>

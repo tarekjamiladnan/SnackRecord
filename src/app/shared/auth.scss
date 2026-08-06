@@ -1,0 +1,111 @@
+.auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 460px at 115% -15%, rgba(255, 196, 143, 0.55), transparent 55%),
+    radial-gradient(900px 420px at -10% 110%, rgba(255, 139, 61, 0.4), transparent 55%),
+    linear-gradient(160deg, #ff6b00 0%, #ea580c 55%, #c2410c 100%);
+}
+
+.auth::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.45;
+}
+
+.auth-card {
+  position: relative;
+  width: min(430px, 100%);
+  padding: 36px 34px 30px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 32px 70px rgba(120, 40, 0, 0.35);
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.brand-logo {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #ff6b00, #ffa94d);
+  box-shadow: 0 14px 30px rgba(255, 107, 0, 0.4);
+
+  svg { width: 34px; height: 34px; color: #fff; }
+}
+
+.brand h1 {
+  margin: 16px 0 4px;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1f2937;
+}
+
+.brand p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.auth-btn {
+  height: 50px;
+  width: 100%;
+  margin-top: 6px;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+
+  svg { width: 17px; height: 17px; flex: 0 0 auto; }
+}
+
+.auth-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #ea580c;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}

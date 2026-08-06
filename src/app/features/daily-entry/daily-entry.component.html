@@ -1,29 +1,86 @@
 <section class="page">
   <div class="page-head">
-    <div><h1>Daily Entry</h1><p>Enter each member amount manually</p></div>
-    <button mat-flat-button color="primary" (click)="save()">Save</button>
-  </div>
-  <mat-card><mat-card-content class="sheet-wrap">
-    <div class="toolbar">
-      <mat-form-field>
-        <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="picker" [ngModel]="dateValue" (ngModelChange)="setDate($event)" />
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field class="remarks"><mat-label>Remarks</mat-label><input matInput [(ngModel)]="remarks" maxlength="200" /></mat-form-field>
+    <div>
+      <h1>Daily Entry</h1>
+      <p class="page-sub">Enter each member's amount manually</p>
     </div>
-    <table class="sheet">
-      <thead><tr><th>Member</th><th>Amount</th></tr></thead>
-      <tbody>
+  </div>
+
+  <div class="split-2">
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge soft"><svg lucideCalendarDays /></span>
+        <div>
+          <h2>Entry Details</h2>
+          <p>Pick a date and note anything special</p>
+        </div>
+      </div>
+
+      <div class="prime-form" style="margin-top:20px">
+        <div class="field">
+          <span>Date</span>
+          <p-datepicker
+            [ngModel]="dateValue"
+            (ngModelChange)="setDate($event)"
+            name="date"
+            dateFormat="dd/mm/yy"
+            appendTo="body"
+            showIcon
+          />
+        </div>
+
+        <div class="field">
+          <span>Remarks</span>
+          <input pInputText [(ngModel)]="remarks" maxlength="200" placeholder="e.g. Biryani day, extra snacks…" />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge"><svg lucideUsers /></span>
+        <div>
+          <h2>Member Amounts</h2>
+          <p>{{ members().length }} active members</p>
+        </div>
+      </div>
+
+      <div class="entry-list">
         @for (m of members(); track m.id) {
-          <tr>
-            <td>{{ m.name }}</td>
-            <td><input class="amount-input" type="number" min="0" step="0.01" [ngModel]="amounts()[m.id]" (ngModelChange)="setAmount(m.id, $event)" /></td>
-          </tr>
+          <div class="entry-member-row">
+            <div class="entry-member">
+              <span class="initials">{{ initials(m.name) }}</span>
+              <span class="member-name">{{ m.name }}</span>
+            </div>
+            <input
+              class="amount-input"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              [ngModel]="amounts()[m.id]"
+              (ngModelChange)="setAmount(m.id, $event)"
+            />
+          </div>
+        } @empty {
+          <div class="empty-state" style="padding: 40px 16px">
+            <div class="empty-art"><svg lucideUsers /></div>
+            <b>No active members</b>
+            <span>Add members before recording an entry.</span>
+          </div>
         }
-      </tbody>
-      <tfoot><tr><th>Total</th><th>{{ total() | number:'1.0-2' }}</th></tr></tfoot>
-    </table>
-  </mat-card-content></mat-card>
+      </div>
+
+      <div class="entry-total" style="margin-top:16px">
+        <span>Total</span>
+        <span>{{ total() | number:'1.0-2' }}</span>
+      </div>
+    </p-card>
+  </div>
+
+  <div class="sticky-save">
+    <button pButton (click)="save()" [disabled]="total() <= 0">
+      <svg lucideNotebookPen /> Save Entry
+    </button>
+  </div>
 </section>

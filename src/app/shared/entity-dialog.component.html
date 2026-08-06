@@ -1,24 +1,33 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-<mat-dialog-content>
-  <form [formGroup]="form" class="grid">
-    @for (field of data.fields; track field.key) {
-      <mat-form-field>
-        <mat-label>{{ field.label }}</mat-label>
-        @if (field.type === 'select') {
-          <mat-select [formControlName]="field.key">
-            @for (option of field.options ?? []; track option.value) {
-              <mat-option [value]="option.value">{{ option.label }}</mat-option>
-            }
-          </mat-select>
-        } @else {
-          <input matInput [type]="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'" [formControlName]="field.key" />
-        }
-        @if (form.get(field.key)?.hasError('required')) { <mat-error>Required</mat-error> }
-      </mat-form-field>
-    }
-  </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="save()">Save</button>
-</mat-dialog-actions>
+<form [formGroup]="form" class="entity-form" (ngSubmit)="save()">
+  @for (field of data.fields; track field.key) {
+    <div class="entity-field">
+      <label [for]="field.key">
+        {{ field.label }}@if (field.required) {<span class="req">*</span>}
+      </label>
+      @if (field.type === 'select') {
+        <p-select
+          [id]="field.key"
+          [formControlName]="field.key"
+          [options]="field.options ?? []"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select an option"
+          [showClear]="!field.required"
+        />
+      } @else {
+        <input
+          pInputText
+          [id]="field.key"
+          [type]="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'"
+          [formControlName]="field.key"
+          [placeholder]="field.label"
+        />
+      }
+    </div>
+  }
+</form>
+
+<div class="entity-actions">
+  <button pButton type="button" label="Cancel" class="p-button-text" (click)="ref.close()"></button>
+  <button pButton type="button" label="Save" [disabled]="form.invalid" (click)="save()"></button>
+</div>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageService } from 'primeng/api';
 import { SupabaseService } from '../../core/supabase.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
@@ -13,7 +13,11 @@ import { UI_IMPORTS } from '../../shared/ui';
 export class SettingsComponent {
   form;
 
-  constructor(private fb: FormBuilder, private supabase: SupabaseService, private snack: MatSnackBar) {
+  constructor(
+    private fb: FormBuilder,
+    private supabase: SupabaseService,
+    private message: MessageService
+  ) {
     this.form = this.fb.group({ manager_name: ['', Validators.required] });
     void this.load();
   }
@@ -24,8 +28,15 @@ export class SettingsComponent {
   }
 
   async save(): Promise<void> {
-    const { error } = await this.supabase.client.from('settings').upsert({ id: 1, manager_name: this.form.value.manager_name, company_name: 'Snack Record', currency: 'BDT', logo_url: null });
+    if (this.form.invalid) return;
+    const { error } = await this.supabase.client.from('settings').upsert({
+      id: 1,
+      manager_name: this.form.value.manager_name,
+      company_name: 'Snack Record',
+      currency: 'BDT',
+      logo_url: null
+    });
     if (error) throw error;
-    this.snack.open('Settings saved', 'Close', { duration: 2200, panelClass: ['app-toast'] });
+    this.message.add({ severity: 'success', summary: 'Settings saved', detail: 'Manager information updated' });
   }
 }

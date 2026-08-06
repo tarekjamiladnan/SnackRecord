@@ -1,16 +1,46 @@
 <section class="page">
-  <div class="page-head"><div><h1>Menu</h1><p>{{ count() }} items</p></div><button mat-flat-button color="primary" (click)="open()"><i class="pi pi-plus"></i>Add Menu</button></div>
-  <mat-card><mat-card-content>
-    <mat-form-field class="search"><mat-label>Search</mat-label><i class="pi pi-search" matPrefix></i><input matInput #q (input)="search.set(q.value); load()" /></mat-form-field>
-    <table mat-table [dataSource]="data()">
-      <ng-container matColumnDef="sl"><th mat-header-cell *matHeaderCellDef>SL</th><td mat-cell *matCellDef="let row; let i = index">{{ page() * pageSize() + i + 1 }}</td></ng-container>
-      <ng-container matColumnDef="name"><th mat-header-cell *matHeaderCellDef>Name</th><td mat-cell *matCellDef="let row">{{ row.name }}</td></ng-container>
-      <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th><td mat-cell *matCellDef="let row" class="actions">
-        <button mat-button (click)="open(row)"><i class="pi pi-pencil"></i>Edit</button>
-        <button mat-button color="warn" (click)="delete(row)"><i class="pi pi-trash"></i>Delete</button>
-      </td></ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr><tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-    <mat-paginator [length]="count()" [pageSize]="pageSize()" (page)="page.set($event.pageIndex); pageSize.set($event.pageSize); load()" />
-  </mat-card-content></mat-card>
+  <div class="page-head">
+    <div>
+      <h1>Menu</h1>
+      <p class="page-sub">{{ count() }} menu items</p>
+    </div>
+    <div class="page-actions">
+      <button pButton (click)="open()"><svg lucidePlus /> Add Menu</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <p-iconfield class="search">
+      <p-inputicon styleClass="pi pi-search" />
+      <input pInputText #q [value]="search()" (input)="search.set(q.value); load()" placeholder="Search menu items…" />
+    </p-iconfield>
+  </div>
+
+  @if (loading()) {
+    <div class="loading"><p-progressspinner /></div>
+  } @else if (data().length === 0) {
+    <div class="glass empty-state" style="padding: 60px 20px">
+      <div class="empty-art"><svg lucideCookingPot /></div>
+      <b>Menu is empty</b>
+      <span>Add your first menu item to keep track of what's being served.</span>
+      <button pButton style="margin-top:20px" (click)="open()"><svg lucidePlus /> Add Menu Item</button>
+    </div>
+  } @else {
+    <div class="menu-grid">
+      @for (row of data(); track row.id) {
+        <div class="menu-card animate-fade-up">
+          <div class="menu-icon"><svg lucideUtensilsCrossed /></div>
+          <div class="menu-name">{{ row.name }}</div>
+          <div class="menu-actions">
+            <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
+            <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (data().length > 0) {
+    <div class="muted" style="font-size:0.82rem; text-align:center">{{ count() }} item{{ count() === 1 ? '' : 's' }} in total</div>
+  }
 </section>

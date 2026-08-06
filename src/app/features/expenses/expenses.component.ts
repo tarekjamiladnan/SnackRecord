@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { Expense } from '../../core/models';
 import { RepositoryService } from '../../core/repository.service';
 import { SupabaseService } from '../../core/supabase.service';
@@ -20,5 +20,5 @@ export class ExpensesComponent extends CrudPageBase<Expense> {
     { key: 'amount', label: 'Amount', type: 'number' as const, required: true },
     { key: 'remarks', label: 'Remarks' }
   ];
-  constructor(repo: RepositoryService, dialog: MatDialog, snack: MatSnackBar, auth: SupabaseService) { super(repo, dialog, snack, auth); void this.load(); }
+  constructor(repo: RepositoryService, dialog: DialogService, message: MessageService, auth: SupabaseService) { super(repo, dialog, message, auth); void this.load(); }
 }

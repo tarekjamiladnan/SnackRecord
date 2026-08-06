@@ -1,30 +1,66 @@
 <section class="page">
   <div class="page-head">
-    <div><h1>{{ title }}</h1><p>{{ count() }} records</p></div>
-    <button mat-flat-button color="primary" (click)="open()"><i class="pi pi-plus"></i>Add</button>
+    <div>
+      <h1>{{ title }}s</h1>
+      <p class="page-sub">{{ count() }} records</p>
+    </div>
+    <div class="page-actions">
+      <button pButton (click)="open()"><svg lucidePlus /> Add {{ title }}</button>
+    </div>
   </div>
-  <mat-card>
-    <mat-card-content>
-      <mat-form-field class="search"><mat-label>Search</mat-label><i class="pi pi-search" matPrefix></i><input matInput #q (input)="search.set(q.value); load()" /></mat-form-field>
-      @if (loading()) { <div class="loading"><mat-spinner diameter="36" /></div> }
-      <table mat-table [dataSource]="data()" class="mat-elevation-z0">
-        @for (column of columns; track column) {
-          <ng-container [matColumnDef]="column">
-            <th mat-header-cell *matHeaderCellDef>{{ column.replace('_', ' ') | titlecase }}</th>
-            <td mat-cell *matCellDef="let row">{{ row[column] }}</td>
-          </ng-container>
-        }
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let row" class="actions">
-            <button mat-icon-button matTooltip="Edit" (click)="open(row)"><i class="pi pi-pencil"></i></button>
-            <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete(row)"><i class="pi pi-trash"></i></button>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-      <mat-paginator [length]="count()" [pageSize]="pageSize()" [pageSizeOptions]="[10,25,50]" (page)="page.set($event.pageIndex); pageSize.set($event.pageSize); load()" />
-    </mat-card-content>
-  </mat-card>
+
+  <p-card>
+    <div class="toolbar">
+      <p-iconfield class="search">
+        <p-inputicon styleClass="pi pi-search" />
+        <input pInputText #q [value]="search()" (input)="search.set(q.value); load()" placeholder="Search {{ title }}s…" />
+      </p-iconfield>
+    </div>
+
+    @if (loading()) {
+      <div class="loading"><p-progressspinner styleClass="w-2rem h-2rem" /></div>
+    } @else {
+      <p-table
+        [value]="data()"
+        [paginator]="true"
+        [rows]="pageSize()"
+        [totalRecords]="count()"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first}–{last} of {totalRecords}"
+        (onPage)="onPage($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            @for (column of columns; track column) {
+              <th>{{ column.replace('_', ' ') | titlecase }}</th>
+            }
+            <th class="text-right">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            @for (column of columns; track column) {
+              <td>{{ row[column] }}</td>
+            }
+            <td>
+              <div class="row-actions">
+                <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
+                <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="displayedColumns.length" class="empty-state">
+              <div class="empty-art"><svg lucideClipboardList /></div>
+              <b>Nothing here yet</b>
+              <span>No {{ title }} records found.</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
 </section>

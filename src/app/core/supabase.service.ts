@@ -15,12 +15,12 @@ export class SupabaseService {
   readonly loading = signal(false);
 
   constructor(private router: Router) {
-    void this.restoreSession();
+    void this.restoreSession().catch(() => {});
     this.client.auth.onAuthStateChange((event, session) => {
       this.session.set(session);
       this.user.set(session?.user ?? null);
-      if (session?.user) void this.loadProfile();
-      if (event === 'SIGNED_IN' && session) void this.audit('Login', 'auth', session.user.id);
+      if (session?.user) void this.loadProfile().catch(() => {});
+      if (event === 'SIGNED_IN' && session) void this.audit('Login', 'auth', session.user.id).catch(() => {});
       if (event === 'SIGNED_OUT') void this.router.navigateByUrl('/auth/login');
     });
   }
@@ -29,15 +29,21 @@ export class SupabaseService {
     const { data } = await this.client.auth.getSession();
     this.session.set(data.session);
     this.user.set(data.session?.user ?? null);
-    if (data.session?.user) await this.loadProfile();
+    if (data.session?.user) {
+      try {
+        await this.loadProfile();
+      } catch {
+        // Profile may be temporarily unavailable; auth still works.
+      }
+    }
   }
 
   async loadProfile(): Promise<void> {
     const id = this.user()?.id;
     if (!id) return;
-    const { data, error } = await this.client.from('profiles').select('*').eq('id', id).single();
+    const { data, error } = await this.client.from('profiles').select('*').eq('id', id).maybeSingle();
     if (error) throw error;
-    this.profile.set(data as Profile);
+    this.profile.set((data as Profile) ?? null);
   }
 
   async getOpenMonth(): Promise<Month | null> {
@@ -64,7 +70,11 @@ export class SupabaseService {
   }
 
   async signOut(): Promise<void> {
-    await this.audit('Logout', 'auth', this.user()?.id ?? null);
+    try {
+      await this.audit('Logout', 'auth', this.user()?.id ?? null);
+    } catch {
+      // Audit failure must never block sign out.
+    }
     const { error } = await this.client.auth.signOut();
     if (error) throw error;
   }
@@ -80,6 +90,10 @@ export class SupabaseService {
   }
 
   async audit(action: string, entity?: string | null, entityId?: string | null, metadata: Record<string, unknown> = {}): Promise<void> {
-    await this.client.from('audit_logs').insert({ actor_id: this.user()?.id ?? null, action, entity, entity_id: entityId, metadata });
+    try {
+      await this.client.from('audit_logs').insert({ actor_id: this.user()?.id ?? null, action, entity, entity_id: entityId, metadata });
+    } catch (err) {
+      console.warn('Audit log insert failed', err);
+    }
   }
 }

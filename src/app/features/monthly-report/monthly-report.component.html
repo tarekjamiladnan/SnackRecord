@@ -1,11 +1,95 @@
 <section class="page">
-  <div class="page-head"><div><h1>Monthly Report</h1><p>Download the monthly report as PDF or Excel</p></div></div>
-  <mat-card><mat-card-content>
-    <div class="toolbar">
-      <mat-form-field><mat-label>Month</mat-label><input matInput type="number" [(ngModel)]="month" min="1" max="12" /></mat-form-field>
-      <mat-form-field><mat-label>Year</mat-label><input matInput type="number" [(ngModel)]="year" /></mat-form-field>
-      <button mat-flat-button color="primary" (click)="loadAndDownload(true)"><i class="pi pi-file-pdf"></i>Download PDF</button>
-      <button mat-flat-button color="primary" (click)="loadAndDownload(false)"><i class="pi pi-file-excel"></i>Download XLSX</button>
+  <div class="page-head">
+    <div>
+      <h1>Monthly Report</h1>
+      <p class="page-sub">Preview and download the report for any accounting period</p>
     </div>
-  </mat-card-content></mat-card>
+  </div>
+
+  <p-card>
+    <div class="report-toolbar">
+      <div class="field report-field">
+        <span>Month</span>
+        <p-select
+          [(ngModel)]="month"
+          [options]="monthOptions"
+          optionLabel="label"
+          optionValue="value"
+          (onChange)="refreshPreview()"
+        />
+      </div>
+      <div class="field report-field">
+        <span>Year</span>
+        <p-select
+          [(ngModel)]="year"
+          [options]="yearOptions"
+          optionLabel="label"
+          optionValue="value"
+          (onChange)="refreshPreview()"
+        />
+      </div>
+      <div class="report-actions">
+        <button pButton severity="secondary" (click)="loadAndDownload(false)">
+          <svg lucideFileSpreadsheet /> Download Excel
+        </button>
+        <button pButton (click)="loadAndDownload(true)">
+          <svg lucideFileDown /> Download PDF
+        </button>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card>
+    <div class="table-head">
+      <div>
+        <h2>{{ monthName() }} {{ year }}</h2>
+        <p>Report preview — {{ rows.length }} member{{ rows.length === 1 ? '' : 's' }}</p>
+      </div>
+      <span class="count-pill">{{ total('left') | number:'1.0-2' }} total left</span>
+    </div>
+
+    @if (previewLoading()) {
+      <div class="loading"><p-progressspinner /></div>
+    } @else if (rows.length === 0) {
+      <div class="empty-state">
+        <div class="empty-art"><svg lucideChartColumn /></div>
+        <b>No data for this period</b>
+        <span>No month found for {{ monthName() }} {{ year }}.</span>
+      </div>
+    } @else {
+      <div class="report-preview">
+        <table>
+          <thead>
+            <tr>
+              <th>Person</th>
+              <th>Opening (Prev. Left)</th>
+              <th>Given</th>
+              <th>Used</th>
+              <th>Left</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows; track row.person) {
+              <tr>
+                <td><strong>{{ row.person }}</strong></td>
+                <td>{{ row.opening | number:'1.0-2' }}</td>
+                <td>{{ row.given | number:'1.0-2' }}</td>
+                <td>{{ row.used | number:'1.0-2' }}</td>
+                <td><span class="amount-pill accent">{{ row.left | number:'1.0-2' }}</span></td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td><strong>{{ total('opening') | number:'1.0-2' }}</strong></td>
+              <td><strong>{{ total('given') | number:'1.0-2' }}</strong></td>
+              <td><strong>{{ total('used') | number:'1.0-2' }}</strong></td>
+              <td><strong class="orange">{{ total('left') | number:'1.0-2' }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    }
+  </p-card>
 </section>

@@ -1,29 +1,133 @@
-<mat-sidenav-container class="shell">
-  <mat-sidenav #sidenav mode="side" [opened]="wide()" class="side">
-    <div class="brand"><img src="phantom-logo.svg" alt="Phantom Snack Record" /><span>Snack Record</span></div>
-    <mat-nav-list>
+<div class="shell" [class.desktop]="isDesktop()">
+  @if (!isDesktop() && mobileOpen()) {
+    <div class="scrim" (click)="closeMobile()"></div>
+  }
+
+  <aside class="sidebar" [class.collapsed]="isDesktop() && collapsed()" [class.mobile-open]="!isDesktop() && mobileOpen()">
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="phantom-logo.svg" alt="Phantom Snack Record" />
+      </div>
+      <div class="brand-text">
+        <b>Phantom</b>
+        <span>Snack Record</span>
+      </div>
+    </div>
+
+    <div class="nav-label-pill" [class.hidden]="isDesktop() && collapsed()">Menu</div>
+
+    <nav class="nav">
       @for (item of nav(); track item.path) {
-        <a mat-list-item [routerLink]="item.path" routerLinkActive="active">
-          <span matListItemTitle>{{ item.label }}</span>
+        <a
+          class="nav-item"
+          [class.active]="router.url.startsWith(item.path)"
+          [routerLink]="item.path"
+          (click)="closeMobile()"
+          [pTooltip]="isDesktop() && collapsed() ? item.label : ''"
+          tooltipPosition="right"
+        >
+          <span class="nav-icon"><ng-container *ngComponentOutlet="item.icon" /></span>
+          <span class="nav-label">{{ item.label }}</span>
         </a>
       }
-    </mat-nav-list>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="sidenav.toggle()" matTooltip="Menu">
-        <i class="pi" [class.pi-arrow-left]="sidenav.opened" [class.pi-arrow-right]="!sidenav.opened"></i>
+    </nav>
+
+    <div class="side-foot">
+      <button class="collapse-btn" (click)="toggleSidebar()" [pTooltip]="isDesktop() && collapsed() ? 'Expand sidebar' : 'Collapse sidebar'" tooltipPosition="right">
+        <svg lucideChevronLeft />
       </button>
-      <span class="title">{{ pageTitle() }}</span>
-      <span class="spacer"></span>
-      <button mat-icon-button [matMenuTriggerFor]="account" matTooltip="Profile">
-        <i class="pi" [class.pi-angle-double-up]="profileOpen()" [class.pi-angle-double-down]="!profileOpen()"></i>
-      </button>
-      <mat-menu #account="matMenu" (opened)="profileOpen.set(true)" (closed)="profileOpen.set(false)">
-        <button mat-menu-item routerLink="/auth/change-password"><i class="pi pi-key menu-pi"></i>Change password</button>
-        <button mat-menu-item (click)="auth.signOut()"><i class="pi pi-sign-out menu-pi"></i>Logout</button>
-      </mat-menu>
-    </mat-toolbar>
-    <main class="content"><router-outlet /></main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    </div>
+  </aside>
+
+  <div class="main" [class.collapsed]="isDesktop() && collapsed()">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" (click)="toggleSidebar()" [attr.aria-label]="'Toggle menu'">
+          <svg lucideMenu />
+        </button>
+        <div class="crumb">
+          <span class="crumb-dot"></span>
+          <span class="crumb-title">{{ currentTitle() }}</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="search-box">
+          <svg lucideSearch />
+          <input
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+            (keyup.enter)="runQuickSearch()"
+            placeholder="Jump to a page…"
+            aria-label="Search"
+          />
+        </div>
+
+        <button class="icon-btn bell" aria-label="Notifications">
+          <svg lucideBell />
+          <span class="notif-dot"></span>
+        </button>
+
+        <div class="profile" (click)="profileOpen.set(!profileOpen())">
+          <div class="avatar">{{ initials() }}</div>
+          <div class="profile-meta">
+            <b>{{ userName() }}</b>
+            <span>{{ role() }}</span>
+          </div>
+          <svg class="profile-caret" [class.flip]="profileOpen()" lucideChevronDown />
+        </div>
+
+        @if (profileOpen()) {
+          <div class="profile-menu animate-scale-in">
+            <div class="profile-menu-head">
+              <div class="avatar">{{ initials() }}</div>
+              <div>
+                <b>{{ userName() }}</b>
+                <span>{{ role() }}</span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <a routerLink="/auth/change-password" (click)="closeMobile()">
+              <svg lucideKeyRound />
+              <span>Change password</span>
+            </a>
+            <button (click)="auth.signOut()">
+              <svg lucideLogOut />
+              <span>Logout</span>
+            </button>
+          </div>
+        }
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet #o="outlet" />
+    </main>
+  </div>
+
+  <p-toast position="top-right" [preventOpenDuplicates]="true">
+    <ng-template pTemplate="headless" let-message let-close="closeFn">
+      <div class="psr-toast" [class]="'severity-' + (message.severity ?? 'info')">
+        <div class="psr-toast-icon">
+          @switch (message.severity) {
+            @case ('success') { <svg lucideCircleCheck /> }
+            @case ('error') { <svg lucideCircleAlert /> }
+            @case ('warn') { <svg lucideTriangleAlert /> }
+            @default { <svg lucideBell /> }
+          }
+        </div>
+        <div class="psr-toast-body">
+          <b>{{ message.summary }}</b>
+          @if (message.detail) { <span>{{ message.detail }}</span> }
+        </div>
+        <div class="psr-toast-actions">
+          @if (message.key === 'no-month') {
+            <button class="psr-toast-btn" (click)="close(); goToMonths()">Create Month</button>
+          } @else {
+            <button class="psr-toast-close" (click)="close()" aria-label="Dismiss"><svg lucideX /></button>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </p-toast>
+</div>

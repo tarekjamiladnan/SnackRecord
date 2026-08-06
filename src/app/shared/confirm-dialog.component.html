@@ -1,16 +1,26 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-<mat-dialog-content>
-  <p>{{ data.message }}</p>
-  @if (data.requireText) {
-    <mat-form-field class="full">
-      <mat-label>Type {{ data.requireText }}</mat-label>
-      <input matInput [formControl]="typed" autocomplete="off" />
-    </mat-form-field>
-  }
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-flat-button color="warn" [disabled]="data.requireText && typed.value !== data.requireText" (click)="ref.close(true)">
-    {{ data.action }}
-  </button>
-</mat-dialog-actions>
+<div class="confirm-head">
+  <div class="confirm-icon"><svg lucideTriangleAlert /></div>
+  <div>
+    <h3>{{ data.title }}</h3>
+    <p>{{ data.message }}</p>
+  </div>
+</div>
+
+@if (data.requireText) {
+  <div class="confirm-type">
+    <label>Type <b>{{ data.requireText }}</b> to confirm</label>
+    <input pInputText [formControl]="typed" [placeholder]="'Type ' + data.requireText" autocomplete="off" />
+  </div>
+}
+
+<div class="entity-actions">
+  <button pButton type="button" label="Cancel" class="p-button-text" (click)="ref.close()"></button>
+  <button
+    pButton
+    type="button"
+    [label]="data.action"
+    class="p-button-danger"
+    [disabled]="data.requireText && typed.value !== data.requireText"
+    (click)="ref.close(true)"
+  ></button>
+</div>

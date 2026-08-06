@@ -8,7 +8,7 @@ import { SupabaseService } from '../../core/supabase.service';
   selector: 'app-login',
   imports: [...UI_IMPORTS, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['../../shared/auth.scss', './login.component.scss']
 })
 export class LoginComponent {
   loading = signal(false);
