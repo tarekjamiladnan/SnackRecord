@@ -1,29 +1,128 @@
 <section class="page">
-  <div class="page-head"><div><h1>Collections</h1><p>Record received money</p></div></div>
-  <mat-card><mat-card-content>
-    <form class="grid" (ngSubmit)="save()">
-      <mat-form-field>
-        <mat-label>Person Name</mat-label>
-        <mat-select [(ngModel)]="memberId" name="memberId" required>
-          @for (m of members(); track m.id) { <mat-option [value]="m.id">{{ m.name }}</mat-option> }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field><mat-label>Money</mat-label><input matInput type="number" min="0" step="0.01" [(ngModel)]="amount" name="amount" required /></mat-form-field>
-      <mat-form-field>
-        <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="picker" [ngModel]="dateValue" (ngModelChange)="setDate($event)" name="date" required />
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      <button mat-flat-button color="primary">Save Collection</button>
-    </form>
-  </mat-card-content></mat-card>
-  <mat-card><mat-card-content>
-    <table mat-table [dataSource]="collections()">
-      <ng-container matColumnDef="member"><th mat-header-cell *matHeaderCellDef>Person</th><td mat-cell *matCellDef="let row">{{ row.members?.name }}</td></ng-container>
-      <ng-container matColumnDef="amount"><th mat-header-cell *matHeaderCellDef>Money</th><td mat-cell *matCellDef="let row">{{ row.amount | number:'1.0-2' }}</td></ng-container>
-      <ng-container matColumnDef="date"><th mat-header-cell *matHeaderCellDef>Date</th><td mat-cell *matCellDef="let row">{{ row.date }}</td></ng-container>
-      <tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr>
-    </table>
-  </mat-card-content></mat-card>
+  <div class="page-hero collections-hero">
+    <div>
+      <p-tag value="Cash in" severity="success" icon="pi pi-wallet" />
+      <h1>Collections</h1>
+      <p>Record received snack money and keep the latest collection history easy to scan.</p>
+    </div>
+    <div class="hero-metric">
+      <span>Total shown</span>
+      <b>{{ visibleTotal() | number:'1.0-2' }}</b>
+    </div>
+  </div>
+
+  <div class="collection-layout">
+    <p-card styleClass="glass-panel entry-panel">
+      <form class="prime-form" (ngSubmit)="save()">
+        <div class="panel-title">
+          <span class="icon-badge"><i class="pi pi-plus"></i></span>
+          <div>
+            <h2>New Collection</h2>
+            <p>Choose a person, amount, and payment date.</p>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>Person Name</span>
+          <p-select
+            [(ngModel)]="memberId"
+            name="memberId"
+            [options]="members()"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select member"
+            appendTo="body"
+            [filter]="true"
+            filterBy="name"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Money</span>
+          <p-inputnumber
+            [(ngModel)]="amount"
+            name="amount"
+            mode="decimal"
+            [min]="0"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="2"
+            placeholder="0.00"
+            required
+          />
+        </label>
+
+        <label class="field">
+          <span>Date</span>
+          <p-datepicker
+            [ngModel]="dateValue"
+            (ngModelChange)="setDate($event)"
+            name="date"
+            dateFormat="yy-mm-dd"
+            appendTo="body"
+            showIcon
+            required
+          />
+        </label>
+
+        <button
+          pButton
+          type="submit"
+          icon="pi pi-check"
+          label="Save Collection"
+          class="save-button"
+          [disabled]="!memberId || !amount"
+        ></button>
+      </form>
+    </p-card>
+
+    <p-card styleClass="glass-panel history-panel">
+      <ng-template pTemplate="header">
+        <div class="table-head">
+          <div>
+            <h2>Recent Collections</h2>
+            <p>Latest 50 received payments</p>
+          </div>
+          <span class="count-pill">{{ collections().length }} records</span>
+        </div>
+      </ng-template>
+
+      <p-table
+        [value]="collections()"
+        [paginator]="collections().length > 8"
+        [rows]="8"
+        [rowsPerPageOptions]="[8, 16, 32]"
+        responsiveLayout="scroll"
+        styleClass="modern-table"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="members.name">Person <p-sortIcon field="members.name" /></th>
+            <th pSortableColumn="amount">Money <p-sortIcon field="amount" /></th>
+            <th pSortableColumn="date">Date <p-sortIcon field="date" /></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <div class="person-cell">
+                <span>{{ initials(row.members?.name) }}</span>
+                <strong>{{ row.members?.name }}</strong>
+              </div>
+            </td>
+            <td><span class="amount-pill">{{ row.amount | number:'1.0-2' }}</span></td>
+            <td>{{ row.date }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="empty-state">
+              <i class="pi pi-inbox"></i>
+              <span>No collections recorded yet.</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
 </section>

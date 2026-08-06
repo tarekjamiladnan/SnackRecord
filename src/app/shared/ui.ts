@@ -21,6 +21,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 
 export const UI_IMPORTS = [
   CommonModule,
@@ -46,5 +54,13 @@ export const UI_IMPORTS = [
   MatToolbarModule,
   MatTooltipModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  ButtonModule,
+  CardModule,
+  DatePickerModule,
+  InputNumberModule,
+  SelectModule,
+  TableModule,
+  TagModule,
+  TooltipModule
 ];

@@ -18,8 +18,6 @@ export class DashboardComponent {
   members = signal<{ id: string; name: string }[]>([]);
   previewRows = signal<EntryPreview[]>([]);
   managerName = signal('');
-  columns = ['name', 'given', 'left'];
-  blankRows = signal(Array.from({ length: 20 }, (_, index) => index));
   totalGiven = () => this.rows().reduce((sum, row) => sum + row.given, 0);
   totalUsed = () => this.rows().reduce((sum, row) => sum + row.used, 0);
   totalLeft = () => this.rows().reduce((sum, row) => sum + row.left, 0);

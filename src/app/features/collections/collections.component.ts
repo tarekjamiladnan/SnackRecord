@@ -58,4 +58,17 @@ export class CollectionsComponent {
     const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
     return offsetDate.toISOString().slice(0, 10);
   }
+
+  visibleTotal(): number {
+    return this.collections().reduce((total, row) => total + Number(row.amount ?? 0), 0);
+  }
+
+  initials(name?: string): string {
+    return (name ?? '?')
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('');
+  }
 }

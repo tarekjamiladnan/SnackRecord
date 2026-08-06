@@ -1,8 +1,20 @@
-.preview-wrap{overflow:auto}
-.preview-grid{border-collapse:collapse;width:100%;min-width:1120px;background:#fff}
-.preview-grid th,.preview-grid td{border:1px solid #111;padding:3px 8px;text-align:center;height:21px;white-space:nowrap;color:#000}
-.preview-grid th{font-weight:700}
-.preview-grid td:first-child,.preview-grid th:first-child{text-align:center}
-.preview-grid tfoot th{color:#e11d48}
-.preview-manager{margin-top:12px;font-size:14px;color:#172033;font-weight:600}
-.preview-manager span{color:#ea580c;font-weight:700}
+.preview-table .p-datatable-thead > tr > th,
+.preview-table .p-datatable-tbody > tr > td,
+.preview-table .p-datatable-tfoot > tr > td {
+  min-width: 120px;
+  text-align: center;
+}
+
+.preview-table .p-datatable-thead > tr > th:first-child,
+.preview-table .p-datatable-tbody > tr > td:first-child,
+.preview-table .p-datatable-tfoot > tr > td:first-child {
+  min-width: 130px;
+  text-align: left;
+}
+
+.preview-table .p-datatable-thead > tr > th:last-child,
+.preview-table .p-datatable-tbody > tr > td:last-child,
+.preview-table .p-datatable-tfoot > tr > td:last-child {
+  min-width: 220px;
+  text-align: left;
+}

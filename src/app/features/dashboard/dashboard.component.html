@@ -1,44 +1,105 @@
 <section class="page">
-  <div class="page-head">
-    <div><h1>Dashboard</h1><p>Manager: {{ managerName() || 'Not set' }}</p></div>
+  <div class="page-hero">
+    <div>
+      <p-tag value="Overview" severity="warn" icon="pi pi-chart-line" />
+      <h1>Dashboard</h1>
+      <p>Manager: {{ managerName() || 'Not set' }}</p>
+    </div>
+    <div class="hero-metric">
+      <span>Total Left</span>
+      <b>{{ totalLeft() | number:'1.0-2' }}</b>
+    </div>
   </div>
+
   <div class="cards">
-    <mat-card class="stat"><span>Total Given</span><b>{{ totalGiven() | number:'1.0-2' }}</b></mat-card>
-    <mat-card class="stat"><span>Total Used</span><b>{{ totalUsed() | number:'1.0-2' }}</b></mat-card>
-    <mat-card class="stat"><span>Total Left</span><b>{{ totalLeft() | number:'1.0-2' }}</b></mat-card>
+    <p-card styleClass="soft-panel stat"><span>Total Given</span><b>{{ totalGiven() | number:'1.0-2' }}</b></p-card>
+    <p-card styleClass="soft-panel stat"><span>Total Used</span><b>{{ totalUsed() | number:'1.0-2' }}</b></p-card>
+    <p-card styleClass="soft-panel stat"><span>Total Left</span><b>{{ totalLeft() | number:'1.0-2' }}</b></p-card>
   </div>
-  <mat-card><mat-card-content>
-    <h2>Member Money</h2>
-    <table mat-table [dataSource]="rows()">
-      <ng-container matColumnDef="name"><th mat-header-cell *matHeaderCellDef>Person</th><td mat-cell *matCellDef="let row">{{ row.name }}</td></ng-container>
-      <ng-container matColumnDef="given"><th mat-header-cell *matHeaderCellDef>Given</th><td mat-cell *matCellDef="let row">{{ row.given | number:'1.0-2' }}</td></ng-container>
-      <ng-container matColumnDef="left"><th mat-header-cell *matHeaderCellDef>Left</th><td mat-cell *matCellDef="let row">{{ row.left | number:'1.0-2' }}</td></ng-container>
-      <tr mat-header-row *matHeaderRowDef="columns"></tr><tr mat-row *matRowDef="let row; columns: columns"></tr>
-    </table>
-  </mat-card-content></mat-card>
-  <mat-card><mat-card-content class="preview-wrap">
-    <h2>Daily Entry Preview</h2>
-    <table class="preview-grid">
-      <thead>
-        <tr><th>Date</th>@for (member of members(); track member.id) { <th>{{ shortName(member.name) }}</th> }<th>Total Cost</th><th>Item Remarks</th></tr>
-      </thead>
-      <tbody>
-        @for (entry of previewRows(); track entry.id) {
-          <tr>
-            <td>{{ entry.date }}</td>
-            @for (member of members(); track member.id) { <td>{{ entry.values[member.id] ? (entry.values[member.id] | number:'1.0-2') : '' }}</td> }
-            <td>{{ entry.total | number:'1.0-2' }}</td>
-            <td>{{ entry.remarks }}</td>
-          </tr>
-        }
-        @for (blank of blankRows(); track blank) {
-          <tr><td></td>@for (member of members(); track member.id) { <td></td> }<td>0</td><td></td></tr>
-        }
-      </tbody>
-      <tfoot>
-        <tr><th>Total</th>@for (member of members(); track member.id) { <th>{{ memberUsed(member.id) | number:'1.0-2' }}</th> }<th>{{ totalUsed() | number:'1.0-2' }}</th><th></th></tr>
-      </tfoot>
-    </table>
-    <div class="preview-manager">Manager: <span>{{ managerName() || 'Not set' }}</span></div>
-  </mat-card-content></mat-card>
+
+  <p-card styleClass="soft-panel table-panel">
+    <ng-template pTemplate="header">
+      <div class="table-head">
+        <div>
+          <h2>Member Money</h2>
+          <p>Current member balances</p>
+        </div>
+      </div>
+    </ng-template>
+    <p-table [value]="rows()" responsiveLayout="scroll" styleClass="modern-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">Person <p-sortIcon field="name" /></th>
+          <th pSortableColumn="given">Given <p-sortIcon field="given" /></th>
+          <th pSortableColumn="left">Left <p-sortIcon field="left" /></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td><strong>{{ row.name }}</strong></td>
+          <td><span class="amount-pill">{{ row.given | number:'1.0-2' }}</span></td>
+          <td><span class="amount-pill accent">{{ row.left | number:'1.0-2' }}</span></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <p-card styleClass="soft-panel table-panel">
+    <ng-template pTemplate="header">
+      <div class="table-head">
+        <div>
+          <h2>Daily Entry Preview</h2>
+          <p>Recent daily entries by member</p>
+        </div>
+        <span class="count-pill">{{ previewRows().length }} entries</span>
+      </div>
+    </ng-template>
+
+    <p-table
+      [value]="previewRows()"
+      [scrollable]="true"
+      scrollHeight="520px"
+      responsiveLayout="scroll"
+      styleClass="modern-table preview-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Date</th>
+          @for (member of members(); track member.id) {
+            <th>{{ shortName(member.name) }}</th>
+          }
+          <th>Total Cost</th>
+          <th>Item Remarks</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entry>
+        <tr>
+          <td><strong>{{ entry.date }}</strong></td>
+          @for (member of members(); track member.id) {
+            <td>{{ entry.values[member.id] ? (entry.values[member.id] | number:'1.0-2') : '-' }}</td>
+          }
+          <td><span class="amount-pill">{{ entry.total | number:'1.0-2' }}</span></td>
+          <td>{{ entry.remarks || '-' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td><strong>Total</strong></td>
+          @for (member of members(); track member.id) {
+            <td><strong>{{ memberUsed(member.id) | number:'1.0-2' }}</strong></td>
+          }
+          <td><strong>{{ totalUsed() | number:'1.0-2' }}</strong></td>
+          <td>Manager: {{ managerName() || 'Not set' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="members().length + 3" class="empty-state">
+            <i class="pi pi-inbox"></i>
+            <span>No daily entries recorded yet.</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
 </section>
