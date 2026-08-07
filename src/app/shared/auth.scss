@@ -6,9 +6,9 @@
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(1100px 460px at 115% -15%, rgba(255, 196, 143, 0.55), transparent 55%),
-    radial-gradient(900px 420px at -10% 110%, rgba(255, 139, 61, 0.4), transparent 55%),
-    linear-gradient(160deg, #ff6b00 0%, #ea580c 55%, #c2410c 100%);
+    radial-gradient(900px 420px at 105% -10%, rgba(255, 216, 181, 0.6), transparent 58%),
+    radial-gradient(760px 360px at -8% 105%, rgba(255, 139, 61, 0.32), transparent 58%),
+    linear-gradient(160deg, #fff7ed 0%, #ffe3c2 45%, #ff8c32 100%);
 }
 
 .auth::before {
@@ -25,10 +25,10 @@
   width: min(430px, 100%);
   padding: 36px 34px 30px;
   border-radius: 28px;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.76);
   border: 1px solid rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(24px);
-  box-shadow: 0 32px 70px rgba(120, 40, 0, 0.35);
+  box-shadow: 0 28px 70px rgba(120, 40, 0, 0.22);
 }
 
 .brand {
@@ -43,10 +43,18 @@
   height: 72px;
   margin: 0 auto;
   border-radius: 22px;
-  background: linear-gradient(135deg, #ff6b00, #ffa94d);
-  box-shadow: 0 14px 30px rgba(255, 107, 0, 0.4);
+  background: #050505;
+  box-shadow: 0 14px 30px rgba(255, 107, 0, 0.32);
+  overflow: hidden;
 
   svg { width: 34px; height: 34px; color: #fff; }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 }
 
 .brand h1 {

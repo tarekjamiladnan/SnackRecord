@@ -12,7 +12,13 @@
         <span class="icon-badge soft"><svg lucideCalendarDays /></span>
         <div>
           <h2>Entry Details</h2>
-          <p>Pick a date and note anything special</p>
+          <p>
+            @if (openMonth()) {
+              Open month: {{ openMonth()!.month }}/{{ openMonth()!.year }}
+            } @else {
+              Create a month before saving entries
+            }
+          </p>
         </div>
       </div>
 

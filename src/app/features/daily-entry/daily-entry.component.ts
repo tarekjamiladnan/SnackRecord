@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
-import { Member } from '../../core/models';
+import { Member, Month } from '../../core/models';
 import { SupabaseService } from '../../core/supabase.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
@@ -15,6 +15,7 @@ export class DailyEntryComponent {
   date = new Date().toISOString().slice(0, 10);
   dateValue = new Date();
   remarks = '';
+  openMonth = signal<Month | null>(null);
   members = signal<Member[]>([]);
   amounts = signal<Record<string, number>>({});
   total = () => Object.values(this.amounts()).reduce((sum, amount) => sum + Number(amount || 0), 0);
@@ -24,8 +25,13 @@ export class DailyEntryComponent {
     private message: MessageService,
     private router: Router
   ) {
-    void this.load();
-    void this.loadEntry();
+    void this.init();
+  }
+
+  async init(): Promise<void> {
+    await this.loadOpenMonth();
+    await this.load();
+    await this.loadEntry();
   }
 
   async load(): Promise<void> {
@@ -36,7 +42,7 @@ export class DailyEntryComponent {
   async loadEntry(): Promise<void> {
     this.amounts.set({});
     this.remarks = '';
-    const month = await this.supabase.getOpenMonth();
+    const month = this.openMonth() ?? await this.loadOpenMonth();
     if (!month) return;
     const { data: entry } = await this.supabase.client
       .from('daily_entries')
@@ -67,9 +73,17 @@ export class DailyEntryComponent {
   async save(): Promise<void> {
     const items = Object.entries(this.amounts()).filter(([, amount]) => Number(amount) > 0);
     if (!items.length) return;
-    const month = await this.supabase.getOpenMonth();
+    const month = this.openMonth() ?? await this.loadOpenMonth();
     if (!month) {
       this.notifyNoOpenMonth();
+      return;
+    }
+    if (!this.isDateInMonth(this.dateValue, month)) {
+      this.message.add({
+        severity: 'warn',
+        summary: 'Wrong month selected',
+        detail: `Select a date in ${this.monthName(month)} ${month.year}.`
+      });
       return;
     }
     const { data: existing, error: existingError } = await this.supabase.client.from('daily_entries').select('id').eq('month_id', month.id).eq('entry_date', this.date).maybeSingle();
@@ -86,9 +100,9 @@ export class DailyEntryComponent {
     }
     await this.supabase.client.from('entry_items').insert(items.map(([memberId, amount]) => ({ entry_id: entry.id, member_id: memberId, menu_id: null, quantity: 1, price: 0, amount })));
     await this.supabase.audit(existing ? 'Daily Entry Update' : 'Daily Entry Add', 'daily_entries', entry.id);
-    this.amounts.set({});
-    this.remarks = '';
-    this.message.add({ severity: 'success', summary: existing ? 'Entry updated' : 'Entry saved', detail: `Total ${this.total().toFixed(2)} recorded` });
+    const savedTotal = this.total();
+    this.message.add({ severity: 'success', summary: existing ? 'Entry updated' : 'Entry saved', detail: `Total ${savedTotal.toFixed(2)} recorded` });
+    await this.loadEntry();
   }
 
   initials(name?: string): string {
@@ -108,6 +122,25 @@ export class DailyEntryComponent {
       detail: 'Create a new month before saving daily entries.',
       sticky: true
     });
+  }
+
+  private async loadOpenMonth(): Promise<Month | null> {
+    const month = await this.supabase.getOpenMonth();
+    this.openMonth.set(month);
+    if (!month) return null;
+    const today = new Date();
+    const nextDate = this.isDateInMonth(today, month) ? today : new Date(month.year, month.month - 1, 1);
+    this.dateValue = nextDate;
+    this.date = this.toIsoDate(nextDate);
+    return month;
+  }
+
+  private isDateInMonth(date: Date, month: Month): boolean {
+    return date.getFullYear() === month.year && date.getMonth() + 1 === month.month;
+  }
+
+  private monthName(month: Month): string {
+    return new Date(month.year, month.month - 1, 1).toLocaleString('default', { month: 'long' });
   }
 
   private toIsoDate(date: Date): string {

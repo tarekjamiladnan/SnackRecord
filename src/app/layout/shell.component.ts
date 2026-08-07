@@ -1,5 +1,6 @@
 import { Component, OnInit, Type, computed, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import {
   LucideCalendarRange,
   LucideChartColumn,
@@ -57,12 +58,12 @@ export class ShellComponent implements OnInit {
     this.userName()
       .split(' ')
       .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join('') || 'A'
+      .at(0)
+      ?.slice(0, 2)
+      .toUpperCase() || 'AC'
   );
 
-  constructor(public auth: SupabaseService, public router: Router) {
+  constructor(public auth: SupabaseService, public router: Router, private message: MessageService) {
     this.isDesktop.set(this.media.matches);
   }
 
@@ -92,6 +93,10 @@ export class ShellComponent implements OnInit {
     const item = this.nav().find((navItem) => navItem.label.toLowerCase().includes(term));
     if (item) void this.router.navigateByUrl(item.path);
     this.search.set('');
+  }
+
+  showNotifications(): void {
+    this.message.add({ severity: 'info', summary: 'Notifications', detail: 'No new notifications.' });
   }
 
   goToMonths(): void {

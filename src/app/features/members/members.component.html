@@ -54,9 +54,8 @@
             <td><span class="muted">{{ row.phone || '—' }}</span></td>
             <td>
               <div class="row-actions">
-                <button pButton type="button" class="p-button-text" pTooltip="Actions" (click)="openRowMenu($event, row)">
-                  <svg lucideEllipsis />
-                </button>
+                <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
+                <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
               </div>
             </td>
           </tr>
@@ -78,9 +77,8 @@
             <div class="member-card-top">
               <div class="member-avatar">{{ initials(row.name) }}</div>
               <div class="member-actions">
-                <button pButton type="button" class="p-button-text" pTooltip="Actions" (click)="openRowMenu($event, row)">
-                  <svg lucideEllipsis />
-                </button>
+                <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
+                <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
               </div>
             </div>
             <div class="member-name">{{ row.name }}</div>

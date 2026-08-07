@@ -63,9 +63,8 @@
           />
         </div>
 
-        <button class="icon-btn bell" aria-label="Notifications">
+        <button class="icon-btn bell" aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom" (click)="showNotifications()">
           <svg lucideBell />
-          <span class="notif-dot"></span>
         </button>
 
         <div class="profile" (click)="profileOpen.set(!profileOpen())">
@@ -79,13 +78,13 @@
 
         @if (profileOpen()) {
           <div class="profile-menu animate-scale-in">
-            <div class="profile-menu-head">
-              <div class="avatar">{{ initials() }}</div>
-              <div>
-                <b>{{ userName() }}</b>
-                <span>{{ role() }}</span>
-              </div>
+          <div class="profile-menu-head">
+            <div class="avatar">{{ initials() }}</div>
+            <div>
+              <b>{{ userName() }}</b>
+              <span>{{ role() }}</span>
             </div>
+          </div>
             <div class="divider"></div>
             <a routerLink="/auth/change-password" (click)="closeMobile()">
               <svg lucideKeyRound />
