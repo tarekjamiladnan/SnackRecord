@@ -77,7 +77,7 @@
       <span class="icon-badge" style="background:linear-gradient(135deg,#3b82f6,#93c5fd)"><svg lucideListFilter /></span>
       <div><h2>Member Balances</h2><p>Given vs. remaining</p></div>
     </div>
-      <p-table [value]="rows()" styleClass="preview-table">
+      <p-table [value]="rows()" styleClass="preview-table desktop-table">
         <ng-template pTemplate="header">
           <tr><th>Member</th><th>Given</th><th>Left</th></tr>
         </ng-template>
@@ -92,6 +92,20 @@
           <tr><td colspan="3" class="empty-state"><div class="empty-art"><svg lucideUsersRound /></div><b>No active members</b><span>Add members to begin.</span></td></tr>
         </ng-template>
       </p-table>
+
+      <div class="simple-list mobile-only">
+        @for (row of rows(); track row.id) {
+          <div class="simple-row animate-fade-up">
+            <div class="person-cell"><span class="initials">{{ initials(row.name) }}</span><b>{{ row.name }}</b></div>
+            <div class="simple-stats">
+              <div><span>Given</span><b>{{ row.given | number:'1.0-2' }}</b></div>
+              <div><span>Left</span><b [class.negative]="row.left < 0">{{ row.left | number:'1.0-2' }}</b></div>
+            </div>
+          </div>
+        } @empty {
+          <div class="mobile-list-empty"><div class="empty-art"><svg lucideUsersRound /></div><b>No active members</b><span>Add members to begin.</span></div>
+        }
+      </div>
     </p-card>
 
   <p-card>
@@ -100,7 +114,7 @@
       <div><h2>Recent Daily Entries</h2><p>The latest recorded expenses</p></div>
       <div class="panel-actions"><button pButton type="button" class="ghost-button" (click)="goTo('/daily-entry')">View All <svg lucideArrowRight /></button></div>
     </div>
-    <p-table [value]="previewRows()" styleClass="preview-table">
+    <p-table [value]="previewRows()" styleClass="preview-table desktop-table">
       <ng-template pTemplate="header">
         <tr><th>Date</th><th>Remarks</th><th>Who &amp; How Much</th><th>Total</th></tr>
       </ng-template>
@@ -129,5 +143,31 @@
         <tr><td colspan="4" class="empty-state"><div class="empty-art"><svg lucideReceiptText /></div><b>No entries yet</b><span>Start the month with your first entry.</span></td></tr>
       </ng-template>
     </p-table>
+
+    <div class="entry-card-list mobile-only">
+      @for (row of previewRows(); track row.id) {
+        <div class="entry-card animate-fade-up">
+          <div class="entry-card-head">
+            <span class="amount-pill soft">{{ row.date }}</span>
+            <b class="amount">{{ row.total | number:'1.0-2' }}</b>
+          </div>
+          @if (row.remarks) {
+            <div class="entry-card-remarks">{{ row.remarks }}</div>
+          }
+          <div class="ep-columns">
+            @for (person of row.items; track person.name) {
+              <div class="ep-member">
+                <b class="ep-name">{{ person.name }}</b>
+                <span class="ep-cost">{{ person.amount | number:'1.0-2' }}</span>
+              </div>
+            } @empty {
+              <span class="muted">—</span>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="mobile-list-empty"><div class="empty-art"><svg lucideReceiptText /></div><b>No entries yet</b><span>Start the month with your first entry.</span></div>
+      }
+    </div>
   </p-card>
 </section>

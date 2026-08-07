@@ -86,6 +86,7 @@ body {
 
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: var(--font);
   font-weight: 500;
   color: var(--text-1);
@@ -351,8 +352,14 @@ button {
 /* ---------- Table ---------- */
 .p-datatable {
   font-size: 0.9rem;
+  max-width: 100%;
 }
-.p-datatable-wrapper { border-radius: var(--radius-sm); }
+.p-datatable-wrapper {
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
 .p-datatable .p-datatable-thead > tr > th {
   background: rgba(255, 255, 255, 0.5);
   -webkit-backdrop-filter: blur(14px);
@@ -464,7 +471,7 @@ button {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow-lg);
   padding: 8px;
-  min-width: 220px;
+  min-width: min(220px, calc(100vw - 32px));
 }
 .p-menu .p-menuitem-content { border-radius: 12px; transition: background 0.2s ease; }
 .p-menu .p-menuitem-content:hover {
@@ -476,7 +483,7 @@ button {
 
 /* ---------- Toast ---------- */
 .p-toast {
-  max-width: 380px;
+  max-width: min(380px, calc(100vw - 24px));
 }
 .p-toast .p-toast-message {
   border-radius: var(--radius-sm);
@@ -495,6 +502,7 @@ button {
 
 /* ---------- Dialog ---------- */
 .p-dialog {
+  max-width: calc(100vw - 24px);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.85);
   -webkit-backdrop-filter: blur(28px);
@@ -560,8 +568,8 @@ button {
   display: flex;
   align-items: center;
   gap: 13px;
-  min-width: 320px;
-  max-width: 400px;
+  min-width: min(320px, calc(100vw - 32px));
+  max-width: min(400px, calc(100vw - 24px));
   padding: 15px 16px;
   margin-bottom: 12px;
   border-radius: 18px;
@@ -656,4 +664,26 @@ button {
 .p-inputtext.ng-invalid.ng-touched {
   border-color: var(--danger);
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+/* ==========================================================================
+   Mobile/tablet refinements (global)
+   ========================================================================== */
+@media (max-width: 900px) {
+  .p-dialog { max-width: calc(100vw - 20px); }
+  .p-dialog .p-dialog-header { padding: 18px 20px 14px; }
+  .p-dialog .p-dialog-content { padding: 20px; }
+  .p-dialog .p-dialog-footer { padding: 12px 20px 18px; }
+}
+
+@media (max-width: 480px) {
+  .p-dialog .p-dialog-header { padding: 16px 16px 12px; }
+  .p-dialog .p-dialog-content { padding: 18px 16px; }
+  .p-dialog .p-dialog-footer { padding: 10px 16px 16px; }
+  .p-dialog .p-dialog-footer .p-button { min-width: 0; flex: 1; }
+  .p-dialog .p-dialog-footer { display: flex; gap: 8px; }
+  .p-button { max-width: 100%; }
+  .p-datatable .p-datatable-thead > tr > th { font-size: 0.68rem; padding: 12px 12px; }
+  .p-datatable .p-datatable-tbody > tr > td { padding: 12px; }
+  .p-paginator { justify-content: center; }
 }

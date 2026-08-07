@@ -8,6 +8,9 @@
   padding: 16px;
   min-height: 100vh;
   align-items: flex-start;
+  width: 100%;
+  max-width: 1720px;
+  margin-inline: auto;
 }
 
 /* ---------- Sidebar ---------- */
@@ -225,11 +228,19 @@
   margin-bottom: 20px;
 }
 
-.topbar-left,
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .topbar-right {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .icon-btn {
@@ -255,6 +266,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .crumb-dot {
@@ -263,6 +276,7 @@
   border-radius: 50%;
   background: linear-gradient(135deg, var(--orange), var(--orange-3));
   box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.15);
+  flex-shrink: 0;
 }
 
 .crumb-title {
@@ -270,6 +284,9 @@
   font-size: 1.05rem;
   color: var(--text-1);
   letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Search */
@@ -380,7 +397,7 @@
   top: calc(100% + 12px);
   right: 0;
   z-index: 60;
-  width: 250px;
+  width: min(250px, calc(100vw - 32px));
   padding: 10px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.9);
@@ -453,6 +470,10 @@
 }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1240px) {
+  .profile-meta { display: none; }
+}
+
 @media (max-width: 900px) {
   .shell { padding: 12px; gap: 0; }
   .sidebar {
@@ -461,6 +482,7 @@
     left: 0;
     height: 100vh;
     width: 280px;
+    max-width: 85vw;
     border-radius: 0 26px 26px 0;
     transform: translateX(-105%);
     z-index: 50;
@@ -476,6 +498,14 @@
 
 @media (max-width: 480px) {
   .shell { padding: 8px; }
-  .topbar { border-radius: 18px; padding: 0 8px 0 6px; }
+  .topbar { border-radius: 18px; padding: 0 8px 0 6px; gap: 8px; }
+  .topbar-left { gap: 6px; }
+  .topbar-right { gap: 8px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 12px; }
+  .bell { display: none; }
+  .profile { padding: 4px 4px 4px 2px; }
+  .profile .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 0.78rem; }
+  .profile-caret { display: none; }
   .content { padding: 2px; }
+  .crumb-title { font-size: 0.95rem; }
 }
