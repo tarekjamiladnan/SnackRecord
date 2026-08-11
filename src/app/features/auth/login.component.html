@@ -1,21 +1,29 @@
 <section class="auth">
-  <div class="auth-card">
-    <div class="brand">
+  <div class="auth-card animate-scale-in">
+    <div class="auth-head">
       <div class="brand-logo"><img src="phantom-logo.svg" alt="Phantom Snack Record" /></div>
-      <h1>Snack Record</h1>
-      <p>Sign in to continue</p>
+      <h1>Welcome back</h1>
+      <p>Sign in to your Snack Record account</p>
     </div>
 
     <form [formGroup]="form" class="auth-form" (ngSubmit)="login()">
-      <div>
-        <label class="field-label" for="email">Email</label>
-        <input pInputText id="email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" autofocus />
+      <div class="field">
+        <label class="field-label" for="email">Email address</label>
+        <div class="field-input-wrap">
+          <svg class="field-icon" lucideMail />
+          <input pInputText id="email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" autofocus />
+        </div>
       </div>
-      <div>
-        <label class="field-label" for="password">Password</label>
+
+      <div class="field">
+        <div class="field-label-row">
+          <label class="field-label" for="password">Password</label>
+          <a class="forgot-link" routerLink="/auth/forgot-password">Forgot password?</a>
+        </div>
         <div class="password-wrap">
-          <input pInputText id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••" autocomplete="current-password" />
-          <button pButton type="button" class="ghost-button toggle-password" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+          <svg class="field-icon" lucideLock />
+          <input pInputText id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Enter your password" autocomplete="current-password" />
+          <button type="button" class="toggle-password" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
             @if (showPassword()) { <svg lucideEyeOff /> } @else { <svg lucideEye /> }
           </button>
         </div>
@@ -29,11 +37,13 @@
         @if (loading()) {
           <span class="spinner"></span>
         } @else {
-          <svg lucideLogIn /> Login
+          <svg lucideLogIn /> Sign in
         }
       </button>
     </form>
 
-    <a class="auth-link" routerLink="/auth/forgot-password">Forgot password?</a>
+    <p class="auth-foot">
+      Need an account? <a routerLink="/auth/login">Contact the manager</a>
+    </p>
   </div>
 </section>

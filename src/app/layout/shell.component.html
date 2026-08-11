@@ -121,9 +121,9 @@
         </div>
         <div class="psr-toast-actions">
           @if (message.key === 'no-month') {
-            <button class="psr-toast-btn" (click)="close(); goToMonths()">Create Month</button>
+            <button class="psr-toast-btn" (click)="close($event); goToMonths()">Create Month</button>
           } @else {
-            <button class="psr-toast-close" (click)="close()" aria-label="Dismiss"><svg lucideX /></button>
+            <button class="psr-toast-close" (click)="close($event)" aria-label="Dismiss"><svg lucideX /></button>
           }
         </div>
       </div>

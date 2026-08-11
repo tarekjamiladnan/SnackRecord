@@ -1,8 +1,12 @@
+/* ==========================================================================
+   Auth — centered card (login / forgot / reset / change password)
+   ========================================================================== */
+
 .auth {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 24px;
   position: relative;
   overflow: hidden;
   background:
@@ -18,20 +22,23 @@
   background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
   background-size: 22px 22px;
   opacity: 0.45;
+  pointer-events: none;
 }
 
 .auth-card {
   position: relative;
-  width: min(430px, 100%);
-  padding: 36px 34px 30px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(24px);
-  box-shadow: 0 28px 70px rgba(120, 40, 0, 0.22);
+  width: min(440px, 100%);
+  padding: 40px 38px 34px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(26px);
+  backdrop-filter: blur(26px);
+  box-shadow: 0 30px 70px rgba(120, 40, 0, 0.2);
 }
 
-.brand {
+/* ---------- Card header ---------- */
+.auth-head {
   text-align: center;
   margin-bottom: 26px;
 }
@@ -39,81 +46,305 @@
 .brand-logo {
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
-  margin: 0 auto;
-  border-radius: 22px;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 18px;
+  border-radius: 21px;
   background: #050505;
-  box-shadow: 0 14px 30px rgba(255, 107, 0, 0.32);
+  box-shadow: 0 14px 30px rgba(255, 107, 0, 0.35);
   overflow: hidden;
-
-  svg { width: 34px; height: 34px; color: #fff; }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
 }
 
-.brand h1 {
-  margin: 16px 0 4px;
-  font-size: 25px;
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.auth-head h1 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #1f2937;
+  color: var(--text-1);
 }
 
-.brand p {
+.auth-head p {
   margin: 0;
-  color: #6b7280;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: var(--text-2);
 }
 
 .auth-form {
   display: grid;
-  gap: 14px;
+  gap: 18px;
+}
+
+/* ---------- Fields ---------- */
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .field-label {
-  display: block;
-  margin-bottom: 6px;
-  color: #374151;
   font-size: 13px;
   font-weight: 700;
+  color: #374151;
+  letter-spacing: 0.01em;
 }
 
-.auth-btn {
-  height: 50px;
+.field-input-wrap {
+  position: relative;
+}
+
+.field-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.field-input-wrap:focus-within .field-icon {
+  color: var(--orange);
+}
+
+.field-input-wrap .p-inputtext {
   width: 100%;
-  margin-top: 6px;
-  justify-content: center;
-  font-size: 15px;
+  height: 52px;
+  padding: 0 15px 0 46px;
+  font-size: 0.92rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(120, 120, 120, 0.18);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
+.field-input-wrap .p-inputtext:enabled:hover {
+  border-color: rgba(255, 107, 0, 0.45);
+}
+
+.field-input-wrap .p-inputtext:enabled:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.14);
+}
+
+/* ---------- Password ---------- */
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap .field-icon {
+  z-index: 1;
+}
+
+.password-wrap .p-inputtext {
+  width: 100%;
+  height: 52px;
+  padding: 0 52px 0 46px;
+  font-size: 0.92rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(120, 120, 120, 0.18);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.password-wrap .p-inputtext:enabled:hover {
+  border-color: rgba(255, 107, 0, 0.45);
+}
+
+.password-wrap .p-inputtext:enabled:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.14);
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.toggle-password:hover {
+  color: var(--orange);
+  background: rgba(255, 107, 0, 0.08);
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Strength meter ---------- */
+.strength {
+  display: grid;
+  gap: 8px;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 6px;
+}
+
+.strength-bars i {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(120, 120, 120, 0.16);
+  transition: background 0.3s ease;
+}
+
+.strength-bars i.on-weak { background: var(--danger); }
+.strength-bars i.on-fair { background: var(--warning); }
+.strength-bars i.on-good { background: #84cc16; }
+.strength-bars i.on-strong { background: var(--success); }
+
+.strength-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.strength-label.weak { color: var(--danger); }
+.strength-label.fair { color: var(--warning); }
+.strength-label.good { color: #65a30d; }
+.strength-label.strong { color: #16a34a; }
+
+/* ---------- Button ---------- */
+.auth-btn {
+  height: 52px;
+  width: 100%;
+  margin-top: 4px;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-2) 100%);
+  border: 0;
+  box-shadow: 0 14px 30px rgba(255, 107, 0, 0.35);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.auth-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(255, 107, 0, 0.45);
+}
+
+.auth-btn:not(:disabled):active {
+  transform: translateY(0) scale(0.98);
+}
+
+.auth-btn:disabled {
+  opacity: 0.65;
+  filter: saturate(0.6);
+}
+
+.auth-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Error alert ---------- */
 .error {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 11px 14px;
+  padding: 12px 14px;
   border-radius: 14px;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.22);
   color: #b91c1c;
-  font-size: 13px;
+  font-size: 0.82rem;
   font-weight: 600;
-
-  svg { width: 17px; height: 17px; flex: 0 0 auto; }
+  line-height: 1.45;
+  animation: psr-fade-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+.error svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+/* ---------- Links ---------- */
+.forgot-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--orange);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.forgot-link:hover { color: #c2410c; }
+
+.auth-foot {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.auth-foot a {
+  font-weight: 700;
+  color: var(--orange);
+  cursor: pointer;
+}
+
+.auth-foot a:hover { color: #c2410c; }
 
 .auth-link {
   display: block;
   text-align: center;
   margin-top: 20px;
-  color: #ea580c;
-  font-size: 14px;
+  color: var(--orange);
+  font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
+}
+
+.auth-link:hover { color: #c2410c; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 480px) {
+  .auth { padding: 16px; }
+  .auth-card { padding: 28px 22px 26px; }
 }
