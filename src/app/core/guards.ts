@@ -10,9 +10,9 @@ export const authGuard: CanActivateFn = async () => {
   return auth.session() ? true : router.createUrlTree(['/auth/login']);
 };
 
-export const roleGuard = (roles: Role[]): CanActivateFn => async () => {
+export const roleGuard = (roles: Role[], redirectTo = '/dashboard'): CanActivateFn => async () => {
   const auth = inject(SupabaseService);
   const router = inject(Router);
   await auth.restoreSession();
-  return auth.hasRole(roles) ? true : router.createUrlTree(['/dashboard']);
+  return auth.hasRole(roles) ? true : router.createUrlTree([redirectTo]);
 };

@@ -1,0 +1,68 @@
+<section class="page">
+  <div class="page-head">
+    <div>
+      <h1>Today's Order</h1>
+      <p class="page-sub">{{ today }} · Ordering closes at 4:20 PM</p>
+    </div>
+  </div>
+
+  <p-card>
+    @if (loading()) {
+      <div class="loading"><p-progressspinner /></div>
+    } @else if (!member()) {
+      <div class="empty-state">
+        <div class="empty-art"><svg lucideUsers /></div>
+        <b>No member profile found</b>
+        <span>Ask an admin to add your member record.</span>
+      </div>
+    } @else {
+      <div class="order-form">
+        @if (afterCutoff()) {
+          @if (request()?.status === 'approved') {
+            <div class="order-closed approved"><svg lucideCircleCheck /> Late-order approved — you can submit your order now.</div>
+          } @else if (request()?.status === 'pending') {
+            <div class="order-closed pending"><svg lucideClock /> Ordering closed at 4:20 PM. Request sent — awaiting admin approval.</div>
+          } @else if (request()?.status === 'rejected') {
+            <div class="order-closed rejected"><svg lucideTriangleAlert /> Your late-order request was rejected. You may request again.</div>
+          } @else {
+            <div class="order-closed"><svg lucideLock /> Ordering closed at 4:20 PM. Request permission from the admin to place an order.</div>
+          }
+        }
+
+        <label for="orderText">What do you want to eat today?</label>
+        <textarea
+          id="orderText"
+          pInputText
+          [(ngModel)]="orderText"
+          maxlength="500"
+          rows="8"
+          [disabled]="isClosed()"
+          placeholder="Chicken Khichuri + Egg"
+        ></textarea>
+        <div class="order-footer">
+          <span>{{ remainingChars() }} characters left</span>
+          <div class="order-actions">
+            @if (afterCutoff() && request()?.status !== 'approved') {
+              <button
+                pButton
+                type="button"
+                class="p-button-outlined"
+                (click)="requestPermission()"
+                [disabled]="saving() || request()?.status === 'pending'"
+              >
+                @if (request()?.status === 'pending') {
+                  <svg lucideClock /> Request Pending
+                } @else {
+                  <svg lucideSend /> Request Permission
+                }
+              </button>
+            }
+            <button pButton type="button" (click)="save()" [disabled]="isClosed() || saving() || !orderText.trim()">
+              <svg lucideCircleCheck /> Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </p-card>
+</section>

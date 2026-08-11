@@ -1,0 +1,82 @@
+.order-form {
+  display: grid;
+  gap: 12px;
+}
+
+.order-form label {
+  font-weight: 800;
+}
+
+.order-form textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-2);
+  font-size: 0.85rem;
+}
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-closed {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  font-weight: 800;
+}
+
+.order-closed.pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.order-closed.approved {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.order-closed.rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.order-closed svg {
+  width: 18px;
+  height: 18px;
+}
+
+.order-cell {
+  white-space: pre-wrap;
+  max-width: 420px;
+}
+
+@media (max-width: 640px) {
+  .order-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .order-actions {
+    width: 100%;
+  }
+
+  .order-actions .p-button {
+    flex: 1;
+    justify-content: center;
+  }
+}

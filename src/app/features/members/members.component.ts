@@ -7,6 +7,7 @@ import { RepositoryService } from '../../core/repository.service';
 import { SupabaseService } from '../../core/supabase.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog.component';
 import { CrudPageBase } from '../../shared/crud-page.base';
+import { EntityDialogComponent, FieldConfig } from '../../shared/entity-dialog.component';
 import { UI_IMPORTS } from '../../shared/ui';
 
 @Component({
@@ -20,10 +21,12 @@ export class MembersComponent extends CrudPageBase<Member> {
   table = 'members';
   columns = ['name', 'phone'];
   displayedColumns = [...this.columns, 'actions'];
-  override searchColumns = ['name', 'phone'];
-  fields = [
-    { key: 'name', label: 'Name', required: true },
-    { key: 'phone', label: 'Number' }
+  override searchColumns = ['name', 'email', 'phone'];
+  fields: FieldConfig[] = [
+    { key: 'name', label: 'Full Name', required: true },
+    { key: 'email', label: 'Email Address', type: 'email', required: true },
+    { key: 'phone', label: 'Phone Number' },
+    { key: 'initial_password', label: 'Initial Password', type: 'password', required: true }
   ];
   menuItems = signal<MenuItem[]>([]);
   @ViewChild('rowMenu') rowMenu?: Menu;
@@ -36,6 +39,65 @@ export class MembersComponent extends CrudPageBase<Member> {
   ) {
     super(repo, dialog, message, auth);
     void this.load();
+  }
+
+  override async open(row?: Member): Promise<void> {
+    if (row) {
+      this.fields = [
+        { key: 'name', label: 'Full Name', required: true },
+        { key: 'email', label: 'Email Address', type: 'email', required: true },
+        { key: 'phone', label: 'Phone Number' }
+      ];
+      super.open(row);
+      return;
+    }
+    this.fields = [
+      { key: 'name', label: 'Full Name', required: true },
+      { key: 'email', label: 'Email Address', type: 'email', required: true },
+      { key: 'phone', label: 'Phone Number' },
+      { key: 'initial_password', label: 'Initial Password', type: 'password', required: true }
+    ];
+    const ref = this.dialog.open(EntityDialogComponent, {
+      header: 'Add Member',
+      width: '520px',
+      data: {
+        title: 'Add Member',
+        fields: this.fields,
+        value: {}
+      }
+    });
+    ref?.onClose.subscribe(async (value) => {
+      if (!value) return;
+      try {
+        const name = String(value.name ?? '').trim();
+        const email = String(value.email ?? '').trim().toLowerCase();
+        if (!name || !email) {
+          this.message.add({ severity: 'warn', summary: 'Missing info', detail: 'Name and email are required.' });
+          return;
+        }
+        const payload = {
+          p_full_name: name,
+          p_email: email,
+          p_phone: String(value.phone ?? '').trim() || null,
+          p_password: String(value.initial_password ?? '')
+        };
+        const { data, error } = await this.auth.client.rpc('create_member_user', payload);
+        if (error) throw error;
+        await this.auth.audit('Member User Add', 'members', data.id, { email });
+        this.message.add({
+          severity: 'success',
+          summary: 'Member user saved',
+          detail: `${data.name} can log in with the initial password.`
+        });
+        await this.load();
+      } catch (err) {
+        this.message.add({
+          severity: 'error',
+          summary: 'Member save failed',
+          detail: err instanceof Error ? err.message : 'Please try again.'
+        });
+      }
+    });
   }
 
   override async load(): Promise<void> {

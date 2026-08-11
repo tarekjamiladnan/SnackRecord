@@ -22,6 +22,19 @@
           <input pInputText formControlName="manager_name" placeholder="e.g. Rahim Bhai" />
         </div>
 
+        <div class="field">
+          <span>Enable Minimum Remaining Balance</span>
+          <label class="setting-check">
+            <input type="checkbox" formControlName="min_balance_enabled" />
+            <span>Reject orders below minimum balance</span>
+          </label>
+        </div>
+
+        <div class="field">
+          <span>Minimum Remaining Balance Amount</span>
+          <input pInputText type="number" min="0" formControlName="min_balance_amount" />
+        </div>
+
         <button pButton type="submit" class="save-button" [disabled]="form.invalid">
           <svg lucideCircleCheck /> Save Settings
         </button>
@@ -47,6 +60,20 @@
           <div><b>BDT</b><span>Currency</span></div>
         </div>
       </div>
+    </p-card>
+
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge"><svg lucideClipboardList /></span>
+        <div>
+          <h2>Order Management</h2>
+          <p>View and manage every user's daily order</p>
+        </div>
+      </div>
+
+      <button pButton type="button" class="save-button" style="margin-top:18px" (click)="goToOrders()">
+        <svg lucideClipboardList /> Manage Orders
+      </button>
     </p-card>
   </div>
 </section>

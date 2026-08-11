@@ -1,6 +1,6 @@
 create extension if not exists "pgcrypto";
 
-create type app_role as enum ('admin', 'manager');
+create type app_role as enum ('admin', 'user');
 create type record_status as enum ('active', 'archived', 'inactive');
 create type month_status as enum ('open', 'locked');
 
@@ -8,13 +8,15 @@ create table profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text not null unique,
   full_name text,
-  role app_role not null default 'manager',
+  role app_role not null default 'user',
   created_at timestamptz not null default now()
 );
 
 create table members (
   id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
   name text not null,
+  email text unique,
   phone text,
   status record_status not null default 'active',
   created_at timestamptz not null default now()
@@ -131,9 +133,128 @@ create or replace function is_admin() returns boolean language sql stable securi
   select coalesce(app_current_role() = 'admin', false)
 $$;
 
-create or replace function is_manager_or_admin() returns boolean language sql stable security definer as $$
-  select coalesce(app_current_role() in ('admin','manager'), false)
+create or replace function normalize_profile_role() returns trigger language plpgsql as $$
+begin
+  new.email := lower(new.email);
+  if new.email in ('adnan@gmail.com', 'admin@gmail.com') then
+    new.role := 'admin';
+  elsif new.role is null then
+    new.role := 'user';
+  end if;
+  return new;
+end;
 $$;
+
+create trigger profiles_role_guard before insert or update on profiles for each row execute function normalize_profile_role();
+
+create or replace function is_authenticated() returns boolean language sql stable as $$
+  select auth.uid() is not null
+$$;
+
+create or replace function create_member_user(
+  p_full_name text,
+  p_email text,
+  p_phone text,
+  p_password text
+) returns members language plpgsql security definer set search_path = public, auth as $$
+declare
+  v_email text := lower(trim(p_email));
+  v_user_id uuid;
+  v_member members%rowtype;
+begin
+  if not is_admin() then
+    raise exception 'Only admin can create member users';
+  end if;
+  if nullif(trim(p_full_name), '') is null then
+    raise exception 'Full name is required';
+  end if;
+  if v_email is null or v_email !~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$' then
+    raise exception 'Valid email is required';
+  end if;
+  if length(coalesce(p_password, '')) < 6 then
+    raise exception 'Password must be at least 6 characters';
+  end if;
+
+  select id into v_user_id from auth.users where lower(email) = v_email;
+  if v_user_id is null then
+    v_user_id := gen_random_uuid();
+
+    insert into auth.users (
+      instance_id,
+      id,
+      aud,
+      role,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      created_at,
+      updated_at
+    )
+    values (
+      '00000000-0000-0000-0000-000000000000',
+      v_user_id,
+      'authenticated',
+      'authenticated',
+      v_email,
+      crypt(p_password, gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}'::jsonb,
+      jsonb_build_object('full_name', trim(p_full_name), 'role', 'user', 'must_change_password', true),
+      now(),
+      now()
+    );
+
+    insert into auth.identities (
+      provider_id,
+      user_id,
+      identity_data,
+      provider,
+      last_sign_in_at,
+      created_at,
+      updated_at
+    )
+    values (
+      v_user_id::text,
+      v_user_id,
+      jsonb_build_object('sub', v_user_id::text, 'email', v_email, 'email_verified', true),
+      'email',
+      now(),
+      now(),
+      now()
+    );
+  else
+    update auth.users
+    set encrypted_password = crypt(p_password, gen_salt('bf')),
+        email_confirmed_at = coalesce(email_confirmed_at, now()),
+        raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb)
+          || jsonb_build_object('full_name', trim(p_full_name), 'role', 'user', 'must_change_password', true),
+        updated_at = now()
+    where id = v_user_id;
+  end if;
+
+  insert into profiles (id, email, full_name, role)
+  values (v_user_id, v_email, trim(p_full_name), 'user')
+  on conflict (id) do update set
+    email = excluded.email,
+    full_name = excluded.full_name,
+    role = excluded.role;
+
+  insert into members (user_id, name, email, phone, status)
+  values (v_user_id, trim(p_full_name), v_email, nullif(trim(coalesce(p_phone, '')), ''), 'active')
+  on conflict (email) do update set
+    user_id = excluded.user_id,
+    name = excluded.name,
+    phone = excluded.phone,
+    status = excluded.status
+  returning * into v_member;
+
+  return v_member;
+end;
+$$;
+
+grant execute on function create_member_user(text, text, text, text) to authenticated;
 
 create or replace function month_is_open(p_month_id uuid) returns boolean language sql stable as $$
   select exists(select 1 from months where id = p_month_id and status = 'open')
@@ -245,30 +366,30 @@ alter table settings enable row level security;
 create policy "profiles self read" on profiles for select using (auth.uid() = id or is_admin());
 create policy "profiles admin write" on profiles for all using (is_admin()) with check (is_admin());
 
-create policy "authenticated read members" on members for select using (is_manager_or_admin());
-create policy "admin manager write members" on members for insert with check (is_manager_or_admin());
-create policy "admin manager update members" on members for update using (is_manager_or_admin()) with check (is_manager_or_admin());
+create policy "authenticated read members" on members for select using (is_authenticated());
+create policy "admin write members" on members for insert with check (is_admin());
+create policy "admin update members" on members for update using (is_admin()) with check (is_admin());
 create policy "admin delete members" on members for delete using (is_admin());
 
-create policy "authenticated read menus" on menus for select using (is_manager_or_admin());
-create policy "authenticated write menus" on menus for all using (is_manager_or_admin()) with check (is_manager_or_admin());
+create policy "authenticated read menus" on menus for select using (is_authenticated());
+create policy "admin write menus" on menus for all using (is_admin()) with check (is_admin());
 
-create policy "authenticated read months" on months for select using (is_manager_or_admin());
+create policy "authenticated read months" on months for select using (is_authenticated());
 create policy "admin write months" on months for all using (is_admin()) with check (is_admin());
 
-create policy "authenticated read daily entries" on daily_entries for select using (is_manager_or_admin());
-create policy "authenticated write daily entries" on daily_entries for all using (is_manager_or_admin()) with check (is_manager_or_admin());
-create policy "authenticated read entry items" on entry_items for select using (is_manager_or_admin());
-create policy "authenticated write entry items" on entry_items for all using (is_manager_or_admin()) with check (is_manager_or_admin());
-create policy "authenticated read expenses" on expenses for select using (is_manager_or_admin());
-create policy "authenticated write expenses" on expenses for all using (is_manager_or_admin()) with check (is_manager_or_admin());
-create policy "authenticated read collections" on collections for select using (is_manager_or_admin());
-create policy "authenticated write collections" on collections for all using (is_manager_or_admin()) with check (is_manager_or_admin());
-create policy "authenticated read balances" on member_month_balances for select using (is_manager_or_admin());
+create policy "authenticated read daily entries" on daily_entries for select using (is_authenticated());
+create policy "admin write daily entries" on daily_entries for all using (is_admin()) with check (is_admin());
+create policy "authenticated read entry items" on entry_items for select using (is_authenticated());
+create policy "admin write entry items" on entry_items for all using (is_admin()) with check (is_admin());
+create policy "authenticated read expenses" on expenses for select using (is_authenticated());
+create policy "admin write expenses" on expenses for all using (is_admin()) with check (is_admin());
+create policy "own or admin read collections" on collections for select using (is_admin() or exists(select 1 from members m where m.id = collections.member_id and m.user_id = auth.uid()));
+create policy "admin write collections" on collections for all using (is_admin()) with check (is_admin());
+create policy "own or admin read balances" on member_month_balances for select using (is_admin() or exists(select 1 from members m where m.id = member_month_balances.member_id and m.user_id = auth.uid()));
 create policy "admin write balances" on member_month_balances for all using (is_admin()) with check (is_admin());
 create policy "authenticated audit insert" on audit_logs for insert with check (auth.uid() = actor_id);
 create policy "admin audit read" on audit_logs for select using (is_admin());
-create policy "authenticated read settings" on settings for select using (is_manager_or_admin());
+create policy "authenticated read settings" on settings for select using (is_authenticated());
 create policy "admin write settings" on settings for all using (is_admin()) with check (is_admin());
 
 insert into settings(id, company_name, currency, manager_name) values (1, 'Phantom Snack Record', 'BDT', 'Adnan') on conflict do nothing;

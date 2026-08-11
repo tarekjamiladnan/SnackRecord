@@ -41,6 +41,7 @@ export class SupabaseService {
   async loadProfile(): Promise<void> {
     const id = this.user()?.id;
     if (!id) return;
+    await this.ensureProfile();
     const { data, error } = await this.client.from('profiles').select('*').eq('id', id).maybeSingle();
     if (error) throw error;
     this.profile.set((data as Profile) ?? null);
@@ -65,8 +66,22 @@ export class SupabaseService {
   }
 
   async signIn(email: string, password: string): Promise<void> {
-    const { error } = await this.client.auth.signInWithPassword({ email, password });
+    const { error } = await this.client.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     if (error) throw error;
+  }
+
+  private async ensureProfile(): Promise<void> {
+    const user = this.user();
+    if (!user?.id || !user.email) return;
+    const email = user.email.toLowerCase();
+    const fullName = String(user.user_metadata?.['full_name'] ?? email.split('@')[0]);
+    const role: Role = email === 'adnan@gmail.com' || email === 'admin@gmail.com' ? 'admin' : 'user';
+    await this.client.from('profiles').upsert({ id: user.id, email, full_name: fullName, role }, { onConflict: 'id' });
+    if (role === 'user') {
+      await this.client
+        .from('members')
+        .upsert({ user_id: user.id, email, name: fullName, status: 'active' }, { onConflict: 'email' });
+    }
   }
 
   async signOut(): Promise<void> {

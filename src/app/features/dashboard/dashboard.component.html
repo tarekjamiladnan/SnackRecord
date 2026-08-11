@@ -3,12 +3,14 @@
     <div class="hero-copy">
       <span class="hero-chip"><svg lucideSparkles /> Dashboard</span>
       <h1>Good to see you{{ managerName() ? ', ' + managerName() : '' }}!</h1>
-      <p>Here's how the month is shaping up for your members.</p>
-      <div class="hero-actions">
-        <button pButton (click)="goTo('/daily-entry')"><svg lucideClipboardPlus /> New Entry</button>
-        <button pButton type="button" class="ghost-button" (click)="goTo('/collections')"><svg lucideWallet /> Add Collection</button>
-        <button pButton type="button" class="ghost-button" (click)="goTo('/months')"><svg lucideCalendarPlus /> New Month</button>
-      </div>
+      <p>{{ isAdmin() ? "Here's how the month is shaping up for your members." : 'Your balance and shared snack reports are read-only.' }}</p>
+      @if (isAdmin()) {
+        <div class="hero-actions">
+          <button pButton (click)="goTo('/daily-entry')"><svg lucideClipboardPlus /> New Entry</button>
+          <button pButton type="button" class="ghost-button" (click)="goTo('/collections')"><svg lucideWallet /> Add Collection</button>
+          <button pButton type="button" class="ghost-button" (click)="goTo('/months')"><svg lucideCalendarPlus /> New Month</button>
+        </div>
+      }
     </div>
     <div class="hero-art">
       <svg lucidePiggyBank />
@@ -18,18 +20,18 @@
   <div class="stat-grid">
     <div class="stat-card">
       <div class="stat-top"><span class="icon-badge"><svg lucideUsers /></span><span class="trend-chip">{{ members().length }} active</span></div>
-      <div class="stat-value">{{ members().length }}</div>
-      <div class="stat-label">Members</div>
+      <div class="stat-value">{{ isAdmin() ? members().length : (personalRow()?.given ?? 0 | number:'1.0-2') }}</div>
+      <div class="stat-label">{{ isAdmin() ? 'Members' : 'Monthly Balance' }}</div>
     </div>
     <div class="stat-card">
       <div class="stat-top"><span class="icon-badge" style="background:linear-gradient(135deg,#22c55e,#86efac)"><svg lucideArrowDownToLine /></span><span class="trend-chip">collections</span></div>
-      <div class="stat-value">{{ collectedTotal() | number:'1.0-2' }}</div>
-      <div class="stat-label">Total Given</div>
+      <div class="stat-value">{{ isAdmin() ? (collectedTotal() | number:'1.0-2') : (personalRow()?.used ?? 0 | number:'1.0-2') }}</div>
+      <div class="stat-label">{{ isAdmin() ? 'Total Given' : 'My Used' }}</div>
     </div>
     <div class="stat-card">
       <div class="stat-top"><span class="icon-badge" style="background:linear-gradient(135deg,#ef4444,#fca5a5)"><svg lucideArrowUpFromLine /></span><span class="trend-chip">entries</span></div>
-      <div class="stat-value">{{ totalUsed() | number:'1.0-2' }}</div>
-      <div class="stat-label">Total Used</div>
+      <div class="stat-value">{{ isAdmin() ? (totalUsed() | number:'1.0-2') : (personalRow()?.left ?? 0 | number:'1.0-2') }}</div>
+      <div class="stat-label">{{ isAdmin() ? 'Total Used' : 'Current Balance' }}</div>
     </div>
     <div class="stat-card">
       <div class="stat-top"><span class="icon-badge" style="background:linear-gradient(135deg,#8b5cf6,#c4b5fd)"><svg lucideScale /></span><span class="trend-chip">balance</span></div>
@@ -112,7 +114,9 @@
     <div class="panel-title">
       <span class="icon-badge" style="background:linear-gradient(135deg,#10b981,#6ee7b7)"><svg lucideReceipt /></span>
       <div><h2>Recent Daily Entries</h2><p>The latest recorded expenses</p></div>
-      <div class="panel-actions"><button pButton type="button" class="ghost-button" (click)="goTo('/daily-entry')">View All <svg lucideArrowRight /></button></div>
+      @if (isAdmin()) {
+        <div class="panel-actions"><button pButton type="button" class="ghost-button" (click)="goTo('/daily-entry')">View All <svg lucideArrowRight /></button></div>
+      }
     </div>
     <p-table [value]="previewRows()" styleClass="preview-table desktop-table">
       <ng-template pTemplate="header">

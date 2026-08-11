@@ -20,7 +20,7 @@
       @for (item of nav(); track item.path) {
         <a
           class="nav-item"
-          [class.active]="router.url.startsWith(item.path)"
+          [class.active]="isActive(item.path)"
           [routerLink]="item.path"
           (click)="closeMobile()"
           [pTooltip]="isDesktop() && collapsed() ? item.label : ''"

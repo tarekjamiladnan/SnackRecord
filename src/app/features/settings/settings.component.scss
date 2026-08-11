@@ -24,3 +24,16 @@
 @media (max-width: 900px) {
   .settings-layout { grid-template-columns: 1fr; }
 }
+.setting-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.setting-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--orange);
+}

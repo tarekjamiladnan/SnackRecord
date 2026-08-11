@@ -5,7 +5,7 @@ import Chart from 'chart.js/auto';
 import { SupabaseService } from '../../core/supabase.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
-interface MemberMoney { id: string; name: string; given: number; used: number; left: number; }
+interface MemberMoney { id: string; userId: string | null; email: string | null; name: string; given: number; used: number; left: number; }
 interface EntryPerson { name: string; amount: number; }
 interface EntryPreview { id: string; date: string; remarks: string; items: EntryPerson[]; total: number; }
 
@@ -23,6 +23,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   managerName = signal('');
   collectedTotal = signal(0);
   loading = signal(true);
+  isAdmin = () => this.supabase.profile()?.role === 'admin';
+  personalRow = () => this.rows().find((row) => row.userId === this.supabase.user()?.id || row.email === this.supabase.profile()?.email) ?? null;
 
   @ViewChild('spendCanvas', { static: true }) spendCanvas?: ElementRef<HTMLCanvasElement>;
   @ViewChild('shareCanvas', { static: true }) shareCanvas?: ElementRef<HTMLCanvasElement>;
@@ -54,7 +56,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     this.loading.set(true);
     try {
       const [{ data: members }, { data: settings }, { data: month }] = await Promise.all([
-        this.supabase.client.from('members').select('id,name').eq('status', 'active').order('name'),
+        this.supabase.client.from('members').select('id,user_id,email,name').eq('status', 'active').order('name'),
         this.supabase.client.from('settings').select('manager_name').eq('id', 1).maybeSingle(),
         this.supabase.client.from('months').select('id').eq('status', 'open').order('year', { ascending: false }).order('month', { ascending: false }).limit(1).maybeSingle()
       ]);
@@ -68,7 +70,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
             this.supabase.client.from('daily_entries').select('id,entry_date,total_cost,remarks,entry_items(member_id,amount)').eq('month_id', monthId).order('entry_date', { ascending: false }).limit(25)
           ])
         : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }];
-      const activeMembers = (members ?? []) as { id: string; name: string }[];
+      const activeMembers = (members ?? []) as { id: string; user_id: string | null; email: string | null; name: string }[];
       this.members.set(activeMembers);
       this.managerName.set(settings?.manager_name ?? '');
       this.collectedTotal.set((collections ?? []).reduce((sum, item) => sum + Number(item.amount), 0));
@@ -82,7 +84,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       this.rows.set(activeMembers.map((member) => {
         const memberGiven = (opening.get(member.id) ?? 0) + (given.get(member.id) ?? 0);
         const memberUsed = used.get(member.id) ?? 0;
-        return { id: member.id, name: member.name, given: memberGiven, used: memberUsed, left: memberGiven - memberUsed };
+        return { id: member.id, userId: member.user_id, email: member.email, name: member.name, given: memberGiven, used: memberUsed, left: memberGiven - memberUsed };
       }));
 
       this.memberUsed.set(activeMembers

@@ -6,6 +6,7 @@ import {
   LucideChartColumn,
   LucideLayoutDashboard,
   LucideNotebookPen,
+  LucideClipboardList,
   LucideSettings,
   LucideUsers,
   LucideUtensilsCrossed,
@@ -36,21 +37,29 @@ export class ShellComponent implements OnInit {
 
   nav = computed<NavItem[]>(() => [
     { path: '/dashboard', label: 'Dashboard', icon: LucideLayoutDashboard },
-    { path: '/members', label: 'Members', icon: LucideUsers },
+    ...(this.isAdmin() ? [] : [{ path: '/order', label: 'Order', icon: LucideNotebookPen }]),
+    ...(this.isAdmin() ? [{ path: '/orders', label: 'Manage Orders', icon: LucideClipboardList }] : []),
     { path: '/menu', label: 'Menu', icon: LucideUtensilsCrossed },
-    { path: '/daily-entry', label: 'Daily Entry', icon: LucideNotebookPen },
-    { path: '/collections', label: 'Collections', icon: LucideWallet },
+    ...(this.isAdmin() ? [
+      { path: '/members', label: 'Members', icon: LucideUsers },
+      { path: '/daily-entry', label: 'Daily Entry', icon: LucideNotebookPen },
+      { path: '/collections', label: 'Collections', icon: LucideWallet },
+      { path: '/months', label: 'Months', icon: LucideCalendarRange }
+    ] : []),
     { path: '/monthly-report', label: 'Monthly Report', icon: LucideChartColumn },
-    { path: '/months', label: 'Months', icon: LucideCalendarRange },
-    ...(this.auth.profile()?.role === 'admin' ? [{ path: '/settings', label: 'Settings', icon: LucideSettings }] : [])
+    ...(this.isAdmin() ? [{ path: '/settings', label: 'Settings', icon: LucideSettings }] : [])
   ]);
 
+  isAdmin = computed(() => {
+    const email = this.auth.user()?.email?.toLowerCase() ?? this.auth.profile()?.email?.toLowerCase();
+    return this.auth.profile()?.role === 'admin' || email === 'adnan@gmail.com' || email === 'admin@gmail.com';
+  });
   userName = computed(() => this.auth.profile()?.full_name ?? this.auth.profile()?.email ?? 'Account');
-  role = computed(() => (this.auth.profile()?.role === 'admin' ? 'Administrator' : 'Manager'));
+  role = computed(() => (this.isAdmin() ? 'Administrator' : 'User'));
 
   currentTitle = computed(() => {
     const url = this.router.url.split('?')[0];
-    const item = this.nav().find((navItem) => url.startsWith(navItem.path));
+    const item = this.nav().find((navItem) => this.isActive(navItem.path, url));
     return item?.label ?? 'Dashboard';
   });
 
@@ -97,6 +106,10 @@ export class ShellComponent implements OnInit {
 
   showNotifications(): void {
     this.message.add({ severity: 'info', summary: 'Notifications', detail: 'No new notifications.' });
+  }
+
+  isActive(path: string, currentUrl = this.router.url.split('?')[0]): boolean {
+    return currentUrl === path || currentUrl.startsWith(`${path}/`);
   }
 
   goToMonths(): void {

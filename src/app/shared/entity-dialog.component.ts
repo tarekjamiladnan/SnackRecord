@@ -6,7 +6,7 @@ import { UI_IMPORTS } from './ui';
 export interface FieldConfig {
   key: string;
   label: string;
-  type?: 'text' | 'number' | 'date' | 'select';
+  type?: 'text' | 'number' | 'date' | 'select' | 'email' | 'password';
   required?: boolean;
   options?: { label: string; value: string }[];
 }
