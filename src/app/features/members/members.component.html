@@ -48,7 +48,10 @@
             <td>
               <div class="person-cell">
                 <span class="initials">{{ initials(row.name) }}</span>
-                <strong>{{ row.name }}</strong>
+                <div class="person-text">
+                  <strong>{{ row.name }}</strong>
+                  <span class="login-hint" [title]="'Login with ' + row.email">{{ row.email }}</span>
+                </div>
               </div>
             </td>
             <td><span class="muted">{{ row.phone || '—' }}</span></td>

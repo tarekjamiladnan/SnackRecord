@@ -42,62 +42,75 @@ export class MembersComponent extends CrudPageBase<Member> {
   }
 
   override async open(row?: Member): Promise<void> {
-    if (row) {
-      this.fields = [
-        { key: 'name', label: 'Full Name', required: true },
-        { key: 'email', label: 'Email Address', type: 'email', required: true },
-        { key: 'phone', label: 'Phone Number' }
-      ];
-      super.open(row);
-      return;
-    }
-    this.fields = [
+    const isEdit = !!row;
+    const fields: FieldConfig[] = [
       { key: 'name', label: 'Full Name', required: true },
       { key: 'email', label: 'Email Address', type: 'email', required: true },
       { key: 'phone', label: 'Phone Number' },
-      { key: 'initial_password', label: 'Initial Password', type: 'password', required: true }
+      {
+        key: 'initial_password',
+        label: isEdit ? 'New Password (leave empty to keep)' : 'Initial Password',
+        type: 'password',
+        required: !isEdit
+      }
     ];
+    this.fields = fields;
     const ref = this.dialog.open(EntityDialogComponent, {
-      header: 'Add Member',
+      header: isEdit ? 'Edit Member' : 'Add Member',
       width: '520px',
       data: {
-        title: 'Add Member',
-        fields: this.fields,
-        value: {}
+        title: isEdit ? 'Edit Member' : 'Add Member',
+        fields,
+        value: row ?? {}
       }
     });
     ref?.onClose.subscribe(async (value) => {
       if (!value) return;
-      try {
-        const name = String(value.name ?? '').trim();
-        const email = String(value.email ?? '').trim().toLowerCase();
-        if (!name || !email) {
-          this.message.add({ severity: 'warn', summary: 'Missing info', detail: 'Name and email are required.' });
-          return;
-        }
-        const payload = {
-          p_full_name: name,
-          p_email: email,
-          p_phone: String(value.phone ?? '').trim() || null,
-          p_password: String(value.initial_password ?? '')
-        };
-        const { data, error } = await this.auth.client.rpc('create_member_user', payload);
-        if (error) throw error;
-        await this.auth.audit('Member User Add', 'members', data.id, { email });
-        this.message.add({
-          severity: 'success',
-          summary: 'Member user saved',
-          detail: `${data.name} can log in with the initial password.`
-        });
-        await this.load();
-      } catch (err) {
-        this.message.add({
-          severity: 'error',
-          summary: 'Member save failed',
-          detail: err instanceof Error ? err.message : 'Please try again.'
-        });
-      }
+      await this.saveMember(value, isEdit);
     });
+  }
+
+  private async saveMember(value: Record<string, unknown>, isEdit: boolean): Promise<void> {
+    const name = String(value['name'] ?? '').trim();
+    const email = String(value['email'] ?? '').trim().toLowerCase();
+    if (!name || !email) {
+      this.message.add({ severity: 'warn', summary: 'Missing info', detail: 'Name and email are required.' });
+      return;
+    }
+    const password = String(value['initial_password'] ?? '').trim();
+    if (password && password.length < 6) {
+      this.message.add({ severity: 'warn', summary: 'Password too short', detail: 'Password must be at least 6 characters.' });
+      return;
+    }
+    const payload = {
+      p_full_name: name,
+      p_email: email,
+      p_phone: String(value['phone'] ?? '').trim() || null,
+      p_password: isEdit && !password ? null : password
+    };
+    try {
+      const { data, error } = await this.auth.client.rpc('create_member_user', payload);
+      if (error) throw error;
+      await this.auth.audit(isEdit ? 'Member Update' : 'Member User Add', 'members', data?.id ?? null, { email });
+      this.message.add({
+        severity: 'success',
+        summary: isEdit ? 'Member updated' : 'Member user saved',
+        detail: isEdit
+          ? data?.id
+            ? password
+              ? `Login password reset for ${data?.name}.`
+              : `${data?.name} logs in with their email.`
+            : ''
+          : `${data?.name} can log in with the initial password.`
+      });
+      await this.load();
+    } catch (err) {
+      this.message.add({
+        severity: 'error',
+        summary: isEdit ? 'Member update failed' : 'Member save failed',
+        detail: err instanceof Error ? err.message : 'Please try again.'
+      });
+    }
   }
 
   override async load(): Promise<void> {

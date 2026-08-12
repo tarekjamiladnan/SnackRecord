@@ -371,6 +371,26 @@
   gap: 12px;
 }
 
+.person-cell .person-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.person-cell .person-text strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.person-cell .login-hint {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .person-cell .initials,
 .initials {
   display: grid;
