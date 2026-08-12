@@ -2,7 +2,7 @@
   <div class="hero-card">
     <div class="hero-copy">
       <span class="hero-chip"><svg lucideSparkles /> Dashboard</span>
-      <h1>Good to see you{{ managerName() ? ', ' + managerName() : '' }}!</h1>
+      <h1>Good to see you{{ loggedInName() ? ', ' + loggedInName() + '!' : '!' }}</h1>
       <p>{{ isAdmin() ? "Here's how the month is shaping up for your members." : 'Your balance and shared snack reports are read-only.' }}</p>
       @if (isAdmin()) {
         <div class="hero-actions">

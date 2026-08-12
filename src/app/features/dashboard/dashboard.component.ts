@@ -20,8 +20,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   members = signal<{ id: string; name: string }[]>([]);
   previewRows = signal<EntryPreview[]>([]);
   memberUsed = signal<{ name: string; used: number }[]>([]);
-  managerName = signal('');
   collectedTotal = signal(0);
+  loggedInName = () => this.supabase.profile()?.full_name ?? this.supabase.user()?.email?.split('@')[0] ?? '';
   loading = signal(true);
   isAdmin = () => this.supabase.profile()?.role === 'admin';
   personalRow = () => this.rows().find((row) => row.userId === this.supabase.user()?.id || row.email === this.supabase.profile()?.email) ?? null;
@@ -55,9 +55,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const [{ data: members }, { data: settings }, { data: month }] = await Promise.all([
+      const [{ data: members }, { data: month }] = await Promise.all([
         this.supabase.client.from('members').select('id,user_id,email,name').eq('status', 'active').order('name'),
-        this.supabase.client.from('settings').select('manager_name').eq('id', 1).maybeSingle(),
         this.supabase.client.from('months').select('id').eq('status', 'open').order('year', { ascending: false }).order('month', { ascending: false }).limit(1).maybeSingle()
       ]);
       const monthId = month?.id;
@@ -72,7 +71,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }];
       const activeMembers = (members ?? []) as { id: string; user_id: string | null; email: string | null; name: string }[];
       this.members.set(activeMembers);
-      this.managerName.set(settings?.manager_name ?? '');
       this.collectedTotal.set((collections ?? []).reduce((sum, item) => sum + Number(item.amount), 0));
 
       const opening = new Map<string, number>();
