@@ -1,12 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createClient, Session, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
 import { Month, Profile, Role } from './models';
+import { getRuntimeConfig } from './runtime-config';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
-  readonly client: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseAnonKey, {
+  private readonly runtimeConfig = getRuntimeConfig();
+  readonly client: SupabaseClient = createClient(this.runtimeConfig.supabaseUrl, this.runtimeConfig.supabaseAnonKey, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   });
   readonly session = signal<Session | null>(null);
