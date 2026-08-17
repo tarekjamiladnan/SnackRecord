@@ -11,6 +11,7 @@
   width: 100%;
   max-width: 1720px;
   margin-inline: auto;
+  min-width: 0;
 }
 
 /* ---------- Sidebar ---------- */
@@ -277,6 +278,25 @@
   overflow: hidden;
 }
 
+.mobile-brand {
+  display: none;
+  min-width: 0;
+  align-items: center;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mobile-brand-name {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .crumb-dot {
   width: 9px;
   height: 9px;
@@ -492,8 +512,8 @@
     top: 0;
     left: 0;
     height: 100vh;
-    width: 280px;
-    max-width: 85vw;
+    width: min(280px, 82vw);
+    max-width: 82vw;
     border-radius: 0 26px 26px 0;
     transform: translateX(-105%);
     z-index: 50;
@@ -503,6 +523,8 @@
   .topbar { top: 12px; }
   .search-box { display: none; }
   .profile-meta { display: none; }
+  .crumb { display: none; }
+  .mobile-brand { display: flex; }
   .crumb-title { font-size: 1rem; }
   .topbar { height: 66px; }
 }
@@ -510,13 +532,15 @@
 @media (max-width: 480px) {
   .shell { padding: 8px; }
   .topbar { border-radius: 18px; padding: 0 8px 0 6px; gap: 8px; }
-  .topbar-left { gap: 6px; }
+  .topbar-left { gap: 6px; flex: 1 1 auto; min-width: 0; }
   .topbar-right { gap: 8px; }
   .icon-btn { width: 40px; height: 40px; border-radius: 12px; }
   .bell { display: none; }
-  .profile { padding: 4px 4px 4px 2px; }
+  .profile { padding: 4px 4px 4px 2px; min-width: 0; }
   .profile .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 0.78rem; }
   .profile-caret { display: none; }
   .content { padding: 2px; }
-  .crumb-title { font-size: 0.95rem; }
+  .crumb { flex: 1; min-width: 0; }
+  .crumb-title { font-size: 0.95rem; max-width: 100%; }
+  .mobile-brand-name { font-size: 0.8rem; }
 }

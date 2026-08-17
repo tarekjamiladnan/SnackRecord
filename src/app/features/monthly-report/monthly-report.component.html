@@ -31,9 +31,6 @@
         />
       </div>
       <div class="report-actions">
-        <button pButton severity="secondary" (click)="loadAndDownload(false)">
-          <svg lucideFileSpreadsheet /> Download Excel
-        </button>
         <button pButton (click)="loadAndDownload(true)">
           <svg lucideFileDown /> Download PDF
         </button>
@@ -59,7 +56,7 @@
         <span>No month found for {{ monthName() }} {{ year }}.</span>
       </div>
     } @else {
-      <div class="report-preview">
+      <div class="report-preview desktop-table">
         <table>
           <thead>
             <tr>
@@ -91,6 +88,23 @@
             </tr>
           </tfoot>
         </table>
+      </div>
+
+      <div class="report-mobile-list mobile-only">
+        @for (row of rows; track row.person) {
+          <div class="report-mobile-row">
+            <div class="report-mobile-head">
+              <strong>{{ row.person }}</strong>
+              <span class="amount-pill accent">{{ row.left | number:'1.0-2' }} left</span>
+            </div>
+            <div class="report-mobile-metrics">
+              <div><span>Opening</span><b>{{ row.opening | number:'1.0-2' }}</b></div>
+              <div><span>Given</span><b>{{ row.given | number:'1.0-2' }}</b></div>
+              <div><span>Used</span><b>{{ row.used | number:'1.0-2' }}</b></div>
+              <div><span>Left</span><b>{{ row.left | number:'1.0-2' }}</b></div>
+            </div>
+          </div>
+        }
       </div>
     }
   </p-card>

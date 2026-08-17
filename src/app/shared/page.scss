@@ -579,9 +579,9 @@
 
 .sheet {
   border-collapse: collapse;
-  min-width: 540px;
   width: 100%;
-  table-layout: fixed;
+  min-width: 0;
+  table-layout: auto;
 }
 
 .sheet th,
@@ -589,7 +589,9 @@
   border-bottom: 1px solid var(--divider);
   padding: 12px 14px;
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .sheet th {
@@ -977,6 +979,13 @@
   .report-toolbar { align-items: stretch; flex-direction: column; }
   .report-actions { margin-left: 0; }
   .report-actions .p-button { flex: 1; }
+  .report-preview { padding: 12px; }
+  .report-preview table { font-size: 0.74rem; }
+  .report-preview th,
+  .report-preview td { padding: 8px 6px; }
+  .desktop-table { display: none !important; }
+  .mobile-only { display: grid !important; }
+  .report-mobile-list { display: grid; }
 }
 
 /* ---------- Report preview ---------- */
@@ -985,14 +994,73 @@
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.55);
   border: 1px solid var(--glass-border);
-  overflow-x: auto;
+  overflow-x: hidden;
+}
+
+.report-mobile-list {
+  display: none;
+  gap: 12px;
+}
+
+.report-mobile-row {
+  display: grid;
+  gap: 10px;
+  padding: 14px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid var(--glass-border);
+}
+
+.report-mobile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.report-mobile-head strong {
+  font-size: 0.96rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.report-mobile-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.report-mobile-metrics div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255, 107, 0, 0.06);
+}
+
+.report-mobile-metrics span {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-2);
+}
+
+.report-mobile-metrics b {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-1);
 }
 
 .report-preview table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.86rem;
-  min-width: 560px;
+  min-width: 0;
+  table-layout: auto;
 }
 
 .report-preview th,
@@ -1000,6 +1068,9 @@
   padding: 10px 12px;
   border-bottom: 1px solid var(--divider);
   text-align: left;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .report-preview thead th {

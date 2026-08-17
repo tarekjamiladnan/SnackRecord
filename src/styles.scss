@@ -86,7 +86,6 @@ body {
 
 body {
   margin: 0;
-  overflow-x: hidden;
   font-family: var(--font);
   font-weight: 500;
   color: var(--text-1);
@@ -98,6 +97,26 @@ body {
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img, svg, canvas, video, iframe, object, embed {
+  max-width: 100%;
+  height: auto;
+}
+
+app-root,
+.shell,
+.main,
+.content,
+.page,
+.page-head,
+.page-hero,
+.report-preview,
+.p-card,
+.p-dialog {
+  min-width: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {

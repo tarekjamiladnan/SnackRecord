@@ -45,10 +45,17 @@
         <button class="icon-btn" (click)="toggleSidebar()" [attr.aria-label]="'Toggle menu'">
           <svg lucideMenu />
         </button>
-        <div class="crumb">
-          <span class="crumb-dot"></span>
-          <span class="crumb-title">{{ currentTitle() }}</span>
-        </div>
+
+        @if (isDesktop()) {
+          <div class="crumb">
+            <span class="crumb-dot"></span>
+            <span class="crumb-title">{{ currentTitle() }}</span>
+          </div>
+        } @else {
+          <div class="mobile-brand" aria-label="Phantom Snack Record">
+            <span class="mobile-brand-name">Phantom Snack Record</span>
+          </div>
+        }
       </div>
 
       <div class="topbar-right">
