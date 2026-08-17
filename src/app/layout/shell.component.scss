@@ -282,8 +282,17 @@
   display: none;
   min-width: 0;
   align-items: center;
+  gap: 8px;
   flex: 1;
   overflow: hidden;
+}
+
+.mobile-brand-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .mobile-brand-name {

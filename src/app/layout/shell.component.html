@@ -6,7 +6,7 @@
   <aside class="sidebar" [class.collapsed]="isDesktop() && collapsed()" [class.mobile-open]="!isDesktop() && mobileOpen()">
     <div class="brand">
       <div class="brand-logo">
-        <img src="phantom-logo.svg" alt="Phantom Snack Record" />
+        <img src="phantom-logo-1.png" alt="Phantom Snack Record" />
       </div>
       <div class="brand-text">
         <b>Phantom</b>
@@ -53,6 +53,7 @@
           </div>
         } @else {
           <div class="mobile-brand" aria-label="Phantom Snack Record">
+            <img class="mobile-brand-logo" src="phantom-logo-1.png" alt="Phantom Snack Record" />
             <span class="mobile-brand-name">Phantom Snack Record</span>
           </div>
         }
