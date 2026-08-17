@@ -18,9 +18,14 @@ export interface RuntimeConfig {
 
 export function getRuntimeConfig(): RuntimeConfig {
   const config = window.__APP_CONFIG__ ?? {};
+  const hasSupabaseRuntimeConfig = Boolean((config.supabaseUrl ?? '').trim() && (config.supabaseAnonKey ?? '').trim());
   const runtimeConfig: RuntimeConfig = {
-    supabaseUrl: (config.supabaseUrl ?? environment.supabaseUrl ?? '').trim(),
-    supabaseAnonKey: (config.supabaseAnonKey ?? environment.supabaseAnonKey ?? '').trim(),
+    supabaseUrl: hasSupabaseRuntimeConfig
+      ? (config.supabaseUrl ?? '').trim()
+      : ((environment.supabaseUrl ?? '').trim() || 'https://invalid.supabase.co'),
+    supabaseAnonKey: hasSupabaseRuntimeConfig
+      ? (config.supabaseAnonKey ?? '').trim()
+      : ((environment.supabaseAnonKey ?? '').trim() || 'invalid-anon-key'),
     appName: (config.appName ?? environment.appName ?? 'Phantom Snack Record').trim() || 'Phantom Snack Record'
   };
 

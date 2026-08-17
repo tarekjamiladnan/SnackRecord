@@ -27,10 +27,12 @@ npm install
 -- 2. supabase/sample-data.sql
 ```
 
-3. Update these files with your Supabase anon config:
+3. Configure runtime environment variables for the frontend client:
 
-- `src/environments/environment.ts`
-- `src/environments/environment.prod.ts`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+
+The build generates `public/app-config.js` from these values. Do not commit real keys in source files.
 
 4. Seed the requested admin user:
 
@@ -59,6 +61,8 @@ Open `http://localhost:4200`.
 ```bash
 npm run build
 ```
+
+For Vercel, set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in project environment variables before deploying.
 
 Deploy `dist/phantom-snack-record/browser` to Vercel, Netlify, Cloudflare Pages, Firebase Hosting, or any static host. Configure the host to rewrite all routes to `index.html`.
 

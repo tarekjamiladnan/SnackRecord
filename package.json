@@ -2,6 +2,7 @@
   "name": "phantom-snack-record",
   "version": "0.0.0",
   "scripts": {
+    "prebuild": "node scripts/generate-app-config.mjs",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
