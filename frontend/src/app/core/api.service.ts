@@ -6,7 +6,7 @@ import { getRuntimeConfig } from './runtime-config';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly baseUrl = getRuntimeConfig().apiUrl || 'http://localhost:5000/api';
+  private readonly baseUrl = (getRuntimeConfig().apiUrl || 'http://localhost:5000/api').replace(/\/+$/, '');
   readonly token = signal<string | null>(null);
   readonly isLoading = signal(false);
 

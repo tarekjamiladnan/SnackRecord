@@ -14,10 +14,17 @@ export interface RuntimeConfig {
   appName: string;
 }
 
+const pickUrl = (value: string): string => {
+  const matches = value.match(/https?:\/\/[^\s"'`=,]+/gi);
+  return matches && matches.length
+    ? matches[matches.length - 1].replace(/[,"'`\s]+$/, '').replace(/\/+$/, '')
+    : '';
+};
+
 export function getRuntimeConfig(): RuntimeConfig {
   const config = window.__APP_CONFIG__ ?? {};
   const runtimeConfig: RuntimeConfig = {
-    apiUrl: (config.apiUrl ?? environment.apiUrl ?? 'http://localhost:3000/api').trim() || 'http://localhost:3000/api',
+    apiUrl: pickUrl(config.apiUrl ?? environment.apiUrl ?? 'http://localhost:3000/api') || 'http://localhost:5000/api',
     appName: (config.appName ?? environment.appName ?? 'Phantom Snack Record').trim() || 'Phantom Snack Record'
   };
 
