@@ -18,7 +18,7 @@ async function main() {
 
   console.log(`✓ Team ready: ${team.name}`);
 
-  const passwordHash = await bcrypt.hash('adnan123', 12);
+  const passwordHash = await bcrypt.hash('adnan123', 10);
   const user = await prisma.user.upsert({
     where: { email: 'admin@gmail.com' },
     update: {
@@ -60,7 +60,7 @@ async function main() {
     }
   });
 
-  const superHash = await bcrypt.hash('Adnan@123', 12);
+  const superHash = await bcrypt.hash('Adnan@123', 10);
   const superUser = await prisma.user.upsert({
     where: { email: 'superadmin@gmail.com' },
     update: {

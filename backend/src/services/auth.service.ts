@@ -13,6 +13,8 @@ const jwt = require('jsonwebtoken') as {
   sign: (payload: Record<string, unknown>, secret: string, options: { expiresIn?: string | number }) => string;
 };
 
+const BCRYPT_ROUNDS = 10;
+
 export interface RegisterTeamInput {
   teamName: string;
   adminName: string;
@@ -59,7 +61,7 @@ export const authService = {
       suffix += 1;
     }
 
-    const passwordHash = await bcrypt.hash(input.password, 12);
+    const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
 
     const result = await prisma.$transaction(async (tx) => {
       const team = await tx.team.create({
@@ -145,7 +147,7 @@ export const authService = {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new ApiError('User not found', 404);
 
-    const passwordHash = await bcrypt.hash(newPassword, 12);
+    const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
     await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
     return { message: 'Password updated successfully' };
   },

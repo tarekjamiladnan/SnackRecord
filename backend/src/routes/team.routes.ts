@@ -1,9 +1,12 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
+import bcrypt from 'bcryptjs';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
 import { prisma } from '../config/prisma.js';
 import { validate } from '../validators/validate.js';
 import { Role, MonthStatus } from '@prisma/client';
+
+const BCRYPT_ROUNDS = 10;
 
 export const teamRoutes = Router();
 export const memberRoutes = Router();
@@ -101,7 +104,7 @@ const createMember = async (req: any, res: any, next: any) => {
         name,
         email,
         phone,
-        passwordHash: await import('bcryptjs').then(({ default: bcrypt }) => bcrypt.hash(password, 12)),
+        passwordHash: await bcrypt.hash(password, BCRYPT_ROUNDS),
         role: Role.MEMBER
       }
     });
