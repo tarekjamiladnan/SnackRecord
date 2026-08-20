@@ -1,0 +1,142 @@
+<section class="auth">
+  <div class="auth-card animate-scale-in">
+    <div class="auth-head">
+      <div class="brand-logo"><img src="phantom-logo-1.png" alt="Phantom Snack Record" /></div>
+      @if (mode() === 'login') {
+        <h1>Welcome back</h1>
+        <p>Sign in to your Snack Record account</p>
+      } @else {
+        <h1>Create a new record</h1>
+        <p>Set up your team record and start tracking snacks right away</p>
+      }
+    </div>
+
+    <div class="auth-mode">
+      <button type="button" class="auth-mode-btn" [class.active]="mode() === 'login'" (click)="setMode('login')">Sign in</button>
+      <button type="button" class="auth-mode-btn" [class.active]="mode() === 'register'" (click)="setMode('register')">Create new record</button>
+    </div>
+
+    @if (mode() === 'login') {
+      <form [formGroup]="form" class="auth-form" (ngSubmit)="login()">
+        <div class="field">
+          <label class="field-label" for="email">Email address</label>
+          <div class="field-input-wrap">
+            <svg class="field-icon" lucideMail />
+            <input pInputText id="email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" autofocus />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label-row">
+            <label class="field-label" for="password">Password</label>
+            <a class="forgot-link" routerLink="/auth/forgot-password">Forgot password?</a>
+          </div>
+          <div class="password-wrap">
+            <svg class="field-icon" lucideLock />
+            <input pInputText id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" class="toggle-password" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+              @if (showPassword()) { <svg lucideEyeOff /> } @else { <svg lucideEye /> }
+            </button>
+          </div>
+        </div>
+
+        @if (error()) {
+          <div class="error"><svg lucideTriangleAlert /><span>{{ error() }}</span></div>
+        }
+        @if (info()) {
+          <div class="success"><svg lucideCircleCheck /><span>{{ info() }}</span></div>
+        }
+
+        <button pButton type="submit" class="auth-btn" [disabled]="form.invalid || loading()">
+          @if (loading()) {
+            <span class="spinner"></span>
+          } @else {
+            <svg lucideLogIn /> Sign in
+          }
+        </button>
+      </form>
+
+      <p class="auth-foot">
+        New team? <a (click)="setMode('register')">Create a new record</a>
+      </p>
+    } @else {
+      <form [formGroup]="registerForm" class="auth-form" (ngSubmit)="register()">
+        <div class="field">
+          <label class="field-label" for="teamName">Team name</label>
+          <div class="field-input-wrap">
+            <svg class="field-icon" lucideStore />
+            <input pInputText id="teamName" formControlName="teamName" placeholder="e.g. Acme Engineering" autocomplete="organization" autofocus />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="adminName">Admin name</label>
+          <div class="field-input-wrap">
+            <svg class="field-icon" lucideUserRound />
+            <input pInputText id="adminName" formControlName="adminName" placeholder="Your full name" autocomplete="name" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="regEmail">Admin email</label>
+          <div class="field-input-wrap">
+            <svg class="field-icon" lucideMail />
+            <input pInputText id="regEmail" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="phone">Phone number</label>
+          <div class="field-input-wrap">
+            <svg class="field-icon" lucidePhone />
+            <input pInputText id="phone" formControlName="phone" placeholder="+880 1X-XXXXXXX" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="regPassword">Password</label>
+          <div class="password-wrap">
+            <svg class="field-icon" lucideLock />
+            <input pInputText id="regPassword" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="At least 8 characters" autocomplete="new-password" />
+            <button type="button" class="toggle-password" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+              @if (showPassword()) { <svg lucideEyeOff /> } @else { <svg lucideEye /> }
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="confirmPassword">Confirm password</label>
+          <div class="password-wrap">
+            <svg class="field-icon" lucideKeyRound />
+            <input pInputText id="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password'" formControlName="confirmPassword" placeholder="Repeat your password" autocomplete="new-password" />
+            <button type="button" class="toggle-password" (click)="showConfirmPassword.set(!showConfirmPassword())" [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'">
+              @if (showConfirmPassword()) { <svg lucideEyeOff /> } @else { <svg lucideEye /> }
+            </button>
+          </div>
+        </div>
+
+        @if (registerForm.errors?.['mismatch'] && registerForm.controls.confirmPassword.touched) {
+          <div class="error"><svg lucideTriangleAlert /><span>Passwords do not match</span></div>
+        }
+        @if (error()) {
+          <div class="error"><svg lucideTriangleAlert /><span>{{ error() }}</span></div>
+        }
+        @if (info()) {
+          <div class="success"><svg lucideCircleCheck /><span>{{ info() }}</span></div>
+        }
+
+        <button pButton type="submit" class="auth-btn" [disabled]="registerForm.invalid || loading()">
+          @if (loading()) {
+            <span class="spinner"></span>
+          } @else {
+            <svg lucideStore /> Create My Team Record
+          }
+        </button>
+      </form>
+
+      <p class="auth-foot">
+        Already registered? <a (click)="setMode('login')">Sign in</a>
+      </p>
+    }
+  </div>
+</section>

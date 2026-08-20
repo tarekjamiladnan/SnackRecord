@@ -1,0 +1,140 @@
+<div class="shell" [class.desktop]="isDesktop()">
+  @if (!isDesktop() && mobileOpen()) {
+    <div class="scrim" (click)="closeMobile()"></div>
+  }
+
+  <aside class="sidebar" [class.collapsed]="isDesktop() && collapsed()" [class.mobile-open]="!isDesktop() && mobileOpen()">
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="phantom-logo-1.png" alt="Phantom Snack Record" />
+      </div>
+      <div class="brand-text">
+        <b>{{ teamName() || brandName }}</b>
+        <span>{{ teamName() ? brandName : 'Admin Console' }}</span>
+      </div>
+    </div>
+
+    <div class="nav-label-pill" [class.hidden]="isDesktop() && collapsed()">Menu</div>
+
+    <nav class="nav">
+      @for (item of nav(); track item.path) {
+        <a
+          class="nav-item"
+          [class.active]="isActive(item.path)"
+          [routerLink]="item.path"
+          (click)="closeMobile()"
+          [pTooltip]="isDesktop() && collapsed() ? item.label : ''"
+          tooltipPosition="right"
+        >
+          <span class="nav-icon"><ng-container *ngComponentOutlet="item.icon" /></span>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="side-foot">
+      <button class="collapse-btn" (click)="toggleSidebar()" [pTooltip]="isDesktop() && collapsed() ? 'Expand sidebar' : 'Collapse sidebar'" tooltipPosition="right">
+        <svg lucideChevronLeft />
+      </button>
+    </div>
+  </aside>
+
+  <div class="main" [class.collapsed]="isDesktop() && collapsed()">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" (click)="toggleSidebar()" [attr.aria-label]="'Toggle menu'">
+          <svg lucideMenu />
+        </button>
+
+        @if (isDesktop()) {
+          <div class="crumb">
+            <span class="crumb-dot"></span>
+            <span class="crumb-title">{{ teamName() || brandName }}</span>
+          </div>
+        } @else {
+          <div class="mobile-brand" aria-label="Phantom Snack Record">
+            <img class="mobile-brand-logo" src="phantom-logo-1.png" alt="Phantom Snack Record" />
+            <span class="mobile-brand-name">{{ teamName() ? teamName() + ' ' + brandName : brandName }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="topbar-right">
+        <div class="search-box">
+          <svg lucideSearch />
+          <input
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+            (keyup.enter)="runQuickSearch()"
+            placeholder="Jump to a page…"
+            aria-label="Search"
+          />
+        </div>
+
+        <button class="icon-btn bell" aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom" (click)="showNotifications()">
+          <svg lucideBell />
+        </button>
+
+        <div class="profile" (click)="profileOpen.set(!profileOpen())">
+          <div class="avatar">{{ initials() }}</div>
+          <div class="profile-meta">
+            <b>{{ userName() }}</b>
+            <span>{{ role() }}</span>
+          </div>
+          <svg class="profile-caret" [class.flip]="profileOpen()" lucideChevronDown />
+        </div>
+
+        @if (profileOpen()) {
+          <div class="profile-menu animate-scale-in">
+          <div class="profile-menu-head">
+            <div class="avatar">{{ initials() }}</div>
+            <div>
+              <b>{{ userName() }}</b>
+              <span>{{ role() }}</span>
+            </div>
+          </div>
+            <div class="divider"></div>
+            <a routerLink="/auth/change-password" (click)="closeMobile()">
+              <svg lucideKeyRound />
+              <span>Change password</span>
+            </a>
+            <button (click)="auth.logout()">
+              <svg lucideLogOut />
+              <span>Logout</span>
+            </button>
+          </div>
+        }
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet #o="outlet" />
+    </main>
+  </div>
+
+  <p-toast position="top-right" [preventOpenDuplicates]="true">
+    <ng-template pTemplate="headless" let-message let-close="closeFn">
+      <div class="psr-toast" [class]="'severity-' + (message.severity ?? 'info')">
+        <div class="psr-toast-icon">
+          @switch (message.severity) {
+            @case ('success') { <svg lucideCircleCheck /> }
+            @case ('error') { <svg lucideCircleAlert /> }
+            @case ('warn') { <svg lucideTriangleAlert /> }
+            @default { <svg lucideBell /> }
+          }
+        </div>
+        <div class="psr-toast-body">
+          <b>{{ message.summary }}</b>
+          @if (message.detail) { <span>{{ message.detail }}</span> }
+        </div>
+        <div class="psr-toast-actions">
+          @if (message.key === 'no-month') {
+            <button class="psr-toast-btn" (click)="close($event); goToMonths()">Create Month</button>
+          } @else {
+            <button class="psr-toast-close" (click)="close($event)" aria-label="Dismiss"><svg lucideX /></button>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </p-toast>
+</div>

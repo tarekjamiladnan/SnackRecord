@@ -1,0 +1,99 @@
+<section class="page">
+  <div class="page-head">
+    <div>
+      <h1>Today's Orders</h1>
+      <p class="page-sub">{{ rows().length }} order{{ rows().length === 1 ? '' : 's' }}</p>
+    </div>
+  </div>
+
+  <p-card>
+    <div class="panel-title">
+      <div>
+        <h2>Late Order Requests</h2>
+        <p>{{ requests().length }} request{{ requests().length === 1 ? '' : 's' }}</p>
+      </div>
+    </div>
+
+    @if (requestLoading()) {
+      <div class="loading"><p-progressspinner /></div>
+    } @else {
+      <p-table [value]="requests()" styleClass="desktop-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Member</th>
+            <th>Requested</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td><strong>{{ row.member?.name || row.member?.email || 'Member' }}</strong></td>
+            <td>{{ row.createdAt | date:'short' }}</td>
+            <td>
+              @switch (row.status) {
+                @case ('approved') { <p-tag value="Approved" severity="success" /> }
+                @case ('rejected') { <p-tag value="Rejected" severity="danger" /> }
+                @default { <p-tag value="Pending" severity="warn" /> }
+              }
+            </td>
+            <td>
+              @if (row.status === 'pending') {
+                <div class="row-actions">
+                  <button pButton type="button" class="p-button-success action-label" (click)="setRequestStatus(row, 'approved')"><svg lucideCircleCheck /><span>Approve</span></button>
+                  <button pButton type="button" class="p-button-danger action-label" (click)="setRequestStatus(row, 'rejected')"><svg lucideX /><span>Reject</span></button>
+                </div>
+              }
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="4" class="empty-state"><b>No requests</b><span>No late-order requests for this date.</span></td></tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+
+  <p-card>
+    <div class="toolbar">
+      <p-iconfield class="search">
+        <p-inputicon styleClass="pi pi-search" />
+        <input pInputText #q [value]="search()" (input)="search.set(q.value); load()" placeholder="Search orders..." />
+      </p-iconfield>
+      <p-datepicker [ngModel]="dateValue" (ngModelChange)="setDate($event)" dateFormat="dd/mm/yy" appendTo="body" showIcon />
+    </div>
+
+    @if (loading()) {
+      <div class="loading"><p-progressspinner /></div>
+    } @else {
+      <p-table [value]="rows()" styleClass="desktop-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Member</th>
+            <th>Order</th>
+            <th>Submitted</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td><strong>{{ row.member?.name || row.member?.email || 'Member' }}</strong></td>
+            <td class="order-cell">{{ row.orderText }}</td>
+            <td>{{ row.createdAt | date:'shortTime' }}</td>
+            <td>{{ row.updatedAt | date:'shortTime' }}</td>
+            <td>
+              <div class="row-actions">
+                <button pButton type="button" class="p-button-text action-label" (click)="edit(row)"><svg lucidePencil /><span>Edit</span></button>
+                <button pButton type="button" class="p-button-danger action-label" (click)="remove(row)"><svg lucideTrash2 /><span>Delete</span></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="5" class="empty-state"><b>No orders found</b><span>No order submitted for this date.</span></td></tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+</section>

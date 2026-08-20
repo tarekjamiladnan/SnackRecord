@@ -1,0 +1,85 @@
+<section class="page">
+  <div class="page-head">
+    <div>
+      <h1>Settings</h1>
+      <p class="page-sub">Manage manager information</p>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge"><svg lucideUserRound /></span>
+        <div>
+          <h2>Manager Information</h2>
+          <p>This name appears across reports and the dashboard</p>
+        </div>
+      </div>
+
+      <form [formGroup]="form" class="prime-form settings-form" (ngSubmit)="save()">
+        <div class="field">
+          <span>Manager Name</span>
+          <input pInputText formControlName="managerName" placeholder="e.g. Rahim Bhai" />
+        </div>
+
+        <div class="field">
+          <span>Order Closing Time</span>
+          <input pInputText type="time" formControlName="orderClosingTime" />
+          <small class="field-hint">Members can no longer place orders after this time each day</small>
+        </div>
+
+        <div class="field">
+          <span>Enable Minimum Remaining Balance</span>
+          <label class="setting-check">
+            <input type="checkbox" formControlName="minBalanceEnabled" />
+            <span>Reject orders below minimum balance</span>
+          </label>
+        </div>
+
+        <div class="field" [class.disabled-field]="!form.value.minBalanceEnabled">
+          <span>Minimum Remaining Balance Amount</span>
+          <input pInputText type="number" min="0" formControlName="minBalanceAmount" />
+        </div>
+
+        <button pButton type="submit" class="save-button" [disabled]="form.invalid">
+          <svg lucideCircleCheck /> Save Settings
+        </button>
+      </form>
+    </p-card>
+
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge soft"><svg lucideShieldCheck /></span>
+        <div>
+          <h2>Company Profile</h2>
+          <p>Fixed application details</p>
+        </div>
+      </div>
+
+      <div class="profile-meta-grid">
+        <div class="mini-stat">
+          <span class="icon-badge" style="background:linear-gradient(135deg,#8b5cf6,#c4b5fd)"><svg lucideLayoutGrid /></span>
+          <div><b>Snack Record</b><span>Company</span></div>
+        </div>
+        <div class="mini-stat">
+          <span class="icon-badge" style="background:linear-gradient(135deg,#3b82f6,#93c5fd)"><svg lucideCoins /></span>
+          <div><b>BDT</b><span>Currency</span></div>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <div class="panel-title">
+        <span class="icon-badge"><svg lucideClipboardList /></span>
+        <div>
+          <h2>Order Management</h2>
+          <p>View and manage every user's daily order</p>
+        </div>
+      </div>
+
+      <button pButton type="button" class="save-button" style="margin-top:18px" (click)="goToOrders()">
+        <svg lucideClipboardList /> Manage Orders
+      </button>
+    </p-card>
+  </div>
+</section>

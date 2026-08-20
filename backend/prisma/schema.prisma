@@ -1,0 +1,309 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["public"]
+}
+
+enum Role {
+  SUPER_ADMIN
+  TEAM_ADMIN
+  MEMBER
+
+  @@schema("public")
+}
+
+enum TeamStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REJECTED
+
+  @@schema("public")
+}
+
+enum MonthStatus {
+  OPEN
+  LOCKED
+
+  @@schema("public")
+}
+
+model Team {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  slug      String      @unique
+  status    TeamStatus  @default(ACTIVE)
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime    @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+
+  users               User[]
+  snacks              Snack[]
+  menus               Menu[]
+  records             SnackRecord[]
+  members             Member[]
+  months              Month[]
+  dailyEntries        DailyEntry[]
+  entryItems          EntryItem[]
+  expenses            Expense[]
+  collections         Collection[]
+  memberMonthBalances MemberMonthBalance[]
+  orders              Order[]
+  orderRequests       OrderRequest[]
+  settings            TeamSetting?
+}
+
+model User {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId       String?  @db.Uuid
+  team         Team?    @relation(fields: [teamId], references: [id])
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         Role     @default(MEMBER)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+
+  records      SnackRecord[]
+  member       Member?
+}
+
+model Member {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  userId    String?  @unique @db.Uuid
+  user      User?    @relation(fields: [userId], references: [id])
+  name      String
+  email     String?
+  phone     String?
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+  @@unique([teamId, email])
+  @@index([teamId, status])
+}
+
+model Menu {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  name      String
+  price     Decimal  @db.Decimal(12, 2)
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+  @@unique([teamId, name])
+  @@index([teamId, status])
+}
+
+model Snack {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  name      String
+  price     Decimal  @db.Decimal(12, 2)
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+
+  records   SnackRecord[]
+
+  @@unique([teamId, name])
+  @@index([teamId, status])
+}
+
+model Month {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId       String      @db.Uuid
+  team         Team        @relation(fields: [teamId], references: [id])
+  year         Int
+  month        Int
+  openingCash  Decimal     @default(0) @db.Decimal(12, 2)
+  closingCash  Decimal     @default(0) @db.Decimal(12, 2)
+  status       MonthStatus @default(OPEN)
+  closedAt     DateTime?   @db.Timestamptz(6)
+  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+
+  dailyEntries DailyEntry[]
+  expenses     Expense[]
+  collections  Collection[]
+  balances     MemberMonthBalance[]
+
+  @@unique([teamId, year, month])
+  @@index([teamId, status])
+}
+
+model DailyEntry {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String    @db.Uuid
+  team      Team      @relation(fields: [teamId], references: [id])
+  monthId   String    @db.Uuid
+  month     Month     @relation(fields: [monthId], references: [id])
+  entryDate DateTime  @db.Date
+  totalCost Decimal   @default(0) @db.Decimal(12, 2)
+  remarks   String?
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+
+  items     EntryItem[]
+
+  @@index([teamId, monthId, entryDate])
+}
+
+model EntryItem {
+  id       String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId   String     @db.Uuid
+  team     Team       @relation(fields: [teamId], references: [id])
+  entryId  String     @db.Uuid
+  entry    DailyEntry @relation(fields: [entryId], references: [id])
+  memberId String     @db.Uuid
+  menuId   String?    @db.Uuid
+  quantity Decimal    @default(1) @db.Decimal(10, 2)
+  price    Decimal    @default(0) @db.Decimal(12, 2)
+  amount   Decimal    @default(0) @db.Decimal(12, 2)
+
+  @@schema("public")
+  @@index([teamId, entryId])
+}
+
+model Expense {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  monthId   String?  @db.Uuid
+  month     Month?   @relation(fields: [monthId], references: [id])
+  date      DateTime @db.Date
+  item      String
+  amount    Decimal  @db.Decimal(12, 2)
+  remarks   String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+  @@index([teamId, monthId, date])
+}
+
+model Collection {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  memberId  String   @db.Uuid
+  monthId   String?  @db.Uuid
+  month     Month?   @relation(fields: [monthId], references: [id])
+  amount    Decimal  @db.Decimal(12, 2)
+  date      DateTime @db.Date
+  remarks   String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+  @@index([teamId, memberId, monthId])
+}
+
+model MemberMonthBalance {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId         String   @db.Uuid
+  team           Team     @relation(fields: [teamId], references: [id])
+  memberId       String   @db.Uuid
+  monthId        String   @db.Uuid
+  month          Month    @relation(fields: [monthId], references: [id])
+  openingBalance Decimal  @default(0) @db.Decimal(12, 2)
+  collection     Decimal  @default(0) @db.Decimal(12, 2)
+  expenseShare   Decimal  @default(0) @db.Decimal(12, 2)
+  closingBalance Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+  @@unique([teamId, memberId, monthId])
+  @@index([teamId, monthId])
+}
+
+model SnackRecord {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  snackId   String   @db.Uuid
+  snack     Snack    @relation(fields: [snackId], references: [id])
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  quantity  Int      @default(1)
+  amount    Decimal  @db.Decimal(12, 2)
+  notes     String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+  @@index([teamId, userId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String?  @db.Uuid
+  actorId   String?  @db.Uuid
+  action    String
+  entity    String?
+  entityId  String?
+  metadata  Json
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@schema("public")
+  @@index([teamId, createdAt])
+}
+
+model TeamSetting {
+  id                Int      @id @default(1)
+  teamId            String   @unique @db.Uuid
+  team              Team     @relation(fields: [teamId], references: [id])
+  companyName       String   @default("Phantom Snack Record")
+  currency          String   @default("BDT")
+  managerName       String?
+  minBalanceEnabled Boolean  @default(false)
+  minBalanceAmount  Decimal  @default(20) @db.Decimal(12, 2)
+  orderClosingTime  String   @default("16:20")
+  updatedAt         DateTime @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+}
+
+model Order {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id])
+  memberId  String   @db.Uuid
+  orderDate DateTime @db.Date
+  orderText String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+  @@index([teamId, memberId, orderDate])
+}
+
+model OrderRequest {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId      String   @db.Uuid
+  team        Team     @relation(fields: [teamId], references: [id])
+  memberId    String   @db.Uuid
+  requestDate DateTime @db.Date
+  status      String   @default("pending")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  @@schema("public")
+  @@index([teamId, memberId, requestDate])
+}

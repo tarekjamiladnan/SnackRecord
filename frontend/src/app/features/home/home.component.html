@@ -1,0 +1,499 @@
+<main class="home">
+  <!-- ============================ NAVBAR ============================ -->
+  <header class="nav" [class.nav-open]="mobileNav()">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="Snack Record home">
+        <span class="brand-mark">
+          <svg lucideUtensilsCrossed />
+        </span>
+        <span class="brand-name">Snack Record</span>
+      </a>
+
+      <nav class="nav-links" [class.show]="mobileNav()">
+        <a class="nav-link" href="#home" (click)="closeMenu()">Home</a>
+        <a class="nav-link" href="#features" (click)="closeMenu()">Features</a>
+        <a class="nav-link" href="#how-it-works" (click)="closeMenu()">How It Works</a>
+        <a class="nav-link" href="#reports" (click)="closeMenu()">Reports</a>
+
+        <div class="nav-actions">
+          <a class="btn btn-ghost" routerLink="/auth/login">
+            <svg lucideLogIn /> Login
+          </a>
+          <a class="btn btn-primary" routerLink="/auth/login" [queryParams]="{ register: '1' }">
+            <svg lucidePlus /> Create New Record
+          </a>
+        </div>
+      </nav>
+
+      <button
+        type="button"
+        class="nav-toggle"
+        (click)="mobileNav.set(!mobileNav())"
+        [attr.aria-expanded]="mobileNav()"
+        aria-label="Toggle navigation menu"
+      >
+        @if (mobileNav()) { <svg lucideX /> } @else { <svg lucideMenu /> }
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero" id="home">
+    <div class="hero-glow hero-glow-1"></div>
+    <div class="hero-glow hero-glow-2"></div>
+
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow" data-reveal>
+          <span class="eyebrow-dot"></span>
+          Built for you &amp; your team
+        </div>
+
+        <h1 data-reveal>Your Team&rsquo;s Snacks. One&nbsp;Simple&nbsp;Record.</h1>
+
+        <p class="hero-sub" data-reveal>
+          Manage daily food orders, member balances, payments, and monthly snack
+          records &mdash; all in one simple place.
+        </p>
+
+        <div class="hero-cta" data-reveal>
+          <a class="btn btn-primary btn-lg" routerLink="/auth/login" [queryParams]="{ register: '1' }">
+            <svg lucidePlus /> Create New Record
+          </a>
+          <a class="btn btn-ghost btn-lg" routerLink="/auth/login">
+            <svg lucideLogIn /> Login
+          </a>
+        </div>
+
+        <div class="trust-strip" data-reveal>
+          <span class="trust-item"><svg lucideZap /> <b>Simple</b> — easy for everyone</span>
+          <span class="trust-item"><svg lucideLayoutGrid /> <b>Organized</b> — everything together</span>
+          <span class="trust-item"><svg lucideEye /> <b>Transparent</b> — everyone sees their own</span>
+        </div>
+      </div>
+
+      <!-- Hero product preview -->
+      <div class="hero-preview" data-reveal>
+        <div class="preview-window">
+          <div class="preview-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="preview-title"><svg lucideClipboardList /> Today&rsquo;s Record</span>
+            <span class="preview-avatar">A</span>
+          </div>
+
+          <div class="preview-body">
+            <div class="pv-card pv-order">
+              <div class="pv-head">
+                <span class="pv-label">Today&rsquo;s Order</span>
+                <span class="chip chip-success"><svg lucideCheck /> Confirmed</span>
+              </div>
+              <ul class="pv-list">
+                <li><svg lucideUtensilsCrossed /> Chicken &amp; Rice</li>
+                <li><svg lucideLeaf /> Salad</li>
+                <li><svg lucideCoffee /> Tea</li>
+              </ul>
+            </div>
+
+            <div class="pv-card pv-balance">
+              <span class="pv-label">My Balance</span>
+              <div class="pv-balance-row">
+                <span class="pv-balance-num">৳<b data-count="2500">0</b></span>
+                <span class="pv-balance-note">Given</span>
+              </div>
+              <div class="pv-balance-row">
+                <span class="pv-balance-num">৳<b data-count="1850">0</b></span>
+                <span class="pv-balance-note">Used</span>
+              </div>
+              <div class="pv-balance-row pv-left">
+                <span class="pv-balance-num">৳<b data-count="650">0</b></span>
+                <span class="pv-balance-note">Left</span>
+              </div>
+            </div>
+
+            <div class="pv-footer">
+              <span class="pv-label">Monthly Summary</span>
+              <div class="pv-meter">
+                <span class="pv-meter-fill"></span>
+              </div>
+              <span class="pv-meter-hint">Great — balance in the green this month</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-float animate-float">
+          <svg lucideSparkles /> Orders &amp; balances update automatically
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FEATURES ============================ -->
+  <section class="section" id="features">
+    <div class="section-head" data-reveal>
+      <h2>Everything Your Team Needs</h2>
+      <p>From today&rsquo;s food order to the end-of-month report, keep everything organized in one place.</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card" data-reveal>
+        <span class="feature-icon"><svg lucideUtensilsCrossed /></span>
+        <h3>Daily Food Ordering</h3>
+        <p>Members can place their food order for the day before the team&rsquo;s ordering deadline. If they need to order late, they can request permission from the team admin.</p>
+      </article>
+
+      <article class="feature-card" data-reveal>
+        <span class="feature-icon"><svg lucideWallet /></span>
+        <h3>Know Your Balance</h3>
+        <p>See how much you have given, how much you have used, and how much is left — so there is never any confusion about your snack balance.</p>
+        <div class="mini-balance">
+          <div><b>Given</b><span>৳2,500</span></div>
+          <div><b>Used</b><span>৳1,850</span></div>
+          <div class="mini-left"><b>Left</b><span>৳650</span></div>
+        </div>
+      </article>
+
+      <article class="feature-card" data-reveal>
+        <span class="feature-icon"><svg lucideUsers /></span>
+        <h3>Manage Your Team</h3>
+        <p>Add team members, keep their information organized, and give everyone their own account to access their snack records.</p>
+        <div class="mini-avatars">
+          <span class="mini-avatar">R</span>
+          <span class="mini-avatar">K</span>
+          <span class="mini-avatar">S</span>
+          <span class="mini-avatar">+</span>
+        </div>
+      </article>
+
+      <article class="feature-card" data-reveal>
+        <span class="feature-icon"><svg lucideClipboardList /></span>
+        <h3>Daily Records</h3>
+        <p>Keep track of daily snack consumption for every member and keep the team&rsquo;s records organized day after day.</p>
+        <div class="mini-daily">
+          <div class="mini-daily-head">Today</div>
+          <div class="mini-daily-row"><span class="mini-avatar sm">R</span>Rahim <b>৳80</b></div>
+          <div class="mini-daily-row"><span class="mini-avatar sm">K</span>Karim <b>৳70</b></div>
+          <div class="mini-daily-row"><span class="mini-avatar sm">S</span>Sumaiya <b>৳90</b></div>
+        </div>
+      </article>
+
+      <article class="feature-card" data-reveal>
+        <span class="feature-icon"><svg lucideHandCoins /></span>
+        <h3>Record Payments</h3>
+        <p>Keep track of the money members have paid into the snack fund and connect those payments with their monthly records.</p>
+        <div class="mini-payment">
+          <span class="mini-avatar">R</span>
+          <div>
+            <b>Rahim</b>
+            <span>Payment received</span>
+          </div>
+          <b class="mini-payment-amt">৳500</b>
+        </div>
+      </article>
+
+      <article class="feature-card" data-reveal>
+        <span class="feature-icon"><svg lucideChartColumn /></span>
+        <h3>Clear Monthly Reports</h3>
+        <p>See each member&rsquo;s monthly statement with their opening balance, payments, usage, and remaining balance. Export the report whenever you need it.</p>
+        <div class="mini-export">
+          <span class="chip chip-ghost"><svg lucideFileSpreadsheet /> PDF</span>
+          <span class="chip chip-ghost"><svg lucideFileSpreadsheet /> Excel</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================ HOW IT WORKS ============================ -->
+  <section class="section section-alt" id="how-it-works">
+    <div class="section-head" data-reveal>
+      <h2>How It Works</h2>
+      <p>Getting your team&rsquo;s snack records organized takes only a few simple steps.</p>
+    </div>
+
+    <ol class="timeline">
+      <li class="timeline-step" data-reveal>
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <h3>Create Your Team</h3>
+          <p>Set up your team and create your record.</p>
+        </div>
+      </li>
+      <li class="timeline-step" data-reveal>
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <h3>Add Your Members</h3>
+          <p>Add everyone who participates in the team&rsquo;s snack system.</p>
+        </div>
+      </li>
+      <li class="timeline-step" data-reveal>
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <h3>Track Daily Activity</h3>
+          <p>Members place their food orders while the admin records daily usage and payments.</p>
+        </div>
+      </li>
+      <li class="timeline-step" data-reveal>
+        <span class="step-num">4</span>
+        <div class="step-body">
+          <h3>Manage the Month</h3>
+          <p>Keep daily records organized throughout the month and manage the team&rsquo;s snack activity.</p>
+        </div>
+      </li>
+      <li class="timeline-step" data-reveal>
+        <span class="step-num">5</span>
+        <div class="step-body">
+          <h3>Get Your Monthly Report</h3>
+          <p>Close the month and view everyone&rsquo;s final statement with balances carried forward for the next month.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================ BALANCE EXPLAINED ============================ -->
+  <section class="section balance-section">
+    <div class="section-head" data-reveal>
+      <h2>Always Know Where Your Money Goes</h2>
+      <p>Snack Record keeps every member&rsquo;s monthly balance easy to understand.</p>
+    </div>
+
+    <div class="balance-equation" data-reveal>
+      <div class="eq-chip"><svg lucideWallet /> <span><small>Opening Balance</small><b>৳100</b></span></div>
+      <span class="eq-op"><svg lucideTrendingUp /></span>
+      <div class="eq-chip eq-given"><svg lucideArrowDownToLine /> <span><small>Money Given</small><b>৳2,500</b></span></div>
+      <span class="eq-op eq-minus"><svg lucideArrowUpFromLine /></span>
+      <div class="eq-chip eq-used"><svg lucideUtensilsCrossed /> <span><small>Food Used</small><b>৳1,850</b></span></div>
+      <span class="eq-eq">=</span>
+      <div class="eq-chip eq-left"><svg lucidePiggyBank /> <span><small>Money Left</small><b>৳750</b></span></div>
+    </div>
+
+    <p class="balance-note" data-reveal>
+      No complicated calculations. Your monthly balance stays organized automatically.
+    </p>
+  </section>
+
+  <!-- ============================ ORDERING SHOWCASE ============================ -->
+  <section class="section section-alt ordering-section">
+    <div class="section-head" data-reveal>
+      <h2>Ordering Food Made Simple</h2>
+      <p>Choose what you want for today, submit your order, and let your team admin manage the rest.</p>
+    </div>
+
+    <div class="ordering-grid">
+      <div class="ordering-card" data-reveal>
+        <div class="ordering-card-head">
+          <span class="pv-label">Today&rsquo;s Order</span>
+          <span class="chip chip-success"><svg lucideCheck /> Confirmed</span>
+        </div>
+        <ul class="pv-list big">
+          <li><svg lucideUtensilsCrossed /> Chicken &amp; Rice</li>
+          <li><svg lucideLeaf /> Salad</li>
+          <li><svg lucideCoffee /> Tea</li>
+        </ul>
+        <div class="ordering-card-foot">
+          <span class="mini-avatar">R</span>
+          <span>Placed by Rahim</span>
+        </div>
+      </div>
+
+      <div class="ordering-side">
+        <div class="deadline-card" data-reveal>
+          <span class="deadline-icon"><svg lucideClock /></span>
+          <div>
+            <span class="pv-label">Today&rsquo;s ordering deadline</span>
+            <b class="deadline-time">4:20 PM</b>
+            <span class="deadline-note">Your team can set its own ordering deadline.</span>
+          </div>
+        </div>
+
+        <div class="lates-card" data-reveal>
+          <span class="lates-icon"><svg lucideClock /></span>
+          <div>
+            <b class="lates-title">Ordering closed</b>
+            <span class="lates-text">Need to order late?</span>
+            <span class="chip chip-ghost sm"><svg lucideSend /> Request Permission</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ROLES ============================ -->
+  <section class="section">
+    <div class="section-head" data-reveal>
+      <h2>Designed for Everyone on Your Team</h2>
+      <p>Whether you run the record or just place your daily order, everything fits together.</p>
+    </div>
+
+    <div class="roles-grid">
+      <article class="role-card role-primary" data-reveal>
+        <span class="role-icon"><svg lucideShieldCheck /></span>
+        <h3>Team Admin</h3>
+        <p>Keep the team&rsquo;s snack system organized from one place.</p>
+        <ul class="role-list">
+          <li><svg lucideUserRound /> Manage team members</li>
+          <li><svg lucideClipboardList /> Manage daily records</li>
+          <li><svg lucideHandCoins /> Record payments</li>
+          <li><svg lucideUtensilsCrossed /> Manage food orders</li>
+          <li><svg lucideSettings /> Set ordering rules</li>
+          <li><svg lucideCalendarCheck /> Manage monthly records</li>
+          <li><svg lucideChartColumn /> Generate reports</li>
+        </ul>
+        <span class="role-cta">Manage Your Team <svg lucideArrowRight /></span>
+      </article>
+
+      <article class="role-card" data-reveal>
+        <span class="role-icon role-orange"><svg lucideUserRound /></span>
+        <h3>Team Member</h3>
+        <p>See your food activity and balance whenever you need it.</p>
+        <ul class="role-list">
+          <li><svg lucideUtensilsCrossed /> Place daily food orders</li>
+          <li><svg lucideWallet /> Check your balance</li>
+          <li><svg lucideListChecks /> View the menu</li>
+          <li><svg lucideFileText /> View your monthly statement</li>
+          <li><svg lucideSend /> Request permission for late orders</li>
+        </ul>
+        <span class="role-cta">View Your Records <svg lucideArrowRight /></span>
+      </article>
+
+      <article class="role-card role-secondary" data-reveal>
+        <span class="role-icon role-slate"><svg lucideShield /></span>
+        <h3>Platform Admin</h3>
+        <p>Keep registered teams organized and managed.</p>
+        <ul class="role-list">
+          <li><svg lucideUsers /> Review new teams</li>
+          <li><svg lucideBadgeCheck /> Approve teams</li>
+          <li><svg lucideX /> Reject registrations</li>
+          <li><svg lucideClock /> Suspend teams</li>
+          <li><svg lucideRefreshCw /> Reactivate teams</li>
+          <li><svg lucideLayoutGrid /> Manage registered teams</li>
+        </ul>
+        <span class="role-cta">Manage Registrations <svg lucideArrowRight /></span>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================ MONTHLY REPORT SHOWCASE ============================ -->
+  <section class="section section-alt report-showcase" id="reports">
+    <div class="section-head" data-reveal>
+      <h2>See the Full Picture at the End of the Month</h2>
+      <p>Get a clear view of every member&rsquo;s monthly snack activity and remaining balance.</p>
+    </div>
+
+    <div class="report-card" data-reveal>
+      <div class="report-card-head">
+        <span class="pv-label"><svg lucideFileText /> Monthly Report &mdash; October 2026</span>
+        <div class="report-export">
+          <span class="chip chip-ghost"><svg lucideFileSpreadsheet /> PDF</span>
+          <span class="chip chip-ghost"><svg lucideFileSpreadsheet /> Excel</span>
+        </div>
+      </div>
+
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th class="num">Given</th>
+              <th class="num">Used</th>
+              <th class="num">Left</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mini-avatar sm">R</span> Rahim</td>
+              <td class="num">৳<b data-count="2500">0</b></td>
+              <td class="num">৳<b data-count="1850">0</b></td>
+              <td class="num left">৳<b data-count="650">0</b></td>
+            </tr>
+            <tr>
+              <td><span class="mini-avatar sm">K</span> Karim</td>
+              <td class="num">৳<b data-count="2000">0</b></td>
+              <td class="num">৳<b data-count="1700">0</b></td>
+              <td class="num left">৳<b data-count="300">0</b></td>
+            </tr>
+            <tr>
+              <td><span class="mini-avatar sm">S</span> Sumaiya</td>
+              <td class="num">৳<b data-count="2800">0</b></td>
+              <td class="num">৳<b data-count="2100">0</b></td>
+              <td class="num left">৳<b data-count="700">0</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="report-export-mobile">
+        <span class="chip chip-ghost"><svg lucideFileSpreadsheet /> Download PDF</span>
+        <span class="chip chip-ghost"><svg lucideFileSpreadsheet /> Export Excel</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ WHY SNACK RECORD ============================ -->
+  <section class="section">
+    <div class="section-head" data-reveal>
+      <h2>Less Confusion. More Clarity.</h2>
+    </div>
+
+    <div class="why-grid">
+      <article class="why-card" data-reveal>
+        <span class="feature-icon"><svg lucideFileCheck /></span>
+        <h3>No More Scattered Records</h3>
+        <p>Keep daily snack records, payments, orders, and balances together.</p>
+      </article>
+      <article class="why-card" data-reveal>
+        <span class="feature-icon"><svg lucideEye /></span>
+        <h3>Everyone Knows Their Balance</h3>
+        <p>Members can easily see what they have given, used, and have left.</p>
+      </article>
+      <article class="why-card" data-reveal>
+        <span class="feature-icon"><svg lucideClipboardList /></span>
+        <h3>Orders Stay Organized</h3>
+        <p>Keep everyone&rsquo;s daily food orders in one place.</p>
+      </article>
+      <article class="why-card" data-reveal>
+        <span class="feature-icon"><svg lucideCalendarCheck /></span>
+        <h3>Month-End Becomes Easier</h3>
+        <p>Finish the month with a clear report and carry balances forward into the next month.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================ FINAL CTA ============================ -->
+  <section class="cta" data-reveal>
+    <div class="cta-glow"></div>
+    <div class="cta-inner">
+      <h2>Ready to Make Your Team&rsquo;s Snack Management Easier?</h2>
+      <p>Bring daily orders, payments, balances, and monthly records together in one simple place.</p>
+      <div class="cta-actions">
+        <a class="btn btn-white btn-lg" routerLink="/auth/login" [queryParams]="{ register: '1' }">
+          <svg lucidePlus /> Create New Record
+        </a>
+        <span class="cta-alt">Already have an account? <a routerLink="/auth/login">Login</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="#home">
+          <span class="brand-mark"><svg lucideUtensilsCrossed /></span>
+          <span class="brand-name">Snack Record</span>
+        </a>
+        <p>A simple way to organize your team&rsquo;s daily food orders and snack records.</p>
+      </div>
+
+      <nav class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#reports">Reports</a>
+        <a routerLink="/auth/login">Login</a>
+        <a routerLink="/auth/login" [queryParams]="{ register: '1' }">Create New Record</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Snack Record. All rights reserved by team Phantom.</span>
+    </div>
+  </footer>
+</main>

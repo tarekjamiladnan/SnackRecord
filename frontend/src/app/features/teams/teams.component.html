@@ -1,0 +1,88 @@
+<section class="page">
+  <div class="page-head">
+    <div>
+      <h1>Registered Teams</h1>
+      <p class="page-sub">{{ teams().length }} team{{ teams().length === 1 ? '' : 's' }} registered</p>
+    </div>
+  </div>
+
+  <p-card>
+    <div class="toolbar">
+      <p-iconfield class="search">
+        <p-inputicon styleClass="pi pi-search" />
+        <input pInputText #q [value]="filter()" (input)="filter.set(q.value)" placeholder="Search teams…" />
+      </p-iconfield>
+    </div>
+
+    @if (loading()) {
+      <div class="loading"><p-progressspinner /></div>
+    } @else if (teams().length === 0) {
+      <div class="empty-state">
+        <div class="empty-art"><svg lucideStore /></div>
+        <b>No teams registered yet</b>
+        <span>Teams appear here when someone opens a new record from the login page.</span>
+      </div>
+    } @else {
+      <p-table [value]="filteredTeams()" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" styleClass="desktop-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Team</th>
+            <th>Admin</th>
+            <th>Members</th>
+            <th>Status</th>
+            <th>Registered</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <div class="person-cell">
+                <span class="initials">{{ initials(row.name) }}</span>
+                <div class="person-text">
+                  <strong>{{ row.name }}</strong>
+                </div>
+              </div>
+            </td>
+            <td>
+              @if (adminOf(row); as admin) {
+                <div class="person-text">
+                  <span class="login-hint">{{ admin.email }}</span>
+                </div>
+              } @else {
+                <span class="muted">—</span>
+              }
+            </td>
+            <td><span class="muted">{{ memberCount(row) }}</span></td>
+            <td><p-tag [value]="statusLabel(row.status)" [severity]="statusSeverity(row.status)" /></td>
+            <td><span class="muted">{{ formatDate(row.createdAt) }}</span></td>
+            <td>
+              <div class="row-actions">
+                @if (row.status === 'PENDING') {
+                  <button pButton type="button" class="p-button-success action-label" [disabled]="busyId() !== null" (click)="approve(row)"><svg lucideCircleCheck /><span>Approve</span></button>
+                  <button pButton type="button" class="p-button-danger action-label" [disabled]="busyId() !== null" (click)="reject(row)"><svg lucideX /><span>Reject</span></button>
+                }
+                @if (row.status === 'ACTIVE') {
+                  <button pButton type="button" class="p-button-warning action-label" [disabled]="busyId() !== null" (click)="suspend(row)"><svg lucideShieldCheck /><span>Suspend</span></button>
+                }
+                @if (row.status === 'SUSPENDED') {
+                  <button pButton type="button" class="p-button-success action-label" [disabled]="busyId() !== null" (click)="reactivate(row)"><svg lucideCircleCheck /><span>Re-activate</span></button>
+                }
+                <button pButton type="button" class="p-button-danger action-label" [disabled]="busyId() !== null" (click)="deleteTeam(row)"><svg lucideTrash2 /><span>Delete</span></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="empty-state">
+              <div class="empty-art"><svg lucideStore /></div>
+              <b>No matching teams</b>
+              <span>Try a different search term.</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+</section>
