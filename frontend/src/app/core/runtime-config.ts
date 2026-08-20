@@ -15,10 +15,26 @@ export interface RuntimeConfig {
 }
 
 const pickUrl = (value: string): string => {
-  const matches = value.match(/https?:\/\/[^\s"'`=,]+/gi);
-  return matches && matches.length
-    ? matches[matches.length - 1].replace(/[,"'`\s]+$/, '').replace(/\/+$/, '')
-    : '';
+  const text = String(value).trim();
+  let url = '';
+  let cursor = 0;
+  for (;;) {
+    const httpIndex = text.indexOf('https://', cursor);
+    const httpsIndex = text.indexOf('http://', cursor);
+    const start = httpIndex === -1 ? httpsIndex : httpsIndex === -1 ? httpIndex : Math.min(httpIndex, httpsIndex);
+    if (start === -1) break;
+    cursor = start + 1;
+    let end = start;
+    while (end < text.length && !/[\s"'`,]/.test(text[end])) end++;
+    const candidate = text.slice(start, end).replace(/\/+$/, '');
+    try {
+      const parsed = new URL(candidate);
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') url = candidate;
+    } catch {
+      // ignore malformed candidates
+    }
+  }
+  return url;
 };
 
 export function getRuntimeConfig(): RuntimeConfig {
