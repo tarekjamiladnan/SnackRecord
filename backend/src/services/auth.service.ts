@@ -1,9 +1,17 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { createRequire } from 'node:module';
 import { Prisma, Role, TeamStatus } from '@prisma/client';
 import { env } from '../config/env.js';
 import { prisma } from '../config/prisma.js';
 import { ApiError } from '../utils/errors.js';
+
+const require = createRequire(import.meta.url);
+const bcrypt = require('bcryptjs') as {
+  hash: (value: string, salt: number) => Promise<string>;
+  compare: (value: string, hash: string) => Promise<boolean>;
+};
+const jwt = require('jsonwebtoken') as {
+  sign: (payload: Record<string, unknown>, secret: string, options: { expiresIn?: string | number }) => string;
+};
 
 export interface RegisterTeamInput {
   teamName: string;
@@ -192,7 +200,7 @@ export const authService = {
         },
         env.jwtSecret,
         {
-          expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn']
+          expiresIn: env.jwtExpiresIn
         }
       ),
       user: {

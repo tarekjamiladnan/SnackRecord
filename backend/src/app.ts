@@ -1,9 +1,12 @@
 import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+import { createRequire } from 'node:module';
 import { env } from './config/env.js';
 import { authRoutes } from './routes/auth.routes.js';
+
+const require = createRequire(import.meta.url);
+const cors = require('cors') as (options?: Record<string, unknown>) => express.RequestHandler;
+const helmet = require('helmet') as (options?: Record<string, unknown>) => express.RequestHandler;
+const rateLimit = require('express-rate-limit') as (options?: Record<string, unknown>) => express.RequestHandler;
 import { memberRoutes, teamRoutes } from './routes/team.routes.js';
 import { superAdminRoutes } from './routes/super-admin.routes.js';
 import { snackRoutes } from './routes/snack.routes.js';

@@ -1,8 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
-import jwt, { type JwtPayload } from 'jsonwebtoken';
+import { createRequire } from 'node:module';
+import type { JwtPayload } from 'jsonwebtoken';
 import { Role } from '@prisma/client';
 import { env } from '../config/env.js';
 import { prisma } from '../config/prisma.js';
+
+const require = createRequire(import.meta.url);
+const jwt = require('jsonwebtoken') as { verify: (token: string, secretOrPublicKey: string) => unknown };
 
 export interface AuthenticatedUser {
   id: string;
