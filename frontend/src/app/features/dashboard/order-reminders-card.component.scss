@@ -1,0 +1,52 @@
+.reminders-card {
+  margin-top: 16px;
+
+  p-card,
+  ::ng-deep .p-card {
+    height: 100%;
+  }
+}
+
+.reminder-state {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+
+.state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  svg { width: 14px; height: 14px; }
+
+  &.ok { background: rgba(34, 197, 94, 0.14); color: #15803d; }
+  &.bad { background: rgba(239, 68, 68, 0.12); color: #b91c1c; }
+  &.idle { background: rgba(255, 107, 0, 0.1); color: var(--orange); }
+}
+
+.state-text {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.reminder-error {
+  margin: 8px 0 0;
+  color: #b91c1c;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.reminder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}

@@ -6,6 +6,7 @@ declare global {
       appName?: string;
       supabaseUrl?: string;
       supabaseAnonKey?: string;
+      vapidPublicKey?: string;
     };
   }
 }
@@ -14,6 +15,7 @@ export interface RuntimeConfig {
   appName: string;
   supabaseUrl: string;
   supabaseAnonKey: string;
+  vapidPublicKey: string;
 }
 
 const pickUrl = (value: string): string => {
@@ -44,7 +46,8 @@ export function getRuntimeConfig(): RuntimeConfig {
   const runtimeConfig: RuntimeConfig = {
     appName: (config.appName ?? environment.appName ?? 'Phantom Snack Record').trim() || 'Phantom Snack Record',
     supabaseUrl: pickUrl(config.supabaseUrl ?? environment.supabaseUrl ?? ''),
-    supabaseAnonKey: String(config.supabaseAnonKey ?? environment.supabaseAnonKey ?? '').trim()
+    supabaseAnonKey: String(config.supabaseAnonKey ?? environment.supabaseAnonKey ?? '').trim(),
+    vapidPublicKey: String(config.vapidPublicKey ?? '').trim()
   };
 
   return runtimeConfig;

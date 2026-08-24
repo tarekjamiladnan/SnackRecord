@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { AuthService } from '../../core/auth.service';
 import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
+import { OrderRemindersCardComponent } from './order-reminders-card.component';
 import { UI_IMPORTS } from '../../shared/ui';
 
 interface MemberMoney { id: string; userId?: string | null; email: string | null; name: string; given: number; used: number; left: number; }
@@ -12,7 +13,7 @@ interface EntryPreview { id: string; date: string; remarks?: string; items: Entr
 
 @Component({
   selector: 'app-dashboard',
-  imports: UI_IMPORTS,
+  imports: [UI_IMPORTS, OrderRemindersCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['../../shared/page.scss', './dashboard.component.scss']
 })

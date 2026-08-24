@@ -29,6 +29,16 @@
         </div>
 
         <div class="field">
+          <span>Timezone for Order Deadline</span>
+          <select class="timezone-select" formControlName="timezone">
+            @for (zone of timezones; track zone) {
+              <option [value]="zone">{{ zone }}</option>
+            }
+          </select>
+          <small class="field-hint">Used to calculate the daily deadline and reminders correctly for your region</small>
+        </div>
+
+        <div class="field">
           <span>Enable Minimum Remaining Balance</span>
           <label class="setting-check">
             <input type="checkbox" formControlName="minBalanceEnabled" />
