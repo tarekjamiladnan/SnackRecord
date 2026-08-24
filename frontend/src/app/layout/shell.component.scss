@@ -404,6 +404,12 @@
 
 .notif-panel-head b { font-size: 0.9rem; font-weight: 800; }
 
+.notif-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 .notif-mark-read {
   border: 0;
   background: transparent;
@@ -418,6 +424,21 @@
 }
 
 .notif-mark-read:hover { background: rgba(255, 107, 0, 0.1); }
+
+.notif-clear-all {
+  border: 0;
+  background: transparent;
+  color: var(--text-3);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.notif-clear-all:hover { background: rgba(0, 0, 0, 0.05); color: var(--danger); }
 
 .notif-list {
   overflow-y: auto;
@@ -442,6 +463,33 @@
 
 .notif-item:hover { background: rgba(255, 107, 0, 0.08); }
 .notif-item.unread { background: rgba(255, 107, 0, 0.06); }
+.notif-item:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+}
+
+.notif-delete {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.45;
+  transition: opacity 0.15s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.notif-item:hover .notif-delete,
+.notif-delete:focus-visible { opacity: 1; }
+
+.notif-delete:hover { background: rgba(0, 0, 0, 0.06); color: var(--danger); }
+
+.notif-delete svg { width: 14px; height: 14px; }
 
 .notif-item-icon {
   display: grid;

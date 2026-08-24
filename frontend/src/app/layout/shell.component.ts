@@ -160,6 +160,15 @@ export class ShellComponent implements OnInit {
     if (!item.readAt) void this.notificationService.markRead(item.id);
   }
 
+  deleteNotification(event: Event, item: AppNotification): void {
+    event.stopPropagation();
+    void this.notificationService.delete(item.id);
+  }
+
+  clearAllNotifications(): void {
+    void this.notificationService.clearAll();
+  }
+
   notificationIcon(type: AppNotification['type']): Type<unknown> {
     if (type === 'order_permission_approved') return LucideCircleCheck;
     if (type === 'order_permission_rejected') return LucideCircleAlert;

@@ -108,6 +108,34 @@ export class NotificationService implements OnDestroy {
     }
   }
 
+  async delete(id: string): Promise<void> {
+    const target = this.items().find((row) => row.id === id);
+    if (!target || !this.supabase.available || !this.userId) return;
+    this.items.update((rows) => rows.filter((row) => row.id !== id));
+    this.refreshUnread();
+    try {
+      const { error } = await this.supabase.from('notifications').delete()
+        .eq('id', id).eq('recipient_user_id', this.userId);
+      if (error) throw error;
+    } catch {
+      void this.load();
+    }
+  }
+
+  async clearAll(): Promise<void> {
+    if (!this.items().length || !this.supabase.available || !this.userId) return;
+    const ids = this.items().map((row) => row.id);
+    this.items.set([]);
+    this.unreadCount.set(0);
+    try {
+      const { error } = await this.supabase.from('notifications').delete()
+        .eq('recipient_user_id', this.userId).in('id', ids);
+      if (error) throw error;
+    } catch {
+      void this.load();
+    }
+  }
+
   ngOnDestroy(): void {
     if (this.channel) this.supabase.removeChannel(this.channel);
     if (this.pollTimer) clearInterval(this.pollTimer);
