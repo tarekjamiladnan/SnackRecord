@@ -57,7 +57,7 @@ export class SupabaseWorkflowService {
   async dashboard(): Promise<{ members: any[]; entries: any[] }> {
     const [{ data: members, error: membersError }, { data: entries, error: entriesError }] = await Promise.all([
       this.supabase.from('members').select('*').eq('status', 'active').order('name'),
-      this.supabase.from('daily_entries').select('*, entry_items(*)').order('entry_date', { ascending: false }).limit(10)
+      this.supabase.from('daily_entries').select('*, entry_items(amount, members(name))').order('entry_date', { ascending: false }).limit(10)
     ]);
     if (membersError) throw membersError;
     if (entriesError) throw entriesError;
@@ -77,7 +77,7 @@ export class SupabaseWorkflowService {
         date: entry.entry_date,
         remarks: entry.remarks,
         total: Number(entry.total_cost),
-        items: (entry.entry_items ?? []).map((item: any) => ({ name: item.member_id, amount: Number(item.amount) }))
+        items: (entry.entry_items ?? []).map((item: any) => ({ name: item.members?.name ?? 'Unknown member', amount: Number(item.amount) }))
       }))
     };
   }
