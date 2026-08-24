@@ -27,21 +27,7 @@ const supabaseUrl = pickUrl(process.env.NG_APP_SUPABASE_URL || process.env.SUPAB
 const supabaseAnonKey = String(process.env.NG_APP_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '').trim();
 const appName = (process.env.APP_NAME || 'Phantom Snack Record').trim() || 'Phantom Snack Record';
 
-// Preserve a previously generated vapidPublicKey when the env var is absent,
-// so redeploys cannot silently disable push notifications.
-const existingVapidKey = (() => {
-  try {
-    const match = /vapidPublicKey["']?\s*:\s*["']([^"']*)["']/.exec(
-      fs.readFileSync(path.join(process.cwd(), 'public', 'app-config.js'), 'utf8')
-    );
-    return match?.[1] ?? '';
-  } catch {
-    return '';
-  }
-})();
-const vapidPublicKey = String(process.env.NG_APP_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY || existingVapidKey).trim();
-
-const content = `window.__APP_CONFIG__ = {\n  appName: ${JSON.stringify(appName)},\n  supabaseUrl: ${JSON.stringify(supabaseUrl)},\n  supabaseAnonKey: ${JSON.stringify(supabaseAnonKey)},\n  vapidPublicKey: ${JSON.stringify(vapidPublicKey)}\n};\n`;
+const content = `window.__APP_CONFIG__ = {\n  appName: ${JSON.stringify(appName)},\n  supabaseUrl: ${JSON.stringify(supabaseUrl)},\n  supabaseAnonKey: ${JSON.stringify(supabaseAnonKey)}\n};\n`;
 
 const target = path.join(process.cwd(), 'public', 'app-config.js');
 fs.mkdirSync(path.dirname(target), { recursive: true });

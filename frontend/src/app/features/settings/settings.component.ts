@@ -14,18 +14,6 @@ import { UI_IMPORTS } from '../../shared/ui';
 })
 export class SettingsComponent {
   form;
-  timezones: string[] = SettingsComponent.loadTimezones();
-  private static readonly DEFAULT_TIMEZONE = 'Asia/Dhaka';
-
-  private static loadTimezones(): string[] {
-    try {
-      const supported = (Intl as unknown as { supportedValuesOf?: (kind: 'timeZone') => string[] }).supportedValuesOf;
-      if (typeof supported === 'function') return supported('timeZone');
-    } catch {
-      // older engines
-    }
-    return ['UTC', 'Asia/Dhaka', 'Asia/Kolkata', 'Asia/Karachi', 'Asia/Dubai', 'Asia/Singapore', 'Europe/London', 'America/New_York', 'America/Los_Angeles'];
-  }
 
   constructor(
     private fb: FormBuilder,
@@ -38,8 +26,7 @@ export class SettingsComponent {
       managerName: ['', Validators.required],
       minBalanceEnabled: [false],
       minBalanceAmount: [20, [Validators.min(0)]],
-      orderClosingTime: ['16:20', [Validators.pattern(/^([01]\d|2[0-3]):[0-5]\d$/)]],
-      timezone: [SettingsComponent.DEFAULT_TIMEZONE]
+      orderClosingTime: ['16:20', [Validators.pattern(/^([01]\d|2[0-3]):[0-5]\d$/)]]
     });
     void this.load();
   }
@@ -53,8 +40,7 @@ export class SettingsComponent {
           managerName: settings.managerName ?? '',
           minBalanceEnabled: !!settings.minBalanceEnabled,
           minBalanceAmount: Number(settings.minBalanceAmount ?? 20),
-          orderClosingTime: settings.orderClosingTime || '16:20',
-          timezone: this.timezones.includes(settings.timezone) ? settings.timezone : SettingsComponent.DEFAULT_TIMEZONE
+          orderClosingTime: settings.orderClosingTime || '16:20'
         });
       }
     } catch {
@@ -66,14 +52,12 @@ export class SettingsComponent {
     if (this.form.invalid) return;
     const rawAmount = this.form.value.minBalanceAmount;
     const rawTime = String(this.form.value.orderClosingTime ?? '').trim();
-    const rawTimezone = String(this.form.value.timezone ?? '').trim();
     try {
       await this.repo.update('settings', 1, {
         managerName: this.form.value.managerName,
         minBalanceEnabled: !!this.form.value.minBalanceEnabled,
         minBalanceAmount: rawAmount == null || Number.isNaN(Number(rawAmount)) ? 20 : Number(rawAmount),
-        orderClosingTime: rawTime || '16:20',
-        timezone: this.timezones.includes(rawTimezone) ? rawTimezone : SettingsComponent.DEFAULT_TIMEZONE
+        orderClosingTime: rawTime || '16:20'
       });
       this.message.add({ severity: 'success', summary: 'Settings saved', detail: 'Manager information and order settings updated' });
     } catch (err) {

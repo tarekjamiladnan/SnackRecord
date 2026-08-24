@@ -31,11 +31,6 @@ export class SupabaseService {
     return this.client.auth;
   }
 
-  get functions() {
-    if (!this.client) throw new Error(this.configurationError ?? 'Supabase is not configured.');
-    return this.client.functions;
-  }
-
   from(table: string) {
     if (!this.client) throw new Error(this.configurationError ?? 'Supabase is not configured.');
     return this.client.from(table);

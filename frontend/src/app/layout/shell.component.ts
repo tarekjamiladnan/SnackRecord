@@ -19,7 +19,6 @@ import { UI_IMPORTS } from '../shared/ui';
 import { AuthService } from '../core/auth.service';
 import { SupabaseWorkflowService } from '../core/supabase-workflow.service';
 import { AppNotification, NotificationService } from '../core/notification.service';
-import { PushService } from '../core/push.service';
 
 interface NavItem {
   path: string;
@@ -86,8 +85,6 @@ export class ShellComponent implements OnInit {
     const userId = this.auth.user()?.id;
     if (userId) void this.notificationService.watch(userId);
     else this.notificationService.stop();
-    // Keep stored push subscriptions aligned with the signed-in user/team.
-    void this.push.syncOnAuthChange();
   });
 
   private async loadTeam(): Promise<void> {
@@ -118,7 +115,7 @@ export class ShellComponent implements OnInit {
       .toUpperCase() || 'AC'
   );
 
-  constructor(public auth: AuthService, public router: Router, private workflow: SupabaseWorkflowService, private notificationService: NotificationService, private push: PushService) {
+  constructor(public auth: AuthService, public router: Router, private workflow: SupabaseWorkflowService, private notificationService: NotificationService) {
     this.isDesktop.set(this.media.matches);
   }
 
