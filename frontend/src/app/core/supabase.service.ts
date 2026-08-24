@@ -41,6 +41,16 @@ export class SupabaseService {
     return this.client.rpc(functionName, args);
   }
 
+  channel(name: string) {
+    if (!this.client) throw new Error(this.configurationError ?? 'Supabase is not configured.');
+    return this.client.channel(name);
+  }
+
+  removeChannel(channel: ReturnType<SupabaseClient['channel']>) {
+    if (!this.client) return;
+    void this.client.removeChannel(channel);
+  }
+
   private async edgeErrorMessage(error: unknown): Promise<string | null> {
     const response = (error as { context?: Response })?.context;
     if (!response) return null;

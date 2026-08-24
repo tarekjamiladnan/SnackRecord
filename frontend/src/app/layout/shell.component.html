@@ -71,11 +71,44 @@
           />
         </div>
 
-        <button class="icon-btn bell" aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom" (click)="showNotifications()">
+        <button class="icon-btn bell" aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom" (click)="toggleNotifications()">
           <svg lucideBell />
+          @if (unreadCount() > 0) {
+            <span class="notif-dot" [class.counting]="unreadCount() > 1">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
+          }
         </button>
 
-        <div class="profile" (click)="profileOpen.set(!profileOpen())">
+        @if (notificationsOpen()) {
+          <div class="notif-panel animate-scale-in">
+            <div class="notif-panel-head">
+              <b>Notifications</b>
+              @if (unreadCount() > 0) {
+                <button class="notif-mark-read" (click)="markAllNotificationsRead()">Mark all read</button>
+              }
+            </div>
+            <div class="divider"></div>
+            <div class="notif-list">
+              @for (item of notifications(); track item.id) {
+                <button class="notif-item" [class.unread]="!item.readAt" (click)="markNotificationRead(item)">
+                  <span class="notif-item-icon"><ng-container *ngComponentOutlet="notificationIcon(item.type)" /></span>
+                  <span class="notif-item-body">
+                    <b>{{ item.title }}</b>
+                    @if (item.body) { <p>{{ item.body }}</p> }
+                    <time>{{ timeAgo(item.createdAt) }}</time>
+                  </span>
+                  @if (!item.readAt) { <span class="notif-unread-dot"></span> }
+                </button>
+              } @empty {
+                <div class="notif-empty">
+                  <svg lucideBell />
+                  <span>No notifications yet.</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="profile" (click)="toggleProfile()">
           <div class="avatar">{{ initials() }}</div>
           <div class="profile-meta">
             <b>{{ userName() }}</b>

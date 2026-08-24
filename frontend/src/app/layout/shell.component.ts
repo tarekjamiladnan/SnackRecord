@@ -1,9 +1,11 @@
 import { Component, OnInit, Type, computed, effect, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import {
   LucideCalendarRange,
   LucideChartColumn,
+  LucideCircleAlert,
+  LucideCircleCheck,
+  LucideBell,
   LucideLayoutDashboard,
   LucideNotebookPen,
   LucideClipboardList,
@@ -16,6 +18,7 @@ import {
 import { UI_IMPORTS } from '../shared/ui';
 import { AuthService } from '../core/auth.service';
 import { SupabaseWorkflowService } from '../core/supabase-workflow.service';
+import { AppNotification, NotificationService } from '../core/notification.service';
 
 interface NavItem {
   path: string;
@@ -33,6 +36,7 @@ export class ShellComponent implements OnInit {
   collapsed = signal(false);
   mobileOpen = signal(false);
   profileOpen = signal(false);
+  notificationsOpen = signal(false);
   search = signal('');
   isDesktop = signal(true);
   private media = matchMedia('(min-width: 900px)');
@@ -76,6 +80,14 @@ export class ShellComponent implements OnInit {
     }
   });
 
+  notifications = computed<AppNotification[]>(() => this.notificationService.items());
+  unreadCount = computed(() => this.notificationService.unreadCount());
+  private readonly notificationWatcher = effect(() => {
+    const userId = this.auth.user()?.id;
+    if (userId) void this.notificationService.watch(userId);
+    else this.notificationService.stop();
+  });
+
   private async loadTeam(): Promise<void> {
     if (!this.auth.user()?.teamId) return;
     try {
@@ -104,7 +116,7 @@ export class ShellComponent implements OnInit {
       .toUpperCase() || 'AC'
   );
 
-  constructor(public auth: AuthService, public router: Router, private message: MessageService, private workflow: SupabaseWorkflowService) {
+  constructor(public auth: AuthService, public router: Router, private workflow: SupabaseWorkflowService, private notificationService: NotificationService) {
     this.isDesktop.set(this.media.matches);
   }
 
@@ -126,6 +138,44 @@ export class ShellComponent implements OnInit {
   closeMobile(): void {
     this.mobileOpen.set(false);
     this.profileOpen.set(false);
+    this.notificationsOpen.set(false);
+  }
+
+  toggleProfile(): void {
+    this.profileOpen.update((open) => !open);
+    this.notificationsOpen.set(false);
+  }
+
+  toggleNotifications(): void {
+    this.notificationsOpen.update((open) => !open);
+    this.profileOpen.set(false);
+    if (this.notificationsOpen()) void this.notificationService.load();
+  }
+
+  markAllNotificationsRead(): void {
+    void this.notificationService.markAllRead();
+  }
+
+  markNotificationRead(item: AppNotification): void {
+    if (!item.readAt) void this.notificationService.markRead(item.id);
+  }
+
+  notificationIcon(type: AppNotification['type']): Type<unknown> {
+    if (type === 'order_permission_approved') return LucideCircleCheck;
+    if (type === 'order_permission_rejected') return LucideCircleAlert;
+    if (type === 'order_submitted') return LucideClipboardList;
+    return LucideBell;
+  }
+
+  timeAgo(iso: string): string {
+    const seconds = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return days === 1 ? 'yesterday' : `${days}d ago`;
   }
 
   runQuickSearch(): void {
@@ -134,10 +184,6 @@ export class ShellComponent implements OnInit {
     const item = this.nav().find((navItem) => navItem.label.toLowerCase().includes(term));
     if (item) void this.router.navigateByUrl(item.path);
     this.search.set('');
-  }
-
-  showNotifications(): void {
-    this.message.add({ severity: 'info', summary: 'Notifications', detail: 'No new notifications.' });
   }
 
   isActive(path: string, currentUrl = this.router.url.split('?')[0]): boolean {
