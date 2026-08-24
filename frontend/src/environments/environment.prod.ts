@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.snack.example.com/api',
+  supabaseUrl: '',
+  supabaseAnonKey: '',
   appName: 'Phantom Snack Record'
 };

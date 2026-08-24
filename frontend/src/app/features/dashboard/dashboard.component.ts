@@ -3,7 +3,7 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { AuthService } from '../../core/auth.service';
-import { ApiService } from '../../core/api.service';
+import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
 interface MemberMoney { id: string; userId?: string | null; email: string | null; name: string; given: number; used: number; left: number; }
@@ -38,7 +38,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private auth: AuthService,
-    private api: ApiService,
+    private workflow: SupabaseWorkflowService,
     private message: MessageService,
     private router: Router
   ) {
@@ -57,11 +57,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   async load(): Promise<void> {
     this.loading.set(true);
     try {
-      // Load dashboard stats from API
-      const response = await this.api.get<{
-        data?: { members: MemberMoney[]; entries: EntryPreview[] };
-      }>('/dashboard');
-      const stats = response.data ?? (response as unknown as { members: MemberMoney[]; entries: EntryPreview[] });
+      const stats = await this.workflow.dashboard();
       const memberRows = stats.members || [];
       this.rows.set(memberRows);
       this.members.set(memberRows.map((member) => ({ id: member.id, name: member.name })));

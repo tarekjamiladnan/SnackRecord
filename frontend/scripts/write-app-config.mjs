@@ -23,12 +23,13 @@ const pickUrl = (value) => {
   return url;
 };
 
-const apiUrl = pickUrl(process.env.NG_APP_API_URL || process.env.API_URL || 'http://localhost:5000/api') || 'http://localhost:5000/api';
+const supabaseUrl = pickUrl(process.env.NG_APP_SUPABASE_URL || process.env.SUPABASE_URL || '');
+const supabaseAnonKey = String(process.env.NG_APP_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '').trim();
 const appName = (process.env.APP_NAME || 'Phantom Snack Record').trim() || 'Phantom Snack Record';
 
-const content = `window.__APP_CONFIG__ = {\n  appName: ${JSON.stringify(appName)},\n  apiUrl: ${JSON.stringify(apiUrl)}\n};\n`;
+const content = `window.__APP_CONFIG__ = {\n  appName: ${JSON.stringify(appName)},\n  supabaseUrl: ${JSON.stringify(supabaseUrl)},\n  supabaseAnonKey: ${JSON.stringify(supabaseAnonKey)}\n};\n`;
 
 const target = path.join(process.cwd(), 'public', 'app-config.js');
 fs.mkdirSync(path.dirname(target), { recursive: true });
 fs.writeFileSync(target, content, 'utf8');
-console.log(`App config written to ${target} (apiUrl=${apiUrl})`);
+console.log(`App config written to ${target} (supabaseUrl=${supabaseUrl})`);

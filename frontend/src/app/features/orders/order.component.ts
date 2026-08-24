@@ -2,7 +2,7 @@ import { Component, OnDestroy, computed, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Member, Order } from '../../core/models';
 import { AuthService } from '../../core/auth.service';
-import { ApiService } from '../../core/api.service';
+import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
 interface OrderRequest {
@@ -55,7 +55,7 @@ export class OrderComponent implements OnDestroy {
   isClosed = () => this.afterCutoff() && this.request()?.status !== 'approved';
   remainingChars = () => 500 - this.orderText.length;
 
-  constructor(private auth: AuthService, private api: ApiService, private message: MessageService) {
+  constructor(private auth: AuthService, private workflow: SupabaseWorkflowService, private message: MessageService) {
     void this.load();
   }
 
@@ -66,8 +66,7 @@ export class OrderComponent implements OnDestroy {
   async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const response = await this.api.get<MemberInfoResponse>(`/orders/member-info?date=${this.today}`);
-      const info = response.data ?? ({} as NonNullable<MemberInfoResponse['data']>);
+      const info = await this.workflow.memberInfo(this.today) as NonNullable<MemberInfoResponse['data']>;
       this.member.set(info.member ?? null);
       this.settings.set(info.settings ?? null);
       this.request.set(info.request ?? null);
@@ -100,13 +99,9 @@ export class OrderComponent implements OnDestroy {
     this.saving.set(true);
     try {
       if (await this.blockedByMinimumBalance(member.id)) return;
-      const response = await this.api.post<{ data?: Order }>('/orders', {
-        memberId: member.id,
-        orderDate: this.today,
-        orderText: text
-      });
-      this.order.set(response.data ?? null);
-      this.orderText = response.data?.orderText ?? text;
+      const response = await this.workflow.submitOrder<Order>(this.today, text);
+      this.order.set(response);
+      this.orderText = response?.orderText ?? text;
       this.message.add({ severity: 'success', summary: 'Order saved', detail: 'Your order was saved for today.' });
     } catch (err) {
       this.message.add({ severity: 'error', summary: 'Order failed', detail: err instanceof Error ? err.message : 'Please try again.' });
@@ -116,15 +111,11 @@ export class OrderComponent implements OnDestroy {
   }
 
   async requestPermission(): Promise<void> {
-    const member = this.member();
-    if (!member || this.saving() || this.request()?.status === 'pending') return;
+    if (this.saving() || this.request()?.status === 'pending') return;
     this.saving.set(true);
     try {
-      const response = await this.api.post<{ data?: OrderRequest }>('/order-requests', {
-        memberId: member.id,
-        requestDate: this.today
-      });
-      this.request.set(response.data ?? null);
+      const response = await this.workflow.requestLateOrder<OrderRequest>(this.today);
+      this.request.set(response);
       this.message.add({ severity: 'success', summary: 'Request sent', detail: 'Your request was sent to the admin for approval.' });
     } catch (err) {
       this.message.add({ severity: 'error', summary: 'Request failed', detail: err instanceof Error ? err.message : 'Please try again.' });
@@ -137,8 +128,7 @@ export class OrderComponent implements OnDestroy {
     const settings = this.settings();
     if (!settings?.minBalanceEnabled) return false;
     try {
-      const response = await this.api.get<{ data?: { balance: number } }>(`/members/${memberId}/balance?date=${this.today}`);
-      const balance = Number(response.data?.balance ?? 0);
+      const balance = await this.workflow.memberBalance(memberId);
       if (balance < Number(settings.minBalanceAmount ?? 0)) {
         this.message.add({
           severity: 'warn',

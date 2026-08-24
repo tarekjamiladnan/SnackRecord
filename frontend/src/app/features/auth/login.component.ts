@@ -69,8 +69,8 @@ export class LoginComponent {
     this.info.set('');
     try {
       const c = this.registerForm.controls;
-      await this.auth.register(c.teamName.value, c.adminName.value, c.email.value, c.phone.value, c.password.value, c.confirmPassword.value);
-      await this.auth.login(c.email.value, c.password.value);
+      const message = await this.auth.register(c.teamName.value, c.adminName.value, c.email.value, c.phone.value, c.password.value, c.confirmPassword.value);
+      this.info.set(message);
     } catch (err) {
       this.error.set(err instanceof Error ? err.message : 'Registration failed');
     } finally { this.loading.set(false); }

@@ -2,7 +2,7 @@
 
 A multi-tenant SaaS platform for managing a shared **snack / canteen accounting system** inside a team. Every team gets its own isolated workspace where it can track members, daily snack consumption, payments (collections), expenses, monthly balances, and daily food orders.
 
-Each team is a separate tenant. Teams register and start using the platform immediately. A platform-level **Super Admin** monitors and manages all teams. Team **Admins** run the day-to-day accounting. Regular **Members** order their food, see their own balance, and view reports.
+Each team is a separate tenant. New teams are created as pending requests and require Super Admin approval. A platform-level **Super Admin** monitors and manages all teams. Team **Admins** run the day-to-day accounting. Regular **Members** order their food, see their own balance, and view reports.
 
 ---
 
@@ -84,7 +84,7 @@ Permission is enforced on **three layers**: navigation menu visibility, route gu
 ### Team & Member Management
 
 - Team profile and member list (name, email, phone, status).
-- **Add member** — creates both a member record and a **login account** (default password `Welcome123` unless one is provided when adding).
+- **Add member** — creates both a member record and a **login account** (a temporary password is set when adding; the member changes it after first sign-in).
 - **Edit member** — updates the member record and, where linked, the underlying user account.
 - **Delete member = Archive** — the member's history and balances are preserved; they simply stop appearing in new entries. Archives are irreversible by design.
 - Search across name/email/phone, pagination.
@@ -195,7 +195,7 @@ Team-level configuration (admin only):
 
 ### A Team Member
 
-1. Receives their login (email + default password), logs in, changes password.
+1. Receives their login (email + temporary password) from the team admin, logs in, changes password.
 2. Views the **Dashboard** to check their balance (given vs used vs left).
 3. Places their **daily order** before the cutoff; after cutoff, they request permission from the admin.
 4. If the minimum-balance rule is on and they are low, they pay (the admin records a **collection**) and then order.
@@ -277,6 +277,8 @@ Re-ordering the same day **updates** the existing order instead of duplicating i
 
 ## Technology Stack
 
+The Supabase migration begins in `supabase/migrations/0001_auth_teams_members.sql`. It establishes Supabase Auth-linked profiles, team membership, the registration request RPC, and database-enforced RLS. The Angular client accepts only the Supabase project URL and public anon key. Never configure a service-role key, database URL, or JWT signing secret in `frontend` or `public` files.
+
 **Backend** (`backend/`)
 
 - Node.js + Express + TypeScript (`tsx` for dev)
@@ -318,10 +320,6 @@ copy .env.example .env        # fill in DATABASE_URL, DIRECT_URL, JWT_SECRET
 
 # Create the database schema
 npx prisma migrate dev
-
-# Optional: seed an admin + super admin account
-npm run prisma:seed           # admin@gmail.com / adnan123
-                              # superadmin@gmail.com / Adnan@123
 
 # Start the API on http://localhost:5000
 npm run dev

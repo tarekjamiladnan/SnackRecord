@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Member, Month } from '../../core/models';
 import { AuthService } from '../../core/auth.service';
 import { RepositoryService } from '../../core/repository.service';
-import { ApiService } from '../../core/api.service';
+import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
 @Component({
@@ -25,7 +25,7 @@ export class DailyEntryComponent {
   constructor(
     private auth: AuthService,
     private repo: RepositoryService,
-    private api: ApiService,
+    private workflow: SupabaseWorkflowService,
     private message: MessageService,
     private router: Router
   ) {
@@ -53,8 +53,7 @@ export class DailyEntryComponent {
     const month = this.openMonth() ?? await this.loadOpenMonth();
     if (!month) return;
     try {
-      const response = await this.api.get<{ data?: { entry: { remarks?: string | null } | null; items: { memberId: string; amount: number }[] } }>(`/daily-entries?date=${this.date}`);
-      const data = response.data ?? { entry: null, items: [] };
+      const data = await this.workflow.dailyEntry<{ remarks?: string | null }>(this.date);
       this.remarks = data.entry?.remarks ?? '';
       const amounts: Record<string, number> = {};
       for (const item of data.items ?? []) {
@@ -96,12 +95,8 @@ export class DailyEntryComponent {
       return;
     }
     try {
-      const response = await this.api.post<{ data?: { entry: { id: string; totalCost: number } } }>('/daily-entries', {
-        entryDate: this.date,
-        remarks: this.remarks,
-        items: items.map(([memberId, amount]) => ({ memberId, amount: Number(amount) }))
-      });
-      const total = Number(response.data?.entry?.totalCost ?? this.total());
+      const response = await this.workflow.saveDailyEntry<{ totalCost: number }>(this.date, this.remarks, items.map(([memberId, amount]) => ({ memberId, amount: Number(amount) })));
+      const total = Number(response?.totalCost ?? this.total());
       this.message.add({ severity: 'success', summary: 'Entry saved', detail: `Total ${total.toFixed(2)} recorded` });
       await this.loadEntry();
     } catch (err) {
@@ -130,8 +125,7 @@ export class DailyEntryComponent {
 
   private async loadOpenMonth(): Promise<Month | null> {
     try {
-      const response = await this.api.get<{ data?: Month | null }>('/daily-entries/open-month');
-      const month = response.data ?? null;
+      const month = await this.workflow.openMonth<Month>();
       this.openMonth.set(month);
       return month;
     } catch (err) {

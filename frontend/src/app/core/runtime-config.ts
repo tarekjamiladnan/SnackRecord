@@ -3,15 +3,17 @@ import { environment } from '../../environments/environment';
 declare global {
   interface Window {
     __APP_CONFIG__?: {
-      apiUrl?: string;
       appName?: string;
+      supabaseUrl?: string;
+      supabaseAnonKey?: string;
     };
   }
 }
 
 export interface RuntimeConfig {
-  apiUrl: string;
   appName: string;
+  supabaseUrl: string;
+  supabaseAnonKey: string;
 }
 
 const pickUrl = (value: string): string => {
@@ -40,13 +42,10 @@ const pickUrl = (value: string): string => {
 export function getRuntimeConfig(): RuntimeConfig {
   const config = window.__APP_CONFIG__ ?? {};
   const runtimeConfig: RuntimeConfig = {
-    apiUrl: pickUrl(config.apiUrl ?? environment.apiUrl ?? 'http://localhost:3000/api') || 'http://localhost:5000/api',
-    appName: (config.appName ?? environment.appName ?? 'Phantom Snack Record').trim() || 'Phantom Snack Record'
+    appName: (config.appName ?? environment.appName ?? 'Phantom Snack Record').trim() || 'Phantom Snack Record',
+    supabaseUrl: pickUrl(config.supabaseUrl ?? environment.supabaseUrl ?? ''),
+    supabaseAnonKey: String(config.supabaseAnonKey ?? environment.supabaseAnonKey ?? '').trim()
   };
-
-  if (!runtimeConfig.apiUrl) {
-    console.warn('API URL is missing. Configure window.__APP_CONFIG__.apiUrl or environment.apiUrl.');
-  }
 
   return runtimeConfig;
 }

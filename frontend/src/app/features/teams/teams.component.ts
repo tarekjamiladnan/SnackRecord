@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { ApiService } from '../../core/api.service';
+import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
 import { AdminTeam, TeamStatus } from '../../core/models';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog.component';
 import { UI_IMPORTS } from '../../shared/ui';
@@ -25,15 +25,14 @@ export class TeamsComponent {
     );
   });
 
-  constructor(private api: ApiService, private message: MessageService, private dialog: DialogService) {
+  constructor(private workflow: SupabaseWorkflowService, private message: MessageService, private dialog: DialogService) {
     void this.load();
   }
 
   async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const response = await this.api.get<{ teams: AdminTeam[] }>('/super-admin/teams');
-      this.teams.set(response.teams ?? []);
+      this.teams.set(await this.workflow.adminTeams());
     } catch (err) {
       this.message.add({
         severity: 'error',
@@ -69,7 +68,7 @@ export class TeamsComponent {
     if (this.busyId()) return;
     this.busyId.set(team.id);
     try {
-      await this.api.patch<{ team: AdminTeam }>(`/super-admin/teams/${team.id}/status`, { status });
+      await this.workflow.updateTeamStatus(team.id, status);
       this.message.add({ severity: 'success', summary: 'Team updated', detail: successMessage });
       await this.load();
     } catch (err) {
@@ -136,7 +135,7 @@ export class TeamsComponent {
       if (!ok || this.busyId()) return;
       this.busyId.set(team.id);
       try {
-        await this.api.delete<void>(`/super-admin/teams/${team.id}`);
+        await this.workflow.deleteTeam(team.id);
         this.message.add({ severity: 'success', summary: 'Team deleted', detail: `${team.name} was deleted.` });
         await this.load();
       } catch (err) {

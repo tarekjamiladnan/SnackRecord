@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { ApiService } from '../../core/api.service';
+import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
 interface ReportRow { person: string; opening: number; given: number; used: number; left: number; }
@@ -36,7 +36,7 @@ export class MonthlyReportComponent {
     return { label: String(value), value };
   });
 
-  constructor(private api: ApiService, private message: MessageService) {
+  constructor(private workflow: SupabaseWorkflowService, private message: MessageService) {
     void this.refreshPreview();
   }
 
@@ -55,11 +55,7 @@ export class MonthlyReportComponent {
 
   async load(): Promise<void> {
     try {
-      const response = await this.api.get<{ data?: ReportRow[] }>('/reports/monthly', {
-        month: this.month,
-        year: this.year
-      });
-      this.rows = response.data ?? (response as unknown as ReportRow[]);
+      this.rows = await this.workflow.monthlyReport(this.year, this.month);
     } catch (err) {
       this.rows = [];
       this.message.add({ severity: 'error', summary: 'Failed to load report', detail: err instanceof Error ? err.message : 'Unknown error' });

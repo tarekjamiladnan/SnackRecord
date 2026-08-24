@@ -16,7 +16,7 @@ export interface AdminTeam {
   users: AdminTeamUser[];
   _count?: { users: number };
 }
-export interface User { id: string; teamId: string; email: string; name: string; phone?: string; role: Role; passwordHash?: string; createdAt: string; updatedAt: string; }
+export interface User { id: string; teamId: string; email: string; name: string; phone?: string; role: Role; createdAt: string; updatedAt: string; }
 export interface Member { id: string; teamId: string; userId?: string; name: string; email: string; phone?: string; status: Status; createdAt: string; }
 export interface Snack { id: string; teamId: string; name: string; price: number; status: Status; createdAt: string; }
 export interface Month { id: string; teamId: string; year: number; month: number; openingCash: number; closingCash?: number; status: MonthStatus; closedAt?: string; createdAt: string; }

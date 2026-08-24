@@ -45,8 +45,6 @@ export class CollectionsComponent {
 
   async save(): Promise<void> {
     if (!this.memberId || !this.amount) return;
-    // TODO: Get open month from API
-    // For now, user must select month manually
     try {
       await this.repo.create('collections', {
         memberId: this.memberId,

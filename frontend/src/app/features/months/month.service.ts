@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../../core/api.service';
+import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
 
 @Injectable({ providedIn: 'root' })
 export class MonthService {
-  constructor(private api: ApiService) {}
+  constructor(private workflow: SupabaseWorkflowService) {}
   async closeMonth(monthId: string): Promise<void> {
-    await this.api.post(`/months/${monthId}/close`);
+    await this.workflow.closeMonth(monthId);
   }
   async unlockMonth(monthId: string): Promise<void> {
-    await this.api.put(`/months/${monthId}`, { status: 'open', closedAt: null });
+    await this.workflow.unlockMonth(monthId);
   }
   async deleteMonth(monthId: string): Promise<void> {
-    await this.api.delete(`/months/${monthId}`);
+    await this.workflow.deleteMonth(monthId);
   }
 }

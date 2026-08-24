@@ -15,7 +15,7 @@ import {
 } from '@lucide/angular';
 import { UI_IMPORTS } from '../shared/ui';
 import { AuthService } from '../core/auth.service';
-import { ApiService } from '../core/api.service';
+import { SupabaseWorkflowService } from '../core/supabase-workflow.service';
 
 interface NavItem {
   path: string;
@@ -79,8 +79,8 @@ export class ShellComponent implements OnInit {
   private async loadTeam(): Promise<void> {
     if (!this.auth.user()?.teamId) return;
     try {
-      const response = await this.api.get<{ team?: { name: string } }>('/team');
-      const name = response.team?.name?.trim();
+      const team = await this.workflow.team();
+      const name = team?.name?.trim();
       if (name) this.teamName.set(name);
     } catch {
       // Team name is cosmetic; ignore failures silently
@@ -104,7 +104,7 @@ export class ShellComponent implements OnInit {
       .toUpperCase() || 'AC'
   );
 
-  constructor(public auth: AuthService, public router: Router, private message: MessageService, private api: ApiService) {
+  constructor(public auth: AuthService, public router: Router, private message: MessageService, private workflow: SupabaseWorkflowService) {
     this.isDesktop.set(this.media.matches);
   }
 

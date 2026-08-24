@@ -4,7 +4,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { Menu } from 'primeng/menu';
 import { Member } from '../../core/models';
 import { RepositoryService } from '../../core/repository.service';
-import { ApiService } from '../../core/api.service';
+import { SupabaseService } from '../../core/supabase.service';
 import { AuthService } from '../../core/auth.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog.component';
 import { CrudPageBase } from '../../shared/crud-page.base';
@@ -37,7 +37,7 @@ export class MembersComponent extends CrudPageBase<Member> {
     dialog: DialogService,
     message: MessageService,
     public override auth: AuthService,
-    private api: ApiService
+    private supabase: SupabaseService
   ) {
     super(repo, dialog, message, auth);
     void this.load();
@@ -97,14 +97,14 @@ export class MembersComponent extends CrudPageBase<Member> {
 
     try {
       if (isEdit && id) {
-        await this.api.put<Member>(`/members/${id}`, payload);
+          await this.supabase.manageMember({ name, email, phone: payload['phone'] as string | null, password, memberId: id });
         this.message.add({
           severity: 'success',
           summary: 'Member updated',
           detail: `${name} updated successfully.`
         });
       } else {
-        await this.api.post<Member>('/members', payload);
+          await this.supabase.manageMember({ name, email, phone: payload['phone'] as string | null, password });
         this.message.add({
           severity: 'success',
           summary: 'Member added',
@@ -170,7 +170,7 @@ export class MembersComponent extends CrudPageBase<Member> {
 
   canManageMembers(): boolean {
     const role = this.auth.user()?.role;
-    return role === 'SUPER_ADMIN' || role === 'TEAM_ADMIN';
+    return role === 'MEMBER' || role === 'TEAM_ADMIN' || role === 'SUPER_ADMIN';
   }
 
   openRowMenu(event: Event, row: Member): void {
