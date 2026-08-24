@@ -119,7 +119,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(255, 107, 0, 0.1);
-  color: #ea580c;
+  color: var(--orange);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -131,14 +131,15 @@
   font-size: 28px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #1f2937;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-1);
 
   &.highlight { color: var(--orange); }
 }
 
 .stat-label {
   margin-top: 2px;
-  color: #9ca3af;
+  color: var(--text-2);
   font-size: 13px;
   font-weight: 600;
 }
@@ -160,10 +161,10 @@
   justify-content: center;
   gap: 6px;
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-3);
 
   .empty-art svg { width: 44px; height: 44px; stroke-width: 1.3; }
-  b { color: #6b7280; font-size: 14px; }
+  b { color: var(--text-2); font-size: 14px; }
   span { font-size: 12.5px; }
 }
 
@@ -190,7 +191,7 @@
 .ep-name {
   font-size: 12.5px;
   font-weight: 800;
-  color: #1f2937;
+  color: var(--text-1);
   white-space: nowrap;
 }
 
@@ -201,7 +202,7 @@
   white-space: nowrap;
 }
 
-.muted { color: #c4b5a5; }
+.muted { color: var(--text-3); }
 
 
 @media (max-width: 1100px) {
@@ -226,9 +227,13 @@
 /* ---------- Dark mode ---------- */
 :host-context(.app-dark) {
   .stat-card { border-color: rgba(255, 255, 255, 0.1); }
+  .trend-chip {
+    background: rgba(255, 107, 0, 0.16);
+    color: var(--orange-2);
+  }
   .ep-member {
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(255, 255, 255, 0.12);
   }
-  .ep-name { color: var(--text-1); }
+  .ep-cost { color: var(--orange-3); }
 }
