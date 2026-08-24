@@ -7,7 +7,7 @@ export interface AppNotification {
   id: string;
   teamId: string;
   recipientUserId: string;
-  type: 'order_submitted' | 'order_permission_requested' | 'order_permission_approved' | 'order_permission_rejected';
+  type: 'order_submitted' | 'order_permission_requested' | 'order_permission_approved' | 'order_permission_rejected' | 'team_registered';
   title: string;
   body: string | null;
   readAt: string | null;

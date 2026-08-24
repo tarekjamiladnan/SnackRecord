@@ -165,6 +165,7 @@ export class ShellComponent implements OnInit {
     if (type === 'order_permission_approved') return LucideCircleCheck;
     if (type === 'order_permission_rejected') return LucideCircleAlert;
     if (type === 'order_submitted') return LucideClipboardList;
+    if (type === 'team_registered') return LucideStore;
     return LucideBell;
   }
 
