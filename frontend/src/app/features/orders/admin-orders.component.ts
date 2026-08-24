@@ -72,6 +72,11 @@ export class AdminOrdersComponent {
     void this.load();
   }
 
+  initials(name?: string): string {
+    if (!name) return '';
+    return name.split(' ').filter((word) => word.length).slice(0, 2).map((word) => word[0]?.toUpperCase() ?? '').join('');
+  }
+
   edit(row: any): void {
     const ref = this.dialog.open(EntityDialogComponent, {
       header: 'Edit Order',

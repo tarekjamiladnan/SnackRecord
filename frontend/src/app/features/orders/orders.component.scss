@@ -65,6 +65,43 @@
   max-width: 420px;
 }
 
+/* ---------- Admin orders mobile cards ---------- */
+.order-card-text {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--glass-border);
+  color: var(--text-1);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.crud-cards .person-cell {
+  min-width: 0;
+  gap: 10px;
+}
+
+.crud-cards .person-cell b {
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .crud-cards .row-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .crud-cards .row-actions .p-button.action-label {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 640px) {
   .order-footer {
     align-items: stretch;
