@@ -16,6 +16,15 @@
         <a class="nav-link" href="#reports" (click)="closeMenu()">Reports</a>
 
         <div class="nav-actions">
+          <button
+            type="button"
+            class="theme-btn"
+            (click)="theme.toggle()"
+            [attr.aria-label]="theme.isDark() ? 'Switch to day mode' : 'Switch to night mode'"
+            [title]="theme.isDark() ? 'Day mode' : 'Night mode'"
+          >
+            @if (theme.isDark()) { <svg lucideSun /> } @else { <svg lucideMoon /> }
+          </button>
           <a class="btn btn-ghost" routerLink="/auth/login">
             <svg lucideLogIn /> Login
           </a>

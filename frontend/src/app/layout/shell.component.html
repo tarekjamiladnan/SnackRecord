@@ -92,6 +92,16 @@
           />
         </div>
 
+        <button
+          class="icon-btn"
+          aria-label="Toggle theme"
+          [pTooltip]="theme.isDark() ? 'Day mode' : 'Night mode'"
+          tooltipPosition="bottom"
+          (click)="theme.toggle()"
+        >
+          @if (theme.isDark()) { <svg lucideSun /> } @else { <svg lucideMoon /> }
+        </button>
+
         <button class="icon-btn bell" aria-label="Notifications" pTooltip="Notifications" tooltipPosition="bottom" (click)="toggleNotifications()">
           <svg lucideBell />
           @if (unreadCount() > 0) {

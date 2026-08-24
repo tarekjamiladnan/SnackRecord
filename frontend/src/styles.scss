@@ -50,20 +50,6 @@
   --p-primary-hover-color: var(--orange-2);
   --p-primary-active-color: var(--orange-3);
 
-  /* PrimeNG surfaces → warm glass */
-  --p-surface-0: #ffffff;
-  --p-surface-50: #fbf7f3;
-  --p-surface-100: #f5eee7;
-  --p-surface-200: #efe4d9;
-  --p-surface-300: #e3d5c7;
-  --p-surface-400: #cbb9a8;
-  --p-surface-500: #a8977f;
-  --p-surface-600: #83745f;
-  --p-surface-700: #5d5246;
-  --p-surface-800: #38312a;
-  --p-surface-900: #1f2937;
-  --p-surface-950: #111827;
-
   --p-content-background: rgba(255, 255, 255, 0.65);
   --p-content-border-color: var(--glass-border);
   --p-content-color: var(--text-1);
@@ -283,11 +269,26 @@ button {
   font-weight: 500;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.6);
+  color: var(--text-1);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   padding: 0.7rem 1rem;
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.p-inputtext::placeholder,
+.p-password input::placeholder {
+  color: var(--text-3);
+}
+input.p-inputtext:-webkit-autofill,
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--text-1);
+  -webkit-box-shadow: 0 0 0 1000px rgba(255, 248, 243, 0.95) inset;
+  transition: background-color 9999s ease-out;
+}
+.app-dark input.p-inputtext:-webkit-autofill,
+.app-dark input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #201c19 inset;
 }
 .p-inputtext:enabled:hover,
 .p-password input:hover { border-color: rgba(255, 107, 0, 0.5); }
@@ -706,3 +707,74 @@ button {
   .p-datatable .p-datatable-tbody > tr > td { padding: 12px; }
   .p-paginator { justify-content: center; }
 }
+
+/* ==========================================================================
+   Dark mode (html.app-dark — toggled by ThemeService)
+   ========================================================================== */
+
+:root:root.app-dark {
+  --bg: #131110;
+  --glass: rgba(30, 26, 23, 0.55);
+  --glass-strong: rgba(36, 31, 27, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --text-1: #f4f4f5;
+  --text-2: #a8a29e;
+  --text-3: #78716c;
+  --divider: rgba(255, 255, 255, 0.09);
+
+  --glass-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+  --glass-shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.6);
+  --glow: 0 0 0 4px rgba(255, 107, 0, 0.22);
+
+  --p-content-background: rgba(30, 26, 23, 0.6);
+  --p-content-hover-background: rgba(41, 36, 32, 0.75);
+}
+
+.app-dark body {
+  background:
+    radial-gradient(circle at 8% 4%, rgba(255, 107, 0, 0.13) 0%, transparent 30%),
+    radial-gradient(circle at 92% 12%, rgba(255, 138, 50, 0.09) 0%, transparent 26%),
+    radial-gradient(circle at 50% 100%, rgba(255, 169, 77, 0.07) 0%, transparent 34%),
+    linear-gradient(135deg, #141211 0%, #1c1917 100%);
+}
+
+.app-dark ::selection {
+  background: rgba(255, 107, 0, 0.35);
+}
+
+/* ---------- PrimeNG surfaces ---------- */
+.app-dark .p-inputtext,
+.app-dark .p-password input,
+.app-dark .p-select,
+.app-dark .p-datepicker,
+.app-dark .p-paginator .p-dropdown {
+  background: rgba(28, 24, 21, 0.65);
+}
+
+.app-dark .p-select-overlay,
+.app-dark .p-datepicker-panel {
+  background: rgba(22, 19, 17, 0.96);
+}
+
+.app-dark .p-datatable .p-datatable-thead > tr > th { background: rgba(255, 255, 255, 0.04); }
+.app-dark .p-datatable .p-datatable-tbody > tr > td { border-bottom-color: rgba(255, 255, 255, 0.06); }
+.app-dark .p-datatable .p-datatable-tbody > tr:hover { background: rgba(255, 255, 255, 0.04); }
+.app-dark .p-datatable .p-datatable-tfoot > tr > td { background: rgba(255, 255, 255, 0.03); }
+
+.app-dark .p-menu { background: rgba(20, 18, 16, 0.92); }
+
+.app-dark .p-toast .p-toast-message { background: rgba(28, 25, 22, 0.88); }
+
+.app-dark .p-dialog { background: rgba(22, 19, 17, 0.92); }
+
+.app-dark .p-tag.p-tag-success { color: #4ade80; }
+.app-dark .p-tag.p-tag-danger { color: #f87171; }
+.app-dark .p-tag.p-tag-info { color: #60a5fa; }
+
+.app-dark .p-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.11) 37%, rgba(255, 255, 255, 0.05) 63%);
+  background-size: 400% 100%;
+}
+
+.app-dark .psr-toast { background: rgba(26, 23, 20, 0.92); }
+.app-dark .psr-toast-close { background: rgba(255, 255, 255, 0.08); }

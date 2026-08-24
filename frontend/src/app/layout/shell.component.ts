@@ -18,6 +18,7 @@ import {
 import { UI_IMPORTS } from '../shared/ui';
 import { AuthService } from '../core/auth.service';
 import { SupabaseWorkflowService } from '../core/supabase-workflow.service';
+import { ThemeService } from '../core/theme.service';
 import { AppNotification, NotificationService } from '../core/notification.service';
 
 interface NavItem {
@@ -115,7 +116,7 @@ export class ShellComponent implements OnInit {
       .toUpperCase() || 'AC'
   );
 
-  constructor(public auth: AuthService, public router: Router, private workflow: SupabaseWorkflowService, private notificationService: NotificationService) {
+  constructor(public auth: AuthService, public router: Router, public theme: ThemeService, private workflow: SupabaseWorkflowService, private notificationService: NotificationService) {
     this.isDesktop.set(this.media.matches);
   }
 

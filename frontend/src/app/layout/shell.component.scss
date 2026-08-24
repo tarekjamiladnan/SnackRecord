@@ -666,3 +666,21 @@
   .crumb-title { font-size: 0.95rem; max-width: 100%; }
   .mobile-brand-name { font-size: 0.8rem; }
 }
+
+/* ---------- Dark mode ---------- */
+:host-context(.app-dark) {
+  .sidebar,
+  .topbar {
+    background: rgba(24, 21, 18, 0.62);
+  }
+  .topbar { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); }
+  .nav-item:hover { background: rgba(255, 255, 255, 0.06); }
+  .collapse-btn { background: rgba(255, 255, 255, 0.05); }
+  .icon-btn { background: rgba(255, 255, 255, 0.06); }
+  .search-box { background: rgba(255, 255, 255, 0.06); }
+  .notif-panel { background: rgba(20, 17, 15, 0.94); }
+  .notif-clear-all:hover,
+  .notif-delete:hover { background: rgba(255, 255, 255, 0.08); }
+  .bell .notif-dot { box-shadow: 0 0 0 2px #17140f; }
+  .scrim { background: rgba(0, 0, 0, 0.55); }
+}

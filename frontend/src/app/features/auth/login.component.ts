@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UI_IMPORTS } from '../../shared/ui';
 import { AuthService } from '../../core/auth.service';
+import { ThemeService } from '../../core/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class LoginComponent {
   form;
   registerForm;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private route: ActivatedRoute) {
+  constructor(private fb: FormBuilder, private auth: AuthService, public theme: ThemeService, private router: Router, private route: ActivatedRoute) {
     this.form = this.fb.nonNullable.group({ email: ['', [Validators.required, Validators.email]], password: ['', Validators.required] });
     this.registerForm = this.fb.nonNullable.group({
       teamName: ['', [Validators.required, Validators.minLength(2)]],

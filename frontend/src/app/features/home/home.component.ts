@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ThemeService } from '../../core/theme.service';
 import {
   LucideArrowDownToLine,
   LucideArrowRight,
@@ -21,6 +22,7 @@ import {
   LucideListChecks,
   LucideLogIn,
   LucideMenu,
+  LucideMoon,
   LucidePiggyBank,
   LucidePlus,
   LucideRefreshCw,
@@ -29,6 +31,7 @@ import {
   LucideShield,
   LucideShieldCheck,
   LucideSparkles,
+  LucideSun,
   LucideTrendingUp,
   LucideUserRound,
   LucideUsers,
@@ -62,6 +65,7 @@ import {
     LucideListChecks,
     LucideLogIn,
     LucideMenu,
+    LucideMoon,
     LucidePiggyBank,
     LucidePlus,
     LucideRefreshCw,
@@ -70,6 +74,7 @@ import {
     LucideShield,
     LucideShieldCheck,
     LucideSparkles,
+    LucideSun,
     LucideTrendingUp,
     LucideUserRound,
     LucideUsers,
@@ -86,7 +91,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   private observer?: IntersectionObserver;
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef, public theme: ThemeService) {}
 
   ngAfterViewInit(): void {
     const targets = Array.from(this.el.nativeElement.querySelectorAll('[data-reveal]')) as HTMLElement[];

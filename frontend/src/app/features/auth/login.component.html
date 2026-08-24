@@ -1,4 +1,12 @@
 <section class="auth">
+  <button
+    type="button"
+    class="theme-toggle"
+    [attr.aria-label]="theme.isDark() ? 'Switch to day mode' : 'Switch to night mode'"
+    (click)="theme.toggle()"
+  >
+    @if (theme.isDark()) { <svg lucideSun /> } @else { <svg lucideMoon /> }
+  </button>
   <div class="auth-card animate-scale-in">
     <div class="auth-head">
       <div class="brand-logo"><img src="phantom-logo-1.png" alt="Phantom Snack Record" /></div>

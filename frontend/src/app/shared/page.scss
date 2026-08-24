@@ -1159,3 +1159,22 @@
   .stat-grid { grid-template-columns: 1fr; }
   .page-hero { padding: 18px; }
 }
+
+/* ---------- Dark mode ---------- */
+:host-context(.app-dark) {
+  .page-hero {
+    background:
+      radial-gradient(circle at 92% 10%, rgba(255, 107, 0, 0.18), transparent 42%),
+      linear-gradient(120deg, rgba(255, 107, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 169, 77, 0.12) 100%);
+  }
+  .hero-metric,
+  .mini-stat,
+  .crud-card-fields > div,
+  .report-preview,
+  .report-mobile-row,
+  .month-card-metrics .money-cell {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .sheet th { background: rgba(255, 255, 255, 0.04); }
+  .amount-input { background: rgba(28, 24, 21, 0.65); }
+}

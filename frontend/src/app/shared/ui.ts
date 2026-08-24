@@ -84,6 +84,8 @@ import {
   LucideUtensilsCrossed,
   LucideVault,
   LucideWallet,
+  LucideMoon,
+  LucideSun,
   LucideX
 } from '@lucide/angular';
 
@@ -175,5 +177,7 @@ export const UI_IMPORTS = [
   LucideUtensilsCrossed,
   LucideVault,
   LucideWallet,
+  LucideMoon,
+  LucideSun,
   LucideX
 ];

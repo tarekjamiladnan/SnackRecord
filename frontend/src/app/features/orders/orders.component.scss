@@ -117,3 +117,8 @@
     justify-content: center;
   }
 }
+
+/* ---------- Dark mode ---------- */
+:host-context(.app-dark) .order-card-text {
+  background: rgba(255, 255, 255, 0.05);
+}

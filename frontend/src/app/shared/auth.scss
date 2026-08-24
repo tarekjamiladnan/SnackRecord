@@ -348,3 +348,49 @@
   .auth { padding: 16px; }
   .auth-card { padding: 28px 22px 26px; }
 }
+
+/* ---------- Dark mode ---------- */
+:host-context(.app-dark) {
+  .auth {
+    background-image: linear-gradient(160deg, #1c1410 0%, #241a12 45%, #7a3c00 100%);
+  }
+  .auth::before {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  }
+  .auth-card {
+    background: rgba(24, 20, 17, 0.86);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  }
+  .field-input-wrap .p-inputtext,
+  .password-wrap .p-inputtext {
+    background: rgba(28, 24, 21, 0.85);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 5;
+}
+
+.theme-toggle:hover {
+  color: var(--orange);
+  transform: translateY(-1px);
+}
+
+.theme-toggle svg { width: 20px; height: 20px; }
