@@ -189,6 +189,19 @@
   margin-top: 12px;
 }
 
+.side-foot-actions {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.side-foot-actions .nav-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
 .collapse-btn {
   display: grid;
   place-items: center;
@@ -552,12 +565,8 @@
   gap: 11px;
   padding: 6px 10px 6px 6px;
   border-radius: 16px;
-  cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.25s ease;
 }
-
-.profile:hover { background: rgba(255, 255, 255, 0.55); border-color: var(--glass-border); }
 
 .avatar {
   display: grid;
@@ -597,76 +606,6 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-
-.profile-caret {
-  width: 16px;
-  height: 16px;
-  color: var(--text-3);
-  transition: transform 0.25s ease;
-}
-
-.profile-caret.flip { transform: rotate(180deg); }
-
-/* Profile dropdown */
-.profile-menu {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  z-index: 60;
-  width: min(250px, calc(100vw - 32px));
-  padding: 10px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(28px);
-  backdrop-filter: blur(28px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow-lg);
-}
-
-.profile-menu-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 8px 12px;
-}
-
-.profile-menu-head b { display: block; font-size: 0.9rem; font-weight: 800; }
-.profile-menu-head span { font-size: 0.74rem; color: var(--text-3); font-weight: 600; text-transform: uppercase; }
-
-.profile-menu a,
-.profile-menu button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 11px 12px;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  color: var(--text-1);
-  font: inherit;
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-}
-
-.profile-menu a:hover,
-.profile-menu button:hover {
-  background: rgba(255, 107, 0, 0.1);
-  color: var(--orange);
-}
-
-.profile-menu a svg,
-.profile-menu button svg {
-  width: 17px;
-  height: 17px;
-  color: var(--text-2);
-}
-
-.profile-menu a:hover svg,
-.profile-menu button:hover svg { color: var(--orange); }
 
 /* ---------- Content ---------- */
 .content {
@@ -723,7 +662,6 @@
   .bell { display: none; }
   .profile { padding: 4px 4px 4px 2px; min-width: 0; }
   .profile .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 0.78rem; }
-  .profile-caret { display: none; }
   .content { padding: 2px; }
   .crumb { flex: 1; min-width: 0; }
   .crumb-title { font-size: 0.95rem; max-width: 100%; }

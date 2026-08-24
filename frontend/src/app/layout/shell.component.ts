@@ -35,7 +35,6 @@ interface NavItem {
 export class ShellComponent implements OnInit {
   collapsed = signal(false);
   mobileOpen = signal(false);
-  profileOpen = signal(false);
   notificationsOpen = signal(false);
   search = signal('');
   isDesktop = signal(true);
@@ -137,18 +136,11 @@ export class ShellComponent implements OnInit {
 
   closeMobile(): void {
     this.mobileOpen.set(false);
-    this.profileOpen.set(false);
-    this.notificationsOpen.set(false);
-  }
-
-  toggleProfile(): void {
-    this.profileOpen.update((open) => !open);
     this.notificationsOpen.set(false);
   }
 
   toggleNotifications(): void {
     this.notificationsOpen.update((open) => !open);
-    this.profileOpen.set(false);
     if (this.notificationsOpen()) void this.notificationService.load();
   }
 

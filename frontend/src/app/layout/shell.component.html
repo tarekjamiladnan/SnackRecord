@@ -33,6 +33,27 @@
     </nav>
 
     <div class="side-foot">
+      <div class="side-foot-actions">
+        <a
+          class="nav-item"
+          routerLink="/auth/change-password"
+          (click)="closeMobile()"
+          [pTooltip]="isDesktop() && collapsed() ? 'Change Password' : ''"
+          tooltipPosition="right"
+        >
+          <span class="nav-icon"><svg lucideKeyRound /></span>
+          <span class="nav-label">Change Password</span>
+        </a>
+        <button
+          class="nav-item"
+          (click)="auth.logout()"
+          [pTooltip]="isDesktop() && collapsed() ? 'Logout' : ''"
+          tooltipPosition="right"
+        >
+          <span class="nav-icon"><svg lucideLogOut /></span>
+          <span class="nav-label">Logout</span>
+        </button>
+      </div>
       <button class="collapse-btn" (click)="toggleSidebar()" [pTooltip]="isDesktop() && collapsed() ? 'Expand sidebar' : 'Collapse sidebar'" tooltipPosition="right">
         <svg lucideChevronLeft />
       </button>
@@ -123,35 +144,13 @@
           </div>
         }
 
-        <div class="profile" (click)="toggleProfile()">
+        <div class="profile">
           <div class="avatar">{{ initials() }}</div>
           <div class="profile-meta">
             <b>{{ userName() }}</b>
             <span>{{ role() }}</span>
           </div>
-          <svg class="profile-caret" [class.flip]="profileOpen()" lucideChevronDown />
         </div>
-
-        @if (profileOpen()) {
-          <div class="profile-menu animate-scale-in">
-          <div class="profile-menu-head">
-            <div class="avatar">{{ initials() }}</div>
-            <div>
-              <b>{{ userName() }}</b>
-              <span>{{ role() }}</span>
-            </div>
-          </div>
-            <div class="divider"></div>
-            <a routerLink="/auth/change-password" (click)="closeMobile()">
-              <svg lucideKeyRound />
-              <span>Change password</span>
-            </a>
-            <button (click)="auth.logout()">
-              <svg lucideLogOut />
-              <span>Logout</span>
-            </button>
-          </div>
-        }
       </div>
     </header>
 
