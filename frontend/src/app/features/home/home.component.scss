@@ -180,10 +180,10 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 248, 243, 0.85);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(239, 228, 217, 0.9);
+  background: rgba(18, 15, 12, 0.92);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .nav-inner {
   max-width: var(--max);
@@ -216,7 +216,7 @@
   font-weight: 800;
   font-size: 1.15rem;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: #f4f4f5;
 }
 .nav-links {
   display: flex;
@@ -228,13 +228,13 @@
   border-radius: 999px;
   font-weight: 700;
   font-size: 0.92rem;
-  color: var(--ink-2);
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
   transition: color 0.2s ease, background 0.2s ease;
 }
 .nav-link:hover {
-  color: var(--primary-strong);
-  background: var(--primary-soft);
+  color: #fff;
+  background: rgba(255, 107, 0, 0.15);
 }
 .nav-actions {
   display: flex;
@@ -243,16 +243,33 @@
   margin-left: 10px;
 }
 .nav-actions .btn { padding: 9px 18px; font-size: 0.88rem; }
+.nav-actions .btn-ghost {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+.nav-actions .btn-ghost:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 107, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
 .nav-toggle {
   display: none;
   place-items: center;
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
+}
+.nav-toggle:hover {
+  background: rgba(255, 107, 0, 0.15);
+  color: #fff;
+  border-color: rgba(255, 107, 0, 0.4);
 }
 .nav-toggle svg { width: 22px; height: 22px; }
 
@@ -1132,13 +1149,18 @@
     align-items: stretch;
     gap: 8px;
     padding: 18px 24px 24px;
-    background: rgba(255, 248, 243, 0.98);
-    border-bottom: 1px solid var(--line);
-    box-shadow: var(--shadow-lg);
+    background: rgba(18, 15, 12, 0.96);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     display: none;
   }
   .nav-links.show { display: flex; }
-  .nav-link { padding: 13px 16px; font-size: 1rem; }
+  .nav-link {
+    padding: 13px 16px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .nav-link:hover { color: #fff; background: rgba(255, 107, 0, 0.15); }
   .nav-actions { flex-direction: column-reverse; margin-left: 0; margin-top: 6px; }
   .nav-actions .btn,
   .nav-actions .btn-ghost,
@@ -1184,16 +1206,17 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 
 .theme-btn:hover {
-  color: var(--primary);
-  border-color: rgba(255, 107, 0, 0.45);
+  color: #ffa94d;
+  border-color: rgba(255, 107, 0, 0.5);
+  background: rgba(255, 107, 0, 0.12);
   transform: translateY(-1px);
 }
 
@@ -1228,7 +1251,7 @@
 }
 
 @media (max-width: 860px) {
-  .nav-actions .theme-btn { width: 100%; height: 46px; }
+  .nav-actions .theme-btn { width: 100%; height: 46px; color: rgba(255, 255, 255, 0.8); border-color: rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.06); }
 }
 
 /* ================= DARK MODE ================= */
@@ -1262,13 +1285,28 @@
   color: var(--ink);
 }
 
-/* ---- Navbar dark mode ---- */
+/* ---- Navbar dark mode (navbar is already dark by default, minor tweaks) ---- */
 :host-context(.app-dark) .nav {
-  background: rgba(20, 17, 14, 0.88);
-  border-bottom-color: rgba(255, 255, 255, 0.06);
+  background: rgba(12, 10, 8, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.05);
 }
 
 :host-context(.app-dark) .nav-links {
-  background: rgba(20, 17, 14, 0.96);
-  border-bottom-color: rgba(255, 255, 255, 0.06);
+  background: rgba(12, 10, 8, 0.97);
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+:host-context(.app-dark) .nav-toggle {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+:host-context(.app-dark) .theme-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+:host-context(.app-dark) .nav-actions .btn-ghost {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
 }
