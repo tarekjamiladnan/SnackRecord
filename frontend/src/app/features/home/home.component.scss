@@ -1261,3 +1261,14 @@
 :host-context(.app-dark) .home h3 {
   color: var(--ink);
 }
+
+/* ---- Navbar dark mode ---- */
+:host-context(.app-dark) .nav {
+  background: rgba(20, 17, 14, 0.88);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+:host-context(.app-dark) .nav-links {
+  background: rgba(20, 17, 14, 0.96);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
