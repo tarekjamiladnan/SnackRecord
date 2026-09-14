@@ -1,6 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidatorFn, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { UI_IMPORTS } from '../../shared/ui';
 import { AuthService } from '../../core/auth.service';
@@ -56,6 +56,7 @@ export class PasswordComponent {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
+    private router: Router,
     private auth: AuthService,
     private message: MessageService
   ) {
@@ -82,6 +83,10 @@ export class PasswordComponent {
       } else {
         await this.auth.updatePassword(this.form.value.password ?? '');
         this.message.add({ severity: 'success', summary: 'Password updated', detail: 'Your password has been changed successfully.' });
+        if (this.mode() === 'change') {
+          await this.router.navigateByUrl('/dashboard');
+          return;
+        }
         this.form.reset();
       }
     } catch (err) {
