@@ -65,30 +65,19 @@ export class SupabaseService {
   async manageMember(input: { name: string; email: string; phone?: string | null; password: string; memberId?: string }) {
     if (!this.client) throw new Error(this.configurationError ?? 'Supabase is not configured.');
     const { data, error } = await this.client.functions.invoke('manage-member', { body: input });
-    if (error) {
-      const raw = await this.edgeErrorMessage(error);
-      if (raw && /required|access required|already/i.test(raw)) throw new Error(raw);
-      throw new Error('Could not save the member. Please try again in a few minutes.');
-    }
-    if (data?.error) {
-      if (/required|already/i.test(String(data.error))) throw new Error(String(data.error));
-      throw new Error('Could not save the member. Please try again in a few minutes.');
-    }
-    return data;
-  }
-
-  async registerTeam(input: { teamName: string; adminName: string; email: string; phone?: string; password: string }) {
-    if (!this.client) throw new Error(this.configurationError ?? 'Supabase is not configured.');
-    const { data, error } = await this.client.functions.invoke('register-team', { body: input });
     const raw = error ? await this.edgeErrorMessage(error) : data?.error ? String(data.error) : null;
     if (raw) {
-      if (/already registered|already exists|user already/i.test(raw)) {
-        throw new Error('An account already exists with this email. Please sign in instead.');
+      if (/required|access required|already|not found/i.test(raw)) {
+        console.warn('manage-member rejected:', raw);
+        throw new Error(raw);
       }
-      if (/team name, admin name|required|valid email/i.test(raw)) throw new Error(raw);
-      throw new Error('We could not complete your registration right now. Please try again in a few minutes.');
+      console.error('manage-member error:', raw);
+      throw new Error('Could not save the member. Please try again in a few minutes.');
     }
-    return data as { userId: string; message: string };
+    if (data?.error && !raw) {
+      console.error('manage-member response error:', data.error);
+    }
+    return data;
   }
 
   async currentUser(): Promise<User | null> {

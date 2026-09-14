@@ -66,18 +66,38 @@ export class AuthService {
     try {
       this.loading.set(true);
       const normalizedEmail = email.trim().toLowerCase();
-      await this.supabase.registerTeam({ teamName, adminName: name, email: normalizedEmail, phone, password });
-      const { error } = await this.supabase.auth.signInWithPassword({ email: normalizedEmail, password });
-      if (error) throw AuthService.authError(error, 'We created your account but could not sign you in. Please try signing in manually.');
+      const { data, error } = await this.supabase.auth.signUp({
+        email: normalizedEmail,
+        password,
+        options: { data: { teamName, adminName: name, phone: phone || '' } }
+      });
+      if (error) {
+        console.error('Supabase signUp error:', { message: error.message, code: error.code, status: error.status });
+        throw AuthService.authError(error, 'We could not complete your registration right now. Please try again in a few minutes.');
+      }
+      const signInResult = await this.supabase.auth.signInWithPassword({ email: normalizedEmail, password });
+      if (signInResult.error) {
+        if (data.session) await this.restoreSession();
+        if (this.user()) {
+          await this.router.navigateByUrl('/dashboard');
+          return 'Your account and team were created successfully.';
+        }
+        console.error('Sign-in after registration failed:', { message: signInResult.error.message, code: signInResult.error.code });
+        throw AuthService.authError(signInResult.error, 'We created your account but could not sign you in. Please try signing in manually.');
+      }
       await this.supabase.ensureRegistrationContext();
       await this.restoreSession();
       if (!this.user()) throw new Error('Account created, but the team profile could not be loaded.');
       await this.router.navigateByUrl('/dashboard');
       return 'Your account and team were created successfully.';
     } catch (err) {
-      throw err instanceof Error && /passwords do not match|^password must be at least|account created|sign in instead|not configured|registration right now|required|valid email/i.test(err.message)
-        ? err
-        : AuthService.authError(err, 'We could not complete your registration right now. Please try again in a few minutes.');
+      if (err instanceof Error && /passwords do not match|^password must be at least|account created|sign in instead|not configured|required|valid email|already exists|already registered|profile could not be loaded/i.test(err.message)) {
+        throw err;
+      }
+      console.error('Registration error:', err);
+      throw err instanceof Error
+        ? AuthService.authError(err, 'We could not complete your registration right now. Please try again in a few minutes.')
+        : new Error('We could not complete your registration right now. Please try again in a few minutes.');
     } finally {
       this.loading.set(false);
     }
@@ -88,7 +108,10 @@ export class AuthService {
     try {
       this.loading.set(true);
       const { error } = await this.supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
-      if (error) throw AuthService.authError(error, 'Could not sign you in right now. Please try again.');
+      if (error) {
+        console.error('Supabase signIn error:', { message: error.message, code: error.code, status: error.status });
+        throw AuthService.authError(error, 'Could not sign you in right now. Please try again.');
+      }
       let context = await this.supabase.userContext().catch(() => null);
       if (!context) {
         await this.supabase.ensureRegistrationContext().catch(() => null);
