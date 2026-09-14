@@ -41,6 +41,7 @@ export class PasswordComponent {
   mode = signal<'forgot' | 'reset' | 'change'>('forgot');
   title = computed(() => (this.mode() === 'forgot' ? 'Forgot Password' : this.mode() === 'reset' ? 'Reset Password' : 'Change Password'));
   isForgot = computed(() => this.mode() === 'forgot');
+  isChange = computed(() => this.mode() === 'change');
   form;
 
   strength = computed<StrengthMeta>(() => {
