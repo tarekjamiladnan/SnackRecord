@@ -18,7 +18,7 @@ export const routes: Routes = [
       { path: 'menu', canActivate: [roleGuard(['MEMBER', 'TEAM_ADMIN'])], loadComponent: () => import('./features/menu/menu.component').then((m) => m.MenuComponent) },
       { path: 'order', canActivate: [roleGuard(['MEMBER', 'TEAM_ADMIN'], '/orders')], loadComponent: () => import('./features/orders/order.component').then((m) => m.OrderComponent) },
       { path: 'orders', canActivate: [roleGuard(['TEAM_ADMIN'])], loadComponent: () => import('./features/orders/admin-orders.component').then((m) => m.AdminOrdersComponent) },
-      { path: 'daily-entry', canActivate: [roleGuard(['MEMBER', 'TEAM_ADMIN'])], loadComponent: () => import('./features/daily-entry/daily-entry.component').then((m) => m.DailyEntryComponent) },
+      { path: 'daily-entry', canActivate: [roleGuard(['TEAM_ADMIN', 'SUPER_ADMIN'], '/dashboard')], loadComponent: () => import('./features/daily-entry/daily-entry.component').then((m) => m.DailyEntryComponent) },
       { path: 'collections', canActivate: [roleGuard(['TEAM_ADMIN'])], loadComponent: () => import('./features/collections/collections.component').then((m) => m.CollectionsComponent) },
       { path: 'monthly-report', canActivate: [roleGuard(['MEMBER', 'TEAM_ADMIN'])], loadComponent: () => import('./features/monthly-report/monthly-report.component').then((m) => m.MonthlyReportComponent) },
       { path: 'months', canActivate: [roleGuard(['TEAM_ADMIN'])], loadComponent: () => import('./features/months/months.component').then((m) => m.MonthsComponent) },

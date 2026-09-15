@@ -53,9 +53,11 @@ export class ShellComponent implements OnInit {
       ...(this.isAdmin() ? [{ path: '/orders', label: 'Manage Orders', icon: LucideClipboardList }] : []),
       { path: '/menu', label: 'Menu', icon: LucideUtensilsCrossed },
 ...(this.isSuperAdmin() ? [] : [
-        { path: '/members', label: 'Members', icon: LucideUsers },
-        { path: '/daily-entry', label: 'Daily Entry', icon: LucideNotebookPen }
+        { path: '/members', label: 'Members', icon: LucideUsers }
       ]),
+      ...(this.isAdmin() ? [
+        { path: '/daily-entry', label: 'Daily Entry', icon: LucideNotebookPen }
+      ] : []),
       ...(this.isAdmin() ? [
         { path: '/collections', label: 'Collections', icon: LucideWallet },
         { path: '/months', label: 'Months', icon: LucideCalendarRange }
