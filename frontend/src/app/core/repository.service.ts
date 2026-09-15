@@ -9,6 +9,7 @@ export interface ListOptions {
   orderBy?: string;
   ascending?: boolean;
   filters?: Record<string, unknown>;
+  select?: string;
 }
 
 export interface ListResponse<T> {
@@ -45,7 +46,7 @@ export class RepositoryService {
     const page = options.page ?? 0;
     const pageSize = options.pageSize ?? 25;
     const table = this.tableName(resource);
-    let query: any = this.supabase.from(table).select('*', { count: 'exact' });
+    let query: any = this.supabase.from(table).select(options.select ?? '*', { count: 'exact' });
     for (const [key, value] of Object.entries(options.filters ?? {})) {
       query = query.eq(this.snake(key), value);
     }

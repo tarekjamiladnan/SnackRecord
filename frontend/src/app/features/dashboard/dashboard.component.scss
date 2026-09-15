@@ -171,8 +171,8 @@
 .panel-actions { margin-left: auto; }
 
 .ep-columns {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -181,7 +181,10 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  min-width: 88px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
   padding: 8px 12px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.5);
@@ -189,10 +192,18 @@
 }
 
 .ep-name {
+  width: 100%;
+  min-width: 0;
   font-size: 12.5px;
   font-weight: 800;
   color: var(--text-1);
-  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .ep-cost {

@@ -34,7 +34,7 @@ export class CollectionsComponent {
     try {
       const [membersResult, collectionsResult] = await Promise.all([
         this.repo.list<Member>('members', { filters: { status: 'active' }, orderBy: 'name' }),
-        this.repo.list<any>('collections', { orderBy: 'date', ascending: false, pageSize: 50 })
+        this.repo.list<any>('collections', { orderBy: 'date', ascending: false, pageSize: 50, select: '*, members(name)' })
       ]);
       this.members.set(membersResult.data);
       this.collections.set(collectionsResult.data);
