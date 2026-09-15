@@ -170,7 +170,7 @@ export class MembersComponent extends CrudPageBase<Member> {
 
   canManageMembers(): boolean {
     const role = this.auth.user()?.role;
-    return role === 'MEMBER' || role === 'TEAM_ADMIN' || role === 'SUPER_ADMIN';
+    return role === 'TEAM_ADMIN' || role === 'SUPER_ADMIN';
   }
 
   openRowMenu(event: Event, row: Member): void {

@@ -68,27 +68,6 @@
   }
 }
 
-.hero-art {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 132px;
-  height: 132px;
-  border-radius: 36px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(8px);
-
-  svg {
-    width: 64px;
-    height: 64px;
-    stroke-width: 1.4;
-    color: #fff;
-  }
-}
-
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -223,7 +202,6 @@
 @media (max-width: 640px) {
   .hero-card { flex-direction: column; text-align: center; padding: 26px 22px; }
   .hero-actions { justify-content: center; }
-  .hero-art { display: none; }
   .stat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .stat-card { padding: 18px; }
   .stat-value { font-size: 22px; }

@@ -5,7 +5,9 @@
       <p class="page-sub">{{ count() }} active members</p>
     </div>
     <div class="page-actions">
-      <button pButton (click)="open()"><svg lucidePlus /> Add Member</button>
+      @if (canManageMembers()) {
+        <button pButton (click)="open()"><svg lucidePlus /> Add Member</button>
+      }
     </div>
   </div>
 
@@ -24,7 +26,9 @@
         <div class="empty-art"><svg lucideUsers /></div>
         <b>No members yet</b>
         <span>Add your first member to start recording snack entries.</span>
-        <button pButton style="margin-top:20px" (click)="open()"><svg lucidePlus /> Add Member</button>
+        @if (canManageMembers()) {
+          <button pButton style="margin-top:20px" (click)="open()"><svg lucidePlus /> Add Member</button>
+        }
       </div>
     } @else {
       <p-table

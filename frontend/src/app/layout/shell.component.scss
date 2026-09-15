@@ -239,8 +239,6 @@
 
 /* ---------- Topbar ---------- */
 .topbar {
-  position: sticky;
-  top: 16px;
   z-index: 30;
   height: 72px;
   display: flex;
@@ -652,7 +650,6 @@
   }
   .sidebar.mobile-open { transform: translateX(0); }
   .main { flex: 1; min-width: 0; }
-  .topbar { top: 12px; }
   .search-box { display: none; }
   .profile-meta { display: none; }
   .crumb { display: none; }
