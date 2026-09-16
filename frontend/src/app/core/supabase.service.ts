@@ -62,7 +62,7 @@ export class SupabaseService {
     }
   }
 
-  async manageMember(input: { name: string; email: string; phone?: string | null; password: string; memberId?: string }) {
+  async manageMember(input: { name?: string; email?: string; phone?: string | null; password?: string; memberId?: string; action?: 'create' | 'delete' }) {
     if (!this.client) throw new Error(this.configurationError ?? 'Supabase is not configured.');
     const { data, error } = await this.client.functions.invoke('manage-member', { body: input });
     const raw = error ? await this.edgeErrorMessage(error) : data?.error ? String(data.error) : null;

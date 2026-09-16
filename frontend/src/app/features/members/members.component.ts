@@ -138,24 +138,34 @@ export class MembersComponent extends CrudPageBase<Member> {
     }
   }
 
-  async archive(row: Member, status: 'active' | 'archived'): Promise<void> {
-    await this.repo.update<Member>('members', row.id, { status });
-    await this.load();
-  }
-
   override delete(row: Member): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       header: 'Delete Member',
       width: '460px',
       data: {
         title: 'Delete Member',
-        message: 'Archives the member so their payment history is kept. They will no longer appear in new entries.',
+        message: 'Removes the member and their login account from Authentication. Their payment history stays for reports.',
         action: 'Delete'
       }
     });
     if (!ref) return;
     ref.onClose.subscribe(async (ok) => {
-      if (ok) await this.archive(row, 'archived');
+      if (!ok) return;
+      try {
+        await this.supabase.manageMember({ memberId: row.id, action: 'delete' });
+        this.message.add({
+          severity: 'success',
+          summary: 'Member deleted',
+          detail: `${row.name} and their account were removed.`
+        });
+        await this.load();
+      } catch (err) {
+        this.message.add({
+          severity: 'error',
+          summary: 'Delete failed',
+          detail: err instanceof Error ? err.message : 'Please try again.'
+        });
+      }
     });
   }
 
