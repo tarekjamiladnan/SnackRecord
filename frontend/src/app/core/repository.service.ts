@@ -44,7 +44,7 @@ export class RepositoryService {
 
   async list<T>(resource: string, options: ListOptions = {}): Promise<ListResponse<T>> {
     const page = options.page ?? 0;
-    const pageSize = options.pageSize ?? 25;
+    const pageSize = options.pageSize ?? 10;
     const table = this.tableName(resource);
     let query: any = this.supabase.from(table).select(options.select ?? '*', { count: 'exact' });
     for (const [key, value] of Object.entries(options.filters ?? {})) {

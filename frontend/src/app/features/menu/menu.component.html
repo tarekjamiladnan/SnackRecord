@@ -4,9 +4,11 @@
       <h1>Menu</h1>
       <p class="page-sub">{{ count() }} menu items</p>
     </div>
-    <div class="page-actions">
-      <button pButton (click)="open()"><svg lucidePlus /> Add Menu</button>
-    </div>
+    @if (isAdmin()) {
+      <div class="page-actions">
+        <button pButton (click)="open()"><svg lucidePlus /> Add Menu</button>
+      </div>
+    }
   </div>
 
   <div class="toolbar">
@@ -22,18 +24,30 @@
     <div class="glass empty-state" style="padding: 60px 20px">
       <div class="empty-art"><svg lucideCookingPot /></div>
       <b>Menu is empty</b>
-      <span>Add your first menu item to keep track of what's being served.</span>
-      <button pButton style="margin-top:20px" (click)="open()"><svg lucidePlus /> Add Menu Item</button>
+      <span>Ask an admin to add menu items.</span>
     </div>
   } @else {
     <div class="menu-grid">
       @for (row of data(); track row.id) {
         <div class="menu-card animate-fade-up">
-          <div class="menu-icon"><svg lucideUtensilsCrossed /></div>
-          <div class="menu-name">{{ row.name }}</div>
-          <div class="menu-actions">
-            <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
-            <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
+          <div class="menu-card-head">
+            <div class="menu-icon"><svg lucideUtensilsCrossed /></div>
+            <div class="menu-name">{{ row.name }}</div>
+            @if (isAdmin()) {
+              <div class="menu-actions">
+                <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
+                <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
+              </div>
+            }
+          </div>
+          <div class="menu-adder">
+            <button pButton type="button" class="p-button-sm p-button-outlined stepper-btn" (click)="draft.minus(row.name)" [disabled]="qty(row.name) === 0" [pTooltip]="qty(row.name) === 0 ? '' : 'Remove one'">
+              <svg lucideMinus />
+            </button>
+            <span class="qty-value">{{ qty(row.name) }}</span>
+            <button pButton type="button" class="p-button-sm add-order-btn" (click)="addToOrder(row)">
+              <svg lucidePlus /> Add to Order
+            </button>
           </div>
         </div>
       }
@@ -42,5 +56,15 @@
 
   @if (data().length > 0) {
     <div class="muted" style="font-size:0.82rem; text-align:center">{{ count() }} item{{ count() === 1 ? '' : 's' }} in total</div>
+  }
+
+  @if (draft.hasItems()) {
+    <div class="order-basket-wrap">
+      <button pButton type="button" class="order-basket" (click)="goToOrder()">
+        <svg lucideShoppingBasket />
+        <span>{{ draft.totalUnits() }} item{{ draft.totalUnits() === 1 ? '' : 's' }} · View Order</span>
+        <svg lucideArrowRight />
+      </button>
+    </div>
   }
 </section>

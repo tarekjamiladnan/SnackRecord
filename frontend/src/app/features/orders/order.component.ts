@@ -3,6 +3,7 @@ import { MessageService } from 'primeng/api';
 import { Member, Order } from '../../core/models';
 import { AuthService } from '../../core/auth.service';
 import { SupabaseWorkflowService } from '../../core/supabase-workflow.service';
+import { OrderDraftService } from '../../core/order-draft.service';
 import { UI_IMPORTS } from '../../shared/ui';
 
 interface OrderRequest {
@@ -33,6 +34,7 @@ interface MemberInfoResponse {
 })
 export class OrderComponent implements OnDestroy {
   orderText = '';
+  customText = '';
   order = signal<Order | null>(null);
   member = signal<Member | null>(null);
   settings = signal<Settings | null>(null);
@@ -55,7 +57,12 @@ export class OrderComponent implements OnDestroy {
   isClosed = () => this.afterCutoff() && this.request()?.status !== 'approved';
   remainingChars = () => 500 - this.orderText.length;
 
-  constructor(private auth: AuthService, private workflow: SupabaseWorkflowService, private message: MessageService) {
+  constructor(
+    private auth: AuthService,
+    private workflow: SupabaseWorkflowService,
+    private message: MessageService,
+    readonly draft: OrderDraftService
+  ) {
     void this.load();
   }
 
@@ -72,7 +79,7 @@ export class OrderComponent implements OnDestroy {
       this.request.set(info.request ?? null);
       const order = info.order;
       this.order.set(order ?? null);
-      this.orderText = order?.orderText ?? '';
+      this.applyOrderText(order?.orderText ?? '');
     } catch (err) {
       this.message.add({
         severity: 'error',
@@ -82,6 +89,41 @@ export class OrderComponent implements OnDestroy {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  removeDraftItem(name: string): void {
+    this.draft.remove(name);
+    this.syncFromDraft();
+  }
+
+  clearDraft(): void {
+    this.draft.clear();
+    this.syncFromDraft();
+  }
+
+  onOrderTextChange(value: string): void {
+    const compose = this.draft.compose();
+    this.customText = compose ? this.stripComposePrefix(value, compose) : value;
+  }
+
+  private applyOrderText(existing: string): void {
+    const compose = this.draft.compose();
+    if (!compose) {
+      this.customText = existing;
+      this.orderText = existing;
+      return;
+    }
+    this.customText = this.stripComposePrefix(existing, compose);
+    this.orderText = compose + (this.customText ? `, ${this.customText}` : '');
+  }
+
+  private syncFromDraft(): void {
+    const compose = this.draft.compose();
+    this.orderText = compose ? compose + (this.customText ? `, ${this.customText}` : '') : this.customText;
+  }
+
+  private stripComposePrefix(text: string, compose: string): string {
+    return text.startsWith(compose) ? text.slice(compose.length).replace(/^\s*,\s*/, '').trim() : text;
   }
 
   async save(): Promise<void> {
@@ -100,6 +142,8 @@ export class OrderComponent implements OnDestroy {
     try {
       if (await this.blockedByMinimumBalance(member.id)) return;
       const response = await this.workflow.submitOrder<Order>(this.today, text);
+      this.draft.clear();
+      this.customText = '';
       this.order.set(response);
       this.orderText = response?.orderText ?? text;
       this.message.add({ severity: 'success', summary: 'Order saved', detail: 'Your order was saved for today.' });

@@ -99,9 +99,9 @@
 
         <p-table
           [value]="collections()"
-          [paginator]="collections().length > 8"
-          [rows]="8"
-          [rowsPerPageOptions]="[8, 16, 32]"
+          [paginator]="collections().length > 10"
+          [rows]="10"
+          [rowsPerPageOptions]="[10, 25, 50]"
           styleClass="preview-table desktop-table"
         >
           <ng-template pTemplate="header">

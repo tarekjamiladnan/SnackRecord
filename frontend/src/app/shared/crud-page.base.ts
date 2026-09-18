@@ -16,7 +16,7 @@ export abstract class CrudPageBase<T extends { id: string }> {
   data = signal<T[]>([]);
   count = signal(0);
   page = signal(0);
-  pageSize = signal(25);
+  pageSize = signal(10);
   search = signal('');
   loading = signal(false);
 

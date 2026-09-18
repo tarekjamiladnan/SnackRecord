@@ -29,11 +29,27 @@
           }
         }
 
+        @if (draft.items().length > 0) {
+          <div class="draft-bar">
+            <span class="draft-label"><svg lucideShoppingBasket /> Selected from menu</span>
+            <button pButton type="button" class="p-button-text draft-clear" (click)="clearDraft()"><svg lucideX /> Clear all</button>
+          </div>
+          <div class="draft-chips">
+            @for (item of draft.items(); track item.name) {
+              <div class="draft-chip">
+                <span>{{ item.name }}@if (item.qty > 1) { <b class="draft-qty">×{{ item.qty }}</b> }</span>
+                <button pButton type="button" class="p-button-text chip-remove" pTooltip="Remove" (click)="removeDraftItem(item.name)"><svg lucideX /></button>
+              </div>
+            }
+          </div>
+        }
+
         <label for="orderText">What do you want to eat today?</label>
         <textarea
           id="orderText"
           pInputText
           [(ngModel)]="orderText"
+          (ngModelChange)="onOrderTextChange($event)"
           maxlength="500"
           rows="8"
           [disabled]="isClosed()"
