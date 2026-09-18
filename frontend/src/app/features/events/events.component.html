@@ -1,0 +1,180 @@
+<section class="page">
+  <div class="page-head">
+    <div>
+      <h1>Events</h1>
+      <p class="page-sub">{{ count() }} event{{ count() === 1 ? '' : 's' }}</p>
+    </div>
+    <div class="page-actions">
+      @if (isAdmin()) {
+        <button pButton (click)="open()"><svg lucidePlus /> Add Event</button>
+      }
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <p-iconfield class="search">
+      <p-inputicon styleClass="pi pi-search" />
+      <input pInputText #q [value]="search()" (input)="search.set(q.value); load()" placeholder="Search events…" />
+    </p-iconfield>
+  </div>
+
+  @if (loading()) {
+    <div class="loading"><p-progressspinner /></div>
+  } @else if (loadError()) {
+    <div class="glass empty-state">
+      <div class="empty-art"><svg lucideTriangleAlert /></div>
+      <b>Couldn't load events</b>
+      <span>{{ loadError() }}</span>
+    </div>
+  } @else if (count() === 0 && !search()) {
+    <div class="glass empty-state">
+      <div class="empty-art"><svg lucideCalendarDays /></div>
+      <b>No events yet</b>
+      <span>Plan an event and add points to build its timeline.</span>
+      @if (isAdmin()) {
+        <button pButton style="margin-top:20px" (click)="open()"><svg lucidePlus /> Add Event</button>
+      }
+    </div>
+  } @else {
+    <p-table
+      styleClass="desktop-table"
+      [value]="data()"
+      [paginator]="true"
+      [rows]="pageSize()"
+      [totalRecords]="count()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      (onPage)="onPage($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Budget</th>
+          <th>Acceptance</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <span class="event-badge"><svg lucideCalendarDays /></span>
+              <div class="person-text">
+                <strong>{{ row.name }}</strong>
+                @if (row.description) {
+                  <span class="login-hint">{{ row.description }}</span>
+                }
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="muted">{{ formatDate(row.date) || '—' }}</span>
+          </td>
+          <td>
+            <span class="muted">{{ row.location || '—' }}</span>
+          </td>
+          <td>
+            <span class="muted">{{ row.approximateBudget != null ? formatBudget(row.approximateBudget) : '—' }}</span>
+          </td>
+          <td>
+            @if (attendance()[row.id]; as att) {
+              <div class="attendance-cell">
+                @if (canAttend()) {
+                  <button
+                    type="button"
+                    class="att-chip go"
+                    [class.on]="att.myStatus === 'GOING'"
+                    [pTooltip]="att.myStatus === 'GOING' ? 'Click to remove' : 'I am going'"
+                    tooltipPosition="top"
+                    (click)="toggleAttendance(row, 'GOING')"
+                  >
+                    <svg lucideCalendarCheck /><span>{{ att.goingCount }} going</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="att-chip no"
+                    [class.on]="att.myStatus === 'NOT_GOING'"
+                    [pTooltip]="att.myStatus === 'NOT_GOING' ? 'Click to remove' : 'I am not going'"
+                    tooltipPosition="top"
+                    (click)="toggleAttendance(row, 'NOT_GOING')"
+                  >
+                    <svg lucideX /><span>{{ att.notGoingCount }} not going</span>
+                  </button>
+                } @else {
+                  <span class="muted">{{ att.goingCount }} · {{ att.notGoingCount }}</span>
+                }
+              </div>
+            }
+          </td>
+          <td>
+            <div class="row-actions">
+              <button pButton type="button" class="p-button-text action-label" (click)="openDetail(row)">
+                <svg lucideArrowRight /><span>Open</span>
+              </button>
+              @if (isAdmin()) {
+                <button pButton type="button" class="p-button-text action-label" (click)="open(row)"><svg lucidePencil /><span>Edit</span></button>
+                <button pButton type="button" class="p-button-danger action-label" (click)="delete(row)"><svg lucideTrash2 /><span>Delete</span></button>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="6" class="empty-state">
+            <div class="empty-art"><svg lucideCalendarDays /></div>
+            <b>No matching events</b>
+            <span>Try a different search term.</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <div class="event-list mobile-only">
+      @for (row of data(); track row.id) {
+        <div class="event-card animate-fade-up">
+          <div class="event-card-top">
+            <div class="person-cell">
+              <span class="event-badge"><svg lucideCalendarDays /></span>
+              <div class="person-text">
+                <b>{{ row.name }}</b>
+                @if (row.description) {
+                  <span class="login-hint">{{ row.description }}</span>
+                }
+              </div>
+            </div>
+            @if (isAdmin()) {
+              <div class="row-actions">
+                <button pButton type="button" class="p-button-text" pTooltip="Edit" (click)="open(row)"><svg lucidePencil /></button>
+                <button pButton type="button" class="p-button-danger" pTooltip="Delete" (click)="delete(row)"><svg lucideTrash2 /></button>
+              </div>
+            }
+          </div>
+          <div class="event-card-meta">
+            <span><svg lucideCalendarRange />{{ formatDate(row.date) || 'No date set' }}</span>
+            <span><svg lucideMapPin />{{ row.location || 'No location' }}</span>
+            @if (row.approximateBudget != null) {
+              <span><svg lucideCoins />≈ {{ formatBudget(row.approximateBudget) }}</span>
+            }
+          </div>
+          @if (attendance()[row.id]; as att) {
+            <div class="attendance-cell">
+              @if (canAttend()) {
+                <button type="button" class="att-chip go" [class.on]="att.myStatus === 'GOING'" (click)="toggleAttendance(row, 'GOING')">
+                  <svg lucideCalendarCheck /><span>{{ att.goingCount }} going</span>
+                </button>
+                <button type="button" class="att-chip no" [class.on]="att.myStatus === 'NOT_GOING'" (click)="toggleAttendance(row, 'NOT_GOING')">
+                  <svg lucideX /><span>{{ att.notGoingCount }} not going</span>
+                </button>
+              }
+            </div>
+          }
+          <button pButton type="button" class="p-button-outlined" style="width:100%" (click)="openDetail(row)">
+            <svg lucideArrowRight /> Open Timeline
+          </button>
+        </div>
+      }
+    </div>
+  }
+</section>

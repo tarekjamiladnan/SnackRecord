@@ -29,6 +29,46 @@ export interface Balance { id: string; teamId: string; memberId: string; monthId
 export interface Setting { id: number; teamId: string; companyName: string; logoUrl?: string; currency: string; managerName?: string; updatedAt: string; }
 export interface Order { id: string; teamId: string; memberId: string; orderDate: string; orderText: string; createdAt: string; updatedAt: string; }
 
+export type EventAttendanceStatus = 'GOING' | 'NOT_GOING';
+
+export interface EventSummary {
+  eventId: string;
+  goingCount: number;
+  notGoingCount: number;
+  myStatus: EventAttendanceStatus | null;
+}
+
+export interface EventItem {
+  id: string;
+  teamId: string;
+  name: string;
+  description?: string;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  location?: string;
+  approximateBudget?: number | null;
+  goingCount?: number;
+  notGoingCount?: number;
+  createdAt: string;
+  updatedAt: string;
+  points?: EventPoint[];
+}
+
+export interface EventPoint {
+  id: string;
+  teamId: string;
+  eventId: string;
+  title: string;
+  description?: string;
+  time?: string;
+  location?: string;
+  icon: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DashboardStats {
   openingCash: number;
   currentCash: number;

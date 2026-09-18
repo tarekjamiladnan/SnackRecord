@@ -1,0 +1,64 @@
+<div class="timeline-wrap">
+  <div class="timeline-stage">
+    <svg class="timeline-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <defs>
+        <marker
+          id="timelineArrow"
+          viewBox="0 0 10 10"
+          refX="3"
+          refY="5"
+          markerWidth="3.5"
+          markerHeight="3.5"
+          markerUnits="userSpaceOnUse"
+          orient="auto"
+        >
+          <path d="M 0 1 L 10 5 L 0 9 z" class="timeline-arrow" />
+        </marker>
+      </defs>
+      @for (seg of segments(); track $index) {
+        <path [attr.d]="seg" class="timeline-route" fill="none" stroke-linecap="round" marker-end="url(#timelineArrow)" />
+      }
+    </svg>
+
+    @for (point of points(); track point.id; let index = $index) {
+      <button
+        type="button"
+        class="point-node"
+        [class.active]="point.id === selectedId()"
+        [style.left.%]="nodes()[index].left"
+        [style.top.%]="nodes()[index].top"
+        [pTooltip]="point.title"
+        tooltipPosition="top"
+        (click)="select.emit(point.id)"
+        [attr.aria-label]="'Select ' + point.title"
+      >
+        <span class="point-node-icon"><ng-container *ngComponentOutlet="pointIcon(point)" /></span>
+        @if (points().length > 1) {
+          <span class="point-node-index">{{ index + 1 }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <div class="timeline-core">
+    @if (selected(); as point) {
+      <div class="core-icon"><ng-container *ngComponentOutlet="pointIcon(point)" /></div>
+      <b class="core-title">{{ point.title }}</b>
+      @if (point.time) {
+        <span class="core-meta"><svg lucideClock /><span>{{ point.time }}</span></span>
+      }
+      @if (point.location) {
+        <span class="core-meta"><svg lucideMapPin /><span>{{ point.location }}</span></span>
+      }
+      @if (point.description) {
+        <p class="core-desc">{{ point.description }}</p>
+      }
+    } @else {
+      <div class="core-icon"><svg lucideCalendarDays /></div>
+      <b class="core-title">{{ eventName() || 'Event' }}</b>
+      @if (points().length) {
+        <span class="core-hint">{{ points().length }} point{{ points().length === 1 ? '' : 's' }}</span>
+      }
+    }
+  </div>
+</div>

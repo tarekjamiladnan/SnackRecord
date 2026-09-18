@@ -1,0 +1,137 @@
+.event-badge {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-3));
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(255, 107, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.event-badge svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+.event-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.event-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.event-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.event-card-top .person-cell {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.event-card-top .person-cell b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-card .row-actions .p-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+
+.event-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--text-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.event-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-card-meta svg {
+  width: 14px;
+  height: 14px;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+.attendance-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.att-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  font-size: 0.74rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.att-chip.no {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.att-chip:hover {
+  transform: translateY(-1px);
+}
+
+.att-chip.on {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(34, 197, 94, 0.35);
+}
+
+.att-chip.no.on {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+}
+
+.att-chip svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.event-card-meta + .attendance-cell {
+  margin-top: 2px;
+}

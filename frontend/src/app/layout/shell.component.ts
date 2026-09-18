@@ -1,6 +1,7 @@
 import { Component, OnInit, Type, computed, effect, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import {
+  LucideCalendarDays,
   LucideCalendarRange,
   LucideChartColumn,
   LucideCircleAlert,
@@ -49,6 +50,7 @@ export class ShellComponent implements OnInit {
     }
     return [
       { path: '/dashboard', label: 'Dashboard', icon: LucideLayoutDashboard },
+      { path: '/events', label: 'Events', icon: LucideCalendarDays },
       ...(this.isAdmin() ? [] : [{ path: '/order', label: 'Order', icon: LucideNotebookPen }]),
       ...(this.isAdmin() ? [{ path: '/orders', label: 'Manage Orders', icon: LucideClipboardList }] : []),
       { path: '/menu', label: 'Menu', icon: LucideUtensilsCrossed },

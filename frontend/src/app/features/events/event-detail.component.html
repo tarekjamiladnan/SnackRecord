@@ -1,0 +1,122 @@
+<section class="page">
+  @if (event(); as event) {
+    <div class="detail-head">
+      <div class="detail-title">
+        <button class="back-btn" type="button" routerLink="/events" [attr.aria-label]="'Back to events'">
+          <svg lucideChevronLeft />
+        </button>
+        <div class="detail-title-text">
+          <h1>{{ event.name }}</h1>
+          <div class="detail-sub">
+            @if (event.date) {
+              <span><svg lucideCalendarRange />{{ formatDate(event.date) }}</span>
+            }
+            @if (event.location) {
+              <span><svg lucideMapPin />{{ event.location }}</span>
+            }
+            <span class="pill">{{ points().length }} point{{ points().length === 1 ? '' : 's' }}</span>
+            @if (event.approximateBudget != null) {
+              <span class="pill budget"><svg lucideCoins />≈ {{ formatBudget(event.approximateBudget) }}</span>
+            }
+            <span class="pill att"><svg lucideCalendarCheck />{{ event.goingCount ?? 0 }} going</span>
+            <span class="pill att no"><svg lucideX />{{ event.notGoingCount ?? 0 }} not going</span>
+          </div>
+        </div>
+      </div>
+      @if (isAdmin()) {
+        <div class="page-actions">
+          <button pButton class="p-button-text" (click)="openEvent(event)"><svg lucidePencil /> Edit</button>
+          <button pButton class="p-button-danger" (click)="deleteEvent()"><svg lucideTrash2 /> Delete</button>
+        </div>
+      }
+    </div>
+
+    @if (event.description) {
+      <div class="event-desc glass">{{ event.description }}</div>
+    }
+
+    <div class="detail-layout">
+      <div class="panel points-panel animate-fade-up">
+        <div class="panel-title">
+          <div>
+            <h2>Points</h2>
+            <p>Plan the day's activities</p>
+          </div>
+          @if (isAdmin()) {
+            <button pButton class="p-button-sm" (click)="openPoint(null)"><svg lucidePlus /> Add Point</button>
+          }
+        </div>
+
+        @if (points().length === 0) {
+          <div class="points-empty">
+            <svg lucideMapPin />
+            <span>No points yet.</span>
+            @if (isAdmin()) {
+              <button pButton class="p-button-outlined p-button-sm" (click)="openPoint(null)"><svg lucidePlus /> Add Point</button>
+            }
+          </div>
+        } @else {
+          <div cdkDropList class="points-list" [cdkDropListData]="points()" [cdkDropListDisabled]="!isAdmin()" (cdkDropListDropped)="onPointDrop($event)">
+            @for (point of points(); track point.id) {
+              <div
+                cdkDrag
+                class="point-row"
+                [class.active]="point.id === selectedPointId()"
+                (click)="selectPoint(point.id)"
+              >
+                @if (isAdmin()) {
+                  <span cdkDragHandle class="drag-handle" [attr.aria-label]="'Reorder point'">
+                    <svg lucideGripVertical />
+                  </span>
+                }
+                <span class="point-icon"><ng-container *ngComponentOutlet="pointIcon(point)" /></span>
+                <span class="point-body">
+                  <b>{{ point.title }}</b>
+                  <span>
+                    @if (point.time) {
+                      <span class="point-meta"><svg lucideClock />{{ point.time }}</span>
+                    }
+                    @if (point.location) {
+                      <span class="point-meta"><svg lucideMapPin />{{ point.location }}</span>
+                    }
+                  </span>
+                </span>
+                @if (isAdmin()) {
+                  <span class="point-actions">
+                    <button type="button" aria-label="Edit point" pTooltip="Edit" tooltipPosition="left" (click)="openPoint($event, point)">
+                      <svg lucidePencil />
+                    </button>
+                    <button type="button" aria-label="Delete point" pTooltip="Delete" tooltipPosition="left" (click)="deletePoint($event, point)">
+                      <svg lucideTrash2 />
+                    </button>
+                  </span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="panel timeline-panel animate-fade-up">
+        <div class="panel-title">
+          <div>
+            <h2>Timeline</h2>
+            <p>Tap a point to inspect it</p>
+          </div>
+        </div>
+        <app-event-timeline [points]="points()" [selectedId]="selectedPointId()" [eventName]="event.name" (select)="selectPoint($event)" />
+      </div>
+    </div>
+  } @else if (loading()) {
+    <div class="loading"><p-progressspinner /></div>
+  } @else {
+    <div class="glass empty-state">
+      <div class="empty-art"><svg lucideTriangleAlert /></div>
+      <b>Couldn't load event</b>
+      <span>{{ loadError() || 'It may have been deleted.' }}</span>
+      @if (!loadError()) {
+        <button pButton style="margin-top:20px" routerLink="/events">Back to Events</button>
+      }
+    </div>
+  }
+</section>

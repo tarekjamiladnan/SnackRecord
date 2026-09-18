@@ -1,0 +1,67 @@
+import { Type } from '@angular/core';
+import {
+  LucideBed,
+  LucideBus,
+  LucideCake,
+  LucideCamera,
+  LucideCar,
+  LucideClock,
+  LucideCoffee,
+  LucideDumbbell,
+  LucideFilm,
+  LucideFlag,
+  LucideFootprints,
+  LucideGamepad2,
+  LucideLandmark,
+  LucideMapPin,
+  LucideMoon,
+  LucideMountain,
+  LucideMusic,
+  LucidePalette,
+  LucidePartyPopper,
+  LucidePlane,
+  LucideSandwich,
+  LucideShip,
+  LucideSparkles,
+  LucideSun,
+  LucideTent,
+  LucideTrain,
+  LucideUtensils,
+  LucideWaves
+} from '@lucide/angular';
+
+export const POINT_ICONS: Record<string, Type<unknown>> = {
+  location: LucideMapPin,
+  car: LucideCar,
+  plane: LucidePlane,
+  ship: LucideShip,
+  bus: LucideBus,
+  train: LucideTrain,
+  bed: LucideBed,
+  coffee: LucideCoffee,
+  camera: LucideCamera,
+  party: LucidePartyPopper,
+  music: LucideMusic,
+  footprints: LucideFootprints,
+  mountain: LucideMountain,
+  sun: LucideSun,
+  flag: LucideFlag,
+  gamepad: LucideGamepad2,
+  dumbbell: LucideDumbbell,
+  film: LucideFilm,
+  waves: LucideWaves,
+  sandwich: LucideSandwich,
+  cake: LucideCake,
+  landmark: LucideLandmark,
+  tent: LucideTent,
+  palette: LucidePalette,
+  utensils: LucideUtensils,
+  sparkles: LucideSparkles,
+  moon: LucideMoon,
+  clock: LucideClock
+};
+
+export const POINT_ICON_OPTIONS: { label: string; value: string }[] = Object.entries(POINT_ICONS).map(([key]) => ({
+  value: key,
+  label: key.charAt(0).toUpperCase() + key.slice(1)
+}));

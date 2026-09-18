@@ -14,11 +14,39 @@
           placeholder="Select an option"
           [showClear]="!field.required"
         />
+      } @else if (field.type === 'textarea') {
+        <textarea
+          pTextarea
+          [id]="field.key"
+          rows="4"
+          [formControlName]="field.key"
+          [placeholder]="field.label"
+        ></textarea>
+      } @else if (field.type === 'icon') {
+        <div class="icon-picker">
+          @for (option of field.options ?? []; track option.value) {
+            <button
+              type="button"
+              class="icon-option"
+              [class.selected]="form.get(field.key)?.value === option.value"
+              [pTooltip]="option.label"
+              tooltipPosition="top"
+              [attr.aria-label]="option.label"
+              (click)="form.get(field.key)?.setValue(option.value)"
+            >
+              @if (iconFor(field, option.value); as icon) {
+                <ng-container *ngComponentOutlet="icon" />
+              } @else {
+                <span class="icon-fallback">{{ option.label.charAt(0).toUpperCase() }}</span>
+              }
+            </button>
+          }
+        </div>
       } @else {
         <input
           pInputText
           [id]="field.key"
-          [type]="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : field.type === 'email' ? 'email' : field.type === 'password' ? 'password' : 'text'"
+          [type]="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : field.type === 'time' ? 'time' : field.type === 'email' ? 'email' : field.type === 'password' ? 'password' : 'text'"
           [formControlName]="field.key"
           [placeholder]="field.label"
         />

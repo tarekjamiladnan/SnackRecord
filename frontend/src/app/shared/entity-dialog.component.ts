@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Type } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { UI_IMPORTS } from './ui';
@@ -6,9 +6,10 @@ import { UI_IMPORTS } from './ui';
 export interface FieldConfig {
   key: string;
   label: string;
-  type?: 'text' | 'number' | 'date' | 'select' | 'email' | 'password';
+  type?: 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'email' | 'password' | 'icon';
   required?: boolean;
   options?: { label: string; value: string }[];
+  icons?: Record<string, Type<unknown>>;
 }
 export interface EntityDialogData { title: string; fields: FieldConfig[]; value?: Record<string, unknown>; }
 
@@ -32,5 +33,9 @@ export class EntityDialogComponent {
 
   save(): void {
     this.ref.close(this.form.getRawValue());
+  }
+
+  iconFor(field: FieldConfig, value: string): Type<unknown> | null {
+    return field.icons?.[value] ?? null;
   }
 }

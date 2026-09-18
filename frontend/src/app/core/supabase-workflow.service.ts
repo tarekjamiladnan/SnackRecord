@@ -189,4 +189,45 @@ export class SupabaseWorkflowService {
     const { error } = await this.supabase.from('teams').delete().eq('id', id);
     if (error) throw error;
   }
+
+  async eventDetail(id: string): Promise<any> {
+    const { data: event, error } = await this.supabase.from('events').select('*').eq('id', id).single();
+    if (error) throw error;
+    const { data: pointRows, error: pointError } = await this.supabase
+      .from('event_points').select('*').eq('event_id', id).order('position');
+    if (pointError) throw pointError;
+    const detail: any = { ...camel<any>(event), points: (pointRows ?? []).map((point: any) => camel<any>(point)) };
+    try {
+      const { data: attendance } = await this.supabase.rpc('event_attendance', { p_event_ids: [id] });
+      const row = attendance?.[0];
+      detail.goingCount = Number(row?.going_count ?? 0);
+      detail.notGoingCount = Number(row?.not_going_count ?? 0);
+    } catch {
+      detail.goingCount = 0;
+      detail.notGoingCount = 0;
+    }
+    return detail;
+  }
+
+  async eventAttendance(eventIds: string[]): Promise<any[]> {
+    if (!eventIds.length) return [];
+    const { data, error } = await this.supabase.rpc('event_attendance', { p_event_ids: eventIds });
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async setEventAttendance(eventId: string, status: 'GOING' | 'NOT_GOING' | null): Promise<void> {
+    const { error } = await this.supabase.rpc('set_event_attendance', { p_event_id: eventId, p_status: status });
+    if (error) throw error;
+  }
+
+  async reorderSteps(eventId: string, ids: string[]): Promise<void> {
+    const { error } = await this.supabase.rpc('reorder_event_steps', { p_event_id: eventId, p_ids: ids });
+    if (error) throw error;
+  }
+
+  async reorderPoints(eventId: string, ids: string[]): Promise<void> {
+    const { error } = await this.supabase.rpc('reorder_event_points', { p_event_id: eventId, p_ids: ids });
+    if (error) throw error;
+  }
 }
